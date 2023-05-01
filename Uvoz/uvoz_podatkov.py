@@ -48,7 +48,7 @@ def uvozSQL(tabela):
     print("Uspesno nalozil podatke!")
 
 uvozSQL("app_user.sql")
-uvozSQL("asset.sql")
 uvozSQL("pair.sql")
-uvoziCSV("trades.csv")
 uvoziCSV("price_history.csv")
+uvoziCSV("trades.csv")
+uvozSQL("asset.sql")
