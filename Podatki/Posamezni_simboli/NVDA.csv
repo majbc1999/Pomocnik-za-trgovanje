@@ -1,4 +1,4 @@
-simbol,date,price
+symbol_id,date,price
 NVDA,2022-01-03,301.21
 NVDA,2022-01-04,292.9
 NVDA,2022-01-05,276.04

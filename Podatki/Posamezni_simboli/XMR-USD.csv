@@ -1,4 +1,4 @@
-simbol,date,price
+symbol_id,date,price
 XMR-USD,2022-01-01,250.21
 XMR-USD,2022-01-02,239.37
 XMR-USD,2022-01-03,231.55

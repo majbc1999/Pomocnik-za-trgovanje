@@ -1,4 +1,4 @@
-simbol,date,price
+symbol_id,date,price
 ETH-USD,2022-01-01,3769.7
 ETH-USD,2022-01-02,3829.56
 ETH-USD,2022-01-03,3761.38
