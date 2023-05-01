@@ -1,0 +1,1 @@
+INSERT INTO asset (user_id, symbol_id, amount) VALUES (1, 'USD', 507.6)
