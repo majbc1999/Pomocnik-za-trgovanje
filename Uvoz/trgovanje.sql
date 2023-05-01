@@ -17,8 +17,8 @@ CREATE TABLE pair (
 );
 
 CREATE TABLE price_history (
-    symbol_id REFERENCES pair(symbol),
-    date DATE NOT NULL (date <= now()),
+    symbol_id TEXT REFERENCES pair(symbol),
+    date DATE NOT NULL,
     price DECIMAL NOT NULL CHECK (price >= 0),
     PRIMARY KEY (symbol_id, date)
 );
@@ -32,13 +32,13 @@ CREATE TABLE asset (
 
 CREATE TABLE trade (
     id_trade SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES app_user(id_user)
-    symbol_id TEXT REFERENCES pair(symbol)
+    user_id INTEGER REFERENCES app_user(id_user),
+    symbol_id TEXT REFERENCES pair(symbol),
     type TEXT NOT NULL,
     strategy TEXT NOT NULL,
     RR DECIMAL NOT NULL,
     target DECIMAL NOT NULL,
-    date DATE NOT NULL (date <= now()),
+    date DATE NOT NULL,
     duration TEXT NOT NULL,
     TP INTEGER NOT NULL,
     PNL TEXT NOT NULL
