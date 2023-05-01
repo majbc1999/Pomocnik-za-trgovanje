@@ -35,12 +35,12 @@ CREATE TABLE trade (
     user_id INTEGER REFERENCES app_user(id_user),
     symbol_id TEXT REFERENCES pair(symbol),
     type TEXT NOT NULL,
-    strategy TEXT NOT NULL,
-    RR DECIMAL NOT NULL,
-    target DECIMAL NOT NULL,
+    strategy TEXT,
+    RR DECIMAL,
+    target DECIMAL,
     date DATE NOT NULL,
-    duration TEXT NOT NULL,
-    TP INTEGER NOT NULL,
+    duration TEXT,
+    TP INTEGER,
     PNL TEXT NOT NULL
 );
 
