@@ -1,4 +1,4 @@
-simbol,date,price
+symbol_id,date,price
 LINK-USD,2022-01-01,20.67
 LINK-USD,2022-01-02,21.83
 LINK-USD,2022-01-03,23.57

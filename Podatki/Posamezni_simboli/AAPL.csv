@@ -1,4 +1,4 @@
-simbol,date,price
+symbol_id,date,price
 AAPL,2022-01-03,182.01
 AAPL,2022-01-04,179.7
 AAPL,2022-01-05,174.92

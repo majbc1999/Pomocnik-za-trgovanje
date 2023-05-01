@@ -1,4 +1,4 @@
-simbol,date,price
+symbol_id,date,price
 TSLA,2022-01-03,399.93
 TSLA,2022-01-04,383.2
 TSLA,2022-01-05,362.71

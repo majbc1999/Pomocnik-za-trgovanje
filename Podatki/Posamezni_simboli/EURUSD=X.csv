@@ -1,4 +1,4 @@
-simbol,date,price
+symbol_id,date,price
 EURUSD=X,2022-01-03,1.14
 EURUSD=X,2022-01-04,1.13
 EURUSD=X,2022-01-05,1.13

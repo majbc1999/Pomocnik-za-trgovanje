@@ -1,4 +1,4 @@
-simbol,date,price
+symbol_id,date,price
 SPY,2022-01-03,477.71
 SPY,2022-01-04,477.55
 SPY,2022-01-05,468.38
