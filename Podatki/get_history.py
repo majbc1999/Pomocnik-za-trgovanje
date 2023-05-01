@@ -3,7 +3,7 @@ import os
 from yahoofinancials import YahooFinancials
 
 
-trading_pairs = ['BTC-USD', 'ETH-USD', 'LINK-USD', 'XMR-USD', 'AAPL', 'SPY', 'NVDA', 'TSLA']
+trading_pairs = ['BTC-USD', 'ETH-USD', 'LINK-USD', 'XMR-USD', 'AAPL', 'SPY', 'NVDA', 'TSLA', 'EURUSD=X']
 
 begin_date = '2022-01-01'
 end_date = '2023-4-30'
@@ -47,6 +47,8 @@ def get_historic_data(seznam_parov):
         zacasni_sez = YahooFinancials(simbol).get_historical_price_data( begin_date, end_date, 'daily')
         seznam_cen = zacasni_sez[simbol]['prices']
         seznam_cen = shorten_list(seznam_cen)
-        zapisi_csv(seznam_cen,  ['date', 'price'], 'Podatki/' + str(simbol) + '.csv')
+        for i in seznam_cen:
+            i.update({"simbol": str(simbol)})
+        zapisi_csv(seznam_cen,  ['simbol', 'date', 'price'], 'Podatki/' + str(simbol) + '.csv')
 
 get_historic_data(trading_pairs)
