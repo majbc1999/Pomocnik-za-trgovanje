@@ -1,0 +1,36 @@
+<html>
+<head>
+    <title>Trade</title>
+</head>
+<body>
+   <h2>All trades</h2>
+
+   <table cellpadding="0" cellspacing="0" border="1">
+   <tr>
+        <th>Symbol</th>
+        <th>Type</th>
+        <th>Strategy</th>
+        <th>RR</th>
+        <th>Target</th>
+        <th>Date</th>
+        <th>Duration</th>
+        <th>TP</th>
+        <th>PNL</th>
+   </tr>
+   %for (symbol_id, type, strategy, RR, target, date, duration, TP, PNL) in trade:
+    <tr>
+        <td>{{symbol_id}}</td>
+        <td>{{type}}</td>
+        <td>{{strategy}}</td>
+        <td>{{RR}}</td>
+        <td>{{target}}</td>
+        <td>{{date}}</td>
+        <td>{{duration}}</td>
+        <td>{{TP}}</td>
+        <td>{{PNL}}</td>
+    </tr>
+   %end
+   </table>
+
+</body>
+</html> 
