@@ -1,0 +1,5 @@
+pandas
+yahoofinancials
+bottle
+psycopg2-binary
+plotly
