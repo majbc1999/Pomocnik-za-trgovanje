@@ -8,7 +8,9 @@ CREATE TABLE app_user (
     id_user SERIAL PRIMARY KEY,
     name TEXT NOT NULL,
     surname TEXT NOT NULL,
-    date_of_birth DATE NOT NULL CHECK (date_of_birth <= now())
+    date_of_birth DATE CHECK (date_of_birth <= now()),
+    user_name TEXT NOT NULL UNIQUE,
+    password TEXT NOT NULL
 );
 
 CREATE TABLE pair (
