@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="slo">
+    <head>
+        <meta charset="UTF-8">
+        <title>Prijava</title>
+    </head>
+    <body>
+        <h2>Tukaj se prijaviš v aplikacijo Trgovanje</h2>
+        <form action="/prijava" method="post">
+            <span>Uporabniško ime:</span> <input name="ime" type="text" />
+            <span>Geslo:</span> <input name="geslo" type="password" />
+            <input value="Prijava" type="submit" />
+        </form>
+    </body>
+        <h2>Še nimaš računa, tukaj lahko registriraš:</h2>
+        <form action="/registracija" method="post" autocomplete="off">
+            <div class="form-row" >
+                <div class="form-group col-md-6">
+                  <label for="name">Ime</label>
+                  <input id="name" name="name" type="text" class="form-control" required
+                    oninput="this.setCustomValidity('')"
+                    oninvalid="this.setCustomValidity('Obvezno polje')"
+                    placeholder="Sara"
+                    />
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                  <label for="surname">Priimek</label>
+                  <input id="surname" name="surname" type="text" class="form-control" required
+                    oninput="this.setCustomValidity('')"
+                    oninvalid="this.setCustomValidity('Obvezno polje')"
+                    placeholder="Žužek"
+                    />
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                  <label for="birth">Datum rojstva</label>
+                  <input id="birth" name="birth" type="text" class="form-control" required
+                    oninput="this.setCustomValidity('')"
+                    oninvalid="this.setCustomValidity('Obvezno polje')"
+                    placeholder="2000-07-29"
+                    />
+                </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <label for="username">Uporabniško ime</label>
+                <input id="username" name="username" type="text" class="form-control" required
+                  oninput="this.setCustomValidity('')"
+                  oninvalid="this.setCustomValidity('Obvezno polje')"
+                  placeholder="sara.zuzek"
+                  />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <label for="password">Geslo</label>
+                <input id="password" name="password" type="password" class="form-control" required
+                  oninput="this.setCustomValidity('')"
+                  oninvalid="this.setCustomValidity('Obvezno polje')"
+                  />
+              </div>
+            </div>
+            <div class="form-row col">
+              <button class="btn btn-primary" type="submit">
+                Registracija
+              </button>
+            </div>
+        </form>
+    </body> 
+</html> 
+

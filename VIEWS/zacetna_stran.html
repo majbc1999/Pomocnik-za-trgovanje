@@ -1,0 +1,26 @@
+% rebase('about.html')
+
+<div><strong>Dobrodošli v pomočniku za trgovanje.</strong></div>
+
+<div><p>Za vas nudimo spremljanje trgovanja za naslednje valute, v prihodnosti pa bomo dodali možnost dodajanja še valut po vaši izbiri. </p></div>
+
+<table class="table table-striped">
+  <tr>
+    <th>Ime</th>
+    <th>Simbol</th>
+  </tr>
+  %for symbol, name in pair:
+  <tr>
+    <td>{{name}}</td>
+    <td>{{symbol}}</td>
+  </tr>
+  %end
+</table>
+
+<!-- 
+<div class="level-right">
+   <a class="button" href="/users">
+      <strong>Tabela uporabnikov</strong>
+   </a>
+</div> -->
+
