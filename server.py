@@ -1,17 +1,13 @@
-#!/usr/bin/python
-# -*- encoding: utf-8 -*-
-
-# uvozimo bottle.py
 from bottleext import get, post, run, request, template, redirect, static_file, url
 
-# uvozimo ustrezne podatke za povezavo
 from auth_public import *
 
-# uvozimo psycopg2
 import psycopg2, psycopg2.extensions, psycopg2.extras
-psycopg2.extensions.register_type(psycopg2.extensions.UNICODE) # se znebimo problemov s šumniki
+psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
 
 import os
+
+import hashlib
 
 # privzete nastavitve
 SERVER_PORT = os.environ.get('BOTTLE_PORT', 8080)
@@ -31,9 +27,6 @@ def static(filename):
 
 @get('/')
 def zacetna_stran():
-    cur.execute("""
-      SELECT symbol,name from pair
-   """)
     return template('home.html', pair=cur)
 
 @get('/registracija')
@@ -81,9 +74,16 @@ def asset():
     ORDER BY app_user.name """)
     return template('asset.html', asset=cur)
 
+@post('/prijava')
+def prijava_post():
+    uporabnisko_ime = request.forms.getunicode("ime")
+    geslo = request.forms.getunicode('geslo')
+    A =cur.execute("SELECT id_user, name FROM app_user WHERE user_name = {0} and password = {1}".format(uporabnisko_ime, geslo))
+    print(A)
+    return template('registracija.html', trade=cur)
+    redirect('/')
 
 
-######################################################################
-# poženemo strežnik na podanih vratih, npr. http://localhost:8080/
+
 if __name__ == "__main__":
-    run(host='localhost', port=SERVER_PORT, reloader=True)
+    run(host='localhost', port=8080, reloader=True)
