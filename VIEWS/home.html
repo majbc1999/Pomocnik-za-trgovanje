@@ -1,3 +1,5 @@
+%from server import uspesna_prijava, sporocilo
+
 <!DOCTYPE html>
 <html lang="slo">
     <head>
@@ -6,6 +8,11 @@
     </head>
     <body>
         <h2>Tukaj se prijaviš v aplikacijo Trgovanje</h2>
+        % if uspesna_prijava == True:
+        <div><b>Prijava</b></div>
+        % elif uspesna_prijava == False:
+        <div style="color: red">{{sporocilo}}</div>  
+        % end
         <form action="/prijava" method="post">
             <span>Uporabniško ime:</span> <input name="ime" type="text" /><br>
             <span>Geslo:</span> <input name="geslo" type="password" /><br>

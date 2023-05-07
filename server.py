@@ -7,6 +7,9 @@ psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
 
 import os
 
+from Podatki import get_history as gh
+from Uvoz import uvoz_podatkov as up
+
 import hashlib
 
 # privzete nastavitve
@@ -78,10 +81,58 @@ def asset():
 def prijava_post():
     uporabnisko_ime = request.forms.getunicode("ime")
     geslo = request.forms.getunicode('geslo')
-    A =cur.execute("SELECT id_user, name FROM app_user WHERE user_name = {0} and password = {1}".format(uporabnisko_ime, geslo))
-    print(A)
-    return template('registracija.html', trade=cur)
-    redirect('/')
+    global uspesna_prijava, sporocilo, uporabnik
+    row = cur.execute("SELECT DISTINCT name FROM app_user WHERE user_name = '{0}' and password = '{1}'".format(uporabnisko_ime, geslo))
+    row = cur.fetchone()
+    if row != None:
+        uporabnik = row[0]
+        print(uporabnik)
+        redirect(url('/uporabnik'))
+    else:
+        uspesna_prijava = False
+        sporocilo = "Napačno uporabinško ime ali geslo!"
+        redirect(url('/'))
+
+  #  try:
+ #       row = cur.execute("SELECT DISTINCT name FROM app_user WHERE user_name = '{0}' and password = '{1}'".format(uporabnisko_ime, geslo))
+#        row = cur.fetchone()
+#
+  #      redirect(url('/uporabnik'))
+ #   except row == None:
+#        sporocilo = "Napačno uporabniško ime ali geslo"
+uspesna_prijava = True        
+sporocilo = ""
+uporabnik = ""
+
+@get('/uporabnik')
+def uporabnik():
+    return template('uporabnik.html', uporabnik=cur)
+
+@get('/dodaj')
+def dodaj():
+    cur.execute("""
+      SELECT symbol,name from pair
+   """)
+    return template('dodaj_asset.html', pair=cur)
+
+@post('/dodaj_potrdi')
+def dodaj_potrdi():
+    symbol = request.forms.symbol
+    try: 
+        gh.get_historic_data(['{0}'.format(symbol)])
+    except gh.get_historic_data(['{0}'.format(symbol)]) !=
+
+    #try:
+    #    cur.execute("INSERT INTO app_user (name, surname, date_of_birth) VALUES (%s, %s, %s) RETURNING id_user",
+    #                (name, surname, date_of_birth))
+    #    conn.commit()
+    #except Exception as ex:
+    #    conn.rollback()
+    #    return template('add_user.html', name=name, surname=surname, date_of_birth=date_of_birth,
+    #                    napaka='Zgodila se je napaka: %s' % ex)
+
+    redirect(url('/users'))
+
 
 
 

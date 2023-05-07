@@ -1,0 +1,49 @@
+% from Podatki import get_history
+
+<!DOCTYPE html>
+<html lang="slo">
+    <head>
+        <meta charset="UTF-8">
+        <title>Pomočnik za trgovanje</title>
+    </head>
+    <body>
+        <div>
+            <h2>Dodaj naložbo</h2>
+            <p>Uporabnik lahko doda nove naložbe v program, tako da izbere simbol, ki je na
+                voljo na spletni strani <a href="https://finance.yahoo.com">YahooFinance</a>
+                in ga vpiše v spodnje okno. Takoj ko potrdi izbiro, je nova naložba
+                na voljo za uporabo, če je simbol le te pravilno vnešen.
+            </p>
+        </div>
+        <form action="/dodaj_potrdi" method="post" autocomplete="off">
+            <div class="form-group col-md-6">
+              <label for="birth">Vpiši simbol:</label>
+              <input id="symbol" name="symbol" type="text" class="form-control" required
+                oninput="this.setCustomValidity('')"
+                oninvalid="this.setCustomValidity('Obvezno polje')"
+                placeholder="BTC-USD"
+                />
+            </div>
+            <div class="form-row col">
+                <button class="btn btn-primary" type="submit">
+                  Potrdi
+                </button>
+              </div>
+            </form>
+        <div>
+            <h3>Naložbe, ki so že na voljo za trgovanje</h3>
+            <table class="table table-striped">
+                <tr>
+                  <th>Ime</th>
+                  <th>Simbol</th>
+                </tr>
+                %for symbol, name in pair:
+                <tr>
+                  <td>{{name}}</td>
+                  <td>{{symbol}}</td>
+                </tr>
+                %end
+              </table>
+        </div>
+    </body>
+</html> 
