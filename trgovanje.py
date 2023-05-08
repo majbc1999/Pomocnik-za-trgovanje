@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- encoding: utf-8 -*-
 
+from bottle import *
 # uvozimo bottle.py
 from bottleext import get, post, run, request, template, redirect, static_file, url
 
@@ -29,40 +30,60 @@ cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 def static(filename):
    return static_file(filename, root='static')
 
+#skrivnost = 'laqwXUtKfHTp1SSpnkSg7VbsJtCgYS89QnvE7PedkXqbE8pPj7VeRUwqdXu1Fr1kEkMzZQAaBR93PoGWks11alfe8y3CPSKh3mEQ'
+
+#napakaSporocilo = None
+#def nastaviSporocilo(sporocilo = None):
+    #global napakaSporocilo
+    #staro = napakaSporocilo
+    #napakaSporocilo = sporocilo
+    #return staro 
+
+#funkcija za piškotke
+#def id_uporabnik():
+    #if request.get_cookie("id", secret = skrivnost):
+    #    piskotek = request.get_cookie("id", secret = skrivnost)
+    #    return piskotek
+    #else:
+    #    return 0
+
 @get('/')
 def zacetna_stran():
-    cur.execute("""
-      SELECT symbol,name from pair
-   """)
     return template('home.html', pair=cur)
 
 @get('/registracija')
-def registracija():
-    return template('registracija.html')
+def registracija_get():
+    return template('registracija.html', naslov = "Registracija")
 
-@get('/users')
-def users():
-    cur.execute("SELECT name, surname, date_of_birth FROM app_user")
-    return template('users.html', app_user=cur)
-
-@get('/add_user')
-def add_user():
-    return template('add_user.html', name='', surname='', date_of_birth='', napaka=None)
-
-@post('/add_user')
-def add_user_post():
-    name = request.forms.name
-    surname = request.forms.surname
-    date_of_birth = request.forms.date_of_birth
-    try:
-        cur.execute("INSERT INTO app_user (name, surname, date_of_birth) VALUES (%s, %s, %s) RETURNING id_user",
-                    (name, surname, date_of_birth))
+@post('/registracija')
+def registracija_post():
+    ime = request.forms.name
+    priimek = request.forms.surname
+    datum_rojstva = request.forms.date_of_birth
+    uporabnisko_ime = request.forms.user_name
+    geslo = request.forms.password
+    global uspesna_registracija, sporocilo
+    row = cur.execute("SELECT name FROM app_user WHERE user_name = '{}'".format(uporabnisko_ime))
+    row = cur.fetchone()
+    if row != None:
+        uspesna_registracija = False
+        sporocilo = "Registracija ni možna, to uporabniško ime že obstaja."
+        redirect('/registracija')
+    else:
+        cur.execute("INSERT INTO app_user (name, surname, date_of_birth, user_name, password) VALUES (%s, %s, %s, %s, %s) RETURNING id_user",
+                (ime, priimek, datum_rojstva, uporabnisko_ime, geslo))
         conn.commit()
-    except Exception as ex:
-        conn.rollback()
-        return template('add_user.html', name=name, surname=surname, date_of_birth=date_of_birth,
-                        napaka='Zgodila se je napaka: %s' % ex)
-    redirect(url('/users'))
+        sporocilo = ""
+        redirect('/uporabnik')
+
+uspesna_registracija = True
+sporocilo = ""
+
+#@get('/users')
+#def users():
+#    cur.execute("SELECT name, surname, date_of_birth FROM app_user")
+#    return template('users.html', app_user=cur)
+
 
 @get('/trades')
 def trades():
@@ -86,4 +107,4 @@ def asset():
 ######################################################################
 # poženemo strežnik na podanih vratih, npr. http://localhost:8080/
 if __name__ == "__main__":
-    run(host='localhost', port=SERVER_PORT, reloader=True)
+    run(host='localhost', port=SERVER_PORT, reloader=RELOADER)
