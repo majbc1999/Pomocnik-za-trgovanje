@@ -3,7 +3,6 @@ import os
 import pandas as pd
 from yahoofinancials import YahooFinancials as yf
 
-
 trading_pairs = ['BTC-USD', 'ETH-USD', 'LINK-USD', 'XMR-USD', 'AAPL', 'SPY', 'NVDA', 'TSLA', 'EURUSD=X', 'MATIC-USD', 'PAXG-USD']
 
 begin_date = '2022-01-01'
@@ -69,6 +68,16 @@ def merge_csv(seznam, csv_name):
     df = pd.concat(zacasni, copy=False)
     df.to_csv('Podatki/'+ str(csv_name), index=False)
 
+def preveri_ustreznost(simbol):
+    '''Preveri če simbol obstaja, če ne obstaja vrne 0, sicer pa 1'''
+    data = yf(str(simbol)).get_historical_price_data('2023-05-03', '2023-05-04', 'daily')
+    if isinstance(data[simbol], type(None)):
+        return 0
+    elif isinstance(data[simbol], dict):
+        if len(data[simbol]) == 1:
+            return 0
+        else:
+            return 1
 
 get_historic_data(trading_pairs)
 merge_csv(get_symbols(), 'price_history.csv')
