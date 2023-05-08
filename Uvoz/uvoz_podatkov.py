@@ -31,7 +31,7 @@ def uvoziCSV(tabela):
                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                     RETURNING id_trade
                 """, r)
-            else:
+            elif "price_history.csv" in tabela:
                 cur.execute("""
                     INSERT INTO price_history
                     (symbol_id, date, price)

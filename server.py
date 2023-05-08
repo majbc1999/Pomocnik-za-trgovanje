@@ -71,12 +71,12 @@ def pairs():
     cur.execute("SELECT symbol, name FROM pair")
     return template('pairs.html', pair=cur)
 
-@get('/asset')
+@get('/assets')
 def asset():
     cur.execute("""SELECT app_user.name, symbol_id, amount FROM asset 
     INNER JOIN app_user ON user_id = id_user 
     ORDER BY app_user.name """)
-    return template('asset.html', asset=cur)
+    return template('assets.html', asset=cur)
 
 @post('/prijava')
 def prijava_post():
@@ -94,13 +94,6 @@ def prijava_post():
         sporocilo = "Napačno uporabinško ime ali geslo!"
         redirect(url('/'))
 
-  #  try:
- #       row = cur.execute("SELECT DISTINCT name FROM app_user WHERE user_name = '{0}' and password = '{1}'".format(uporabnisko_ime, geslo))
-#        row = cur.fetchone()
-#
-  #      redirect(url('/uporabnik'))
- #   except row == None:
-#        sporocilo = "Napačno uporabniško ime ali geslo"
 uspesna_prijava = True        
 sporocilo = ""
 uporabnik = ""
@@ -115,7 +108,7 @@ def dodaj():
     cur.execute("""
       SELECT symbol,name from pair
    """)
-    return template('dodaj_asset.html', pair=cur)
+    return template('dodaj_par.html', pair=cur)
 
 @post('/dodaj_potrdi')
 def dodaj_potrdi():
