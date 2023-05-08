@@ -11,7 +11,7 @@
         % if uspesna_prijava == True:
         <div><b>Prijava</b></div>
         % elif uspesna_prijava == False:
-        <div style="color: red">{{sporocilo}}</div>  
+        <div class="opozorilo">{{sporocilo}}</div>  
         % end
         <form action="/prijava" method="post">
             <span>Uporabniško ime:</span> <input name="ime" type="text" /><br>

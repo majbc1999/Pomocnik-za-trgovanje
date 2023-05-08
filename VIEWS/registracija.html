@@ -4,7 +4,7 @@
 % if uspesna_registracija == True:
 <div><b>Vpiši svoje podatke</b></div>
 % elif uspesna_registracija == False:
-<div style="color: red">{{sporocilo}}</div>  
+<div class="opozorilo">{{sporocilo}}</div>  
 % end
 <form action="/registracija" method="post" autocomplete="off">
   <span>Ime:</span> <input name="name" type="text" required placeholder="Sara"/><br>

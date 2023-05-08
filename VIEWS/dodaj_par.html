@@ -19,9 +19,9 @@
       <p>SIMBOL ZAPIŠI Z VELIKIMI ČRKAMI!</p>
     </div>
     % if pravilen_simbol == True:
-    <div style="color: green">{{sporocilo}}</div>
+    <div class="uspesno">{{sporocilo}}</div>
     % elif pravilen_simbol == False:
-    <div style="color: red">{{sporocilo}}</div>  
+    <div class="opozorilo">{{sporocilo}}</div>  
     % end
     <form action="/dodaj_potrdi" method="post">
       <span>Vpiši simbol:</span> <input name="symbol" type="text" required

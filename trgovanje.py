@@ -86,10 +86,6 @@ def registracija_post():
         redirect('/uporabnik')
 
 #############################################################################
-@get('/pairs')
-def pairs():
-    cur.execute("SELECT symbol, name FROM pair")
-    return template('pairs.html', pair=cur)
 
 """SELECT app_user.name, symbol_id, amount FROM asset 
     INNER JOIN app_user ON user_id = id_user 
@@ -160,7 +156,7 @@ def buy_sell():
     amount = float(amount)
     amount = sign(amount, tip)
     check_user(user_id)
-    row = cur.execute("SELECT  symbol FROM pair WHERE symbol = '{}'".format(symbol))
+    row = cur.execute("SELECT symbol FROM pair WHERE symbol = '{}'".format(symbol))
     row = cur.fetchone()
     if row != None:
         cur.execute("INSERT INTO trade (user_id, symbol_id, type, date, pnl) VALUES (%s, %s, %s, %s, %s) RETURNING id_trade",
@@ -208,12 +204,48 @@ def check_user(user_id):
 def trades():
     cur.execute("""SELECT symbol_id, type, strategy, RR, target, date, duration, TP, PNL FROM trade
     WHERE user_id = {} ORDER BY symbol_id """.format(user_id))
-    return template('trades.html', trade=cur)
+    return template('trades.html', trade=cur, naslov = "Dodaj trade")
+
+@post('/dodaj_trade')
+def dodaj_trade():
+    global sporocilo
+    simbol = request.forms.symbol
+    tip = request.forms.type
+    strategija = request.forms.strategy
+    RR = request.forms.RR
+    tarča = request.forms.target
+    datum = request.forms.date
+    trajanje = request.forms.duration
+    TP = request.forms.TP
+    PNL = request.forms.PNL
+    check_user(user_id)
+    row = cur.execute("SELECT symbol FROM pair WHERE symbol = '{}'".format(simbol))
+    row = cur.fetchone()
+    if row != None:
+        cur.execute("INSERT INTO trade (user_id, symbol_id, type, strategy, rr, target, date, duration, tp, pnl) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING id_trade",
+                    (user_id, simbol, tip, strategija, RR, tarča, datum, trajanje, TP, PNL))
+        conn.commit()
+        sporocilo = "Trade dodan"
+        redirect(url('/trades'))
+    else:
+        sporocilo = "Napačen simbol, če želite dodati trade za njega, ga najprej dodajte v tabelo pari!"
+        redirect(url('/trades'))
+
+#kako dati da bo barva Trade dodan zelene barve ne pa rdeče
+#kako dodati da bo RR in tarča le decimalke, ne text (numeric ne gre so samo cela števila)
+#kako dodati da bo TP lahko dodal v tabelo '' ker ni nujno da imaš TP
+
+#treba dodati da pod asset preračuna
+
+
+
+
+
+#############################################################################
 
 @get('/performance')
 def performance():
     return template('performance.html')
-
 
 
 
