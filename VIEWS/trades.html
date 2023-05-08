@@ -1,7 +1,7 @@
 %rebase('base.html', naslov=naslov)
 %from trgovanje import sporocilo
 
-% if sporocilo == "":
+% if sporocilo == "Trade dodan":
 <div class="uspesno">{{sporocilo}}</div>
 % else:
 <div class="opozorilo">{{sporocilo}}</div>
@@ -14,8 +14,8 @@
             <option value="L">Long</option>
         </select><br>
     <span>Strategija:</span> <input name="strategy" type="text" placeholder="WVR"/><br>
-    <span>Razmerje tveganja (RR):</span> <input name="RR" type="text" inputmode="numeric" placeholder="6.81"/><br>
-    <span>Tarča:</span> <input name="target" type="text" inputmode="numeric" min="0" placeholder="4.06"/><br>
+    <span>Razmerje tveganja (RR):</span> <input name="RR" type="text" placeholder="6.81"/><br>
+    <span>Tarča:</span> <input name="target" type="text" placeholder="4.06"/><br>
     <span>Datum:</span> <input name="date" type="date" required/><br>
     <span>Trajanje:</span> <input name="duration" type="text" placeholder="1h"/><br>
     <label for="type">Delni profit (TP):</label>
