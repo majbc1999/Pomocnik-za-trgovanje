@@ -1,4 +1,4 @@
-%from server import sporocilo
+%from trgovanje import sporocilo
 <!DOCTYPE html>
 <html lang="slo">
     <head>
@@ -29,8 +29,8 @@
         <div>
             <table>
                 <tr>
-                    <th>Symbol</th>
-                    <th>Amount</th>
+                    <th>Simbol</th>
+                    <th>Količina</th>
                 </tr>
                 %for (symbol_id,amount) in asset:
                 <tr>
@@ -40,5 +40,6 @@
                 %end
             </table>
         </div>
+        <a href="/uporabnik" class="Button"><input type='button' value='Nazaj' /></a>
     </body>
 </html>
