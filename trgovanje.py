@@ -102,6 +102,8 @@ def uporabnik():
 ########################### Pari-dodajanje ###########################
 @get('/dodaj')
 def dodaj():
+    global sporocilo
+    sporocilo = ""
     cur.execute("""
       SELECT symbol,name from pair
    """)
@@ -150,6 +152,7 @@ def asset():
 
 @post('/buy_sell')
 def buy_sell():
+    global sporocilo
     symbol = request.forms.symbol
     datum = request.forms.datum
     tip = request.forms.tip
@@ -188,9 +191,7 @@ def trade_result(trade):
     if row == None:
         cur.execute("INSERT INTO asset (user_id, symbol_id, amount) VALUES (%s, %s, %s)", (uid, simbol, pnl))
     else:
-        print(row[0])
-        amount = pnl + float(row[0])
-        print(amount)
+        amount = round(pnl + float(row[0]), 2)
         cur.execute("UPDATE  asset SET amount = {0} WHERE user_id = '{1}' AND symbol_id = '{2}'".format(amount, uid, simbol))
     conn.commit()
 
@@ -209,6 +210,9 @@ def trades():
     WHERE user_id = {} ORDER BY symbol_id """.format(user_id))
     return template('trades.html', trade=cur)
 
+@get('/performance')
+def performance():
+    return template('performance.html')
 
 
 
@@ -216,4 +220,3 @@ def trades():
 #############################################################################
 if __name__ == "__main__":
     run(host='localhost', port=8080, reloader=True)
-psycopg2.extras.DictRow
