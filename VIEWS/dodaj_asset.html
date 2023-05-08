@@ -1,4 +1,5 @@
 % from Podatki import get_history
+% from server import pravilen_simbol, sporocilo
 
 <!DOCTYPE html>
 <html lang="slo">
@@ -12,23 +13,40 @@
             <p>Uporabnik lahko doda nove naložbe v program, tako da izbere simbol, ki je na
                 voljo na spletni strani <a href="https://finance.yahoo.com">YahooFinance</a>
                 in ga vpiše v spodnje okno. Takoj ko potrdi izbiro, je nova naložba
-                na voljo za uporabo, če je simbol le te pravilno vnešen.
+                na voljo za uporabo, če je simbol le te pravilno vnešen. Dodati pa mora tudi
+                polno ime, ki ga predstavlja simbol
             </p>
+            <p>SIMBOL ZAPIŠI Z VELIKIMI ČRKAMI!</p>
         </div>
+        % if pravilen_simbol == True:
+        <div style="color: green">{{sporocilo}}</div>
+        % elif pravilen_simbol == False:
+        <div style="color: red">{{sporocilo}}</div>  
+        % end
         <form action="/dodaj_potrdi" method="post" autocomplete="off">
             <div class="form-group col-md-6">
-              <label for="birth">Vpiši simbol:</label>
+              <label for="symbol">Vpiši simbol:</label>
               <input id="symbol" name="symbol" type="text" class="form-control" required
                 oninput="this.setCustomValidity('')"
                 oninvalid="this.setCustomValidity('Obvezno polje')"
                 placeholder="BTC-USD"
                 />
             </div>
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <label for="ime">Vpiši ime:</label>
+                <input id="ime" name="ime" type="text" class="form-control" required
+                  oninput="this.setCustomValidity('')"
+                  oninvalid="this.setCustomValidity('Obvezno polje')"
+                  placeholder="Bitcoin"
+                  />
+              </div>
+            </div>
             <div class="form-row col">
                 <button class="btn btn-primary" type="submit">
                   Potrdi
                 </button>
-              </div>
+            </div>
             </form>
         <div>
             <h3>Naložbe, ki so že na voljo za trgovanje</h3>
@@ -45,5 +63,6 @@
                 %end
               </table>
         </div>
+        <a href="/uporabnik" class="Button"><input type='button' value='Nazaj' /></a>
     </body>
 </html> 

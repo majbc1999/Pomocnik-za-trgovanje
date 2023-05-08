@@ -60,3 +60,5 @@ GRANT SELECT ON ALL TABLES IN SCHEMA public TO javnost;
 GRANT USAGE ON ALL SEQUENCES IN SCHEMA public TO javnost;
 GRANT INSERT ON app_user TO javnost;
 GRANT INSERT ON trade TO javnost;
+GRANT INSERT ON pair TO javnost;
+GRANT INSERT ON price_history TO javnost;

@@ -7,8 +7,9 @@ psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
 
 import os
 
+import csv
+
 from Podatki import get_history as gh
-from Uvoz import uvoz_podatkov as up
 
 import hashlib
 
@@ -86,7 +87,7 @@ def prijava_post():
     row = cur.fetchone()
     if row != None:
         uporabnik = row[0]
-        print(uporabnik)
+        sporocilo = ""
         redirect(url('/uporabnik'))
     else:
         uspesna_prijava = False
@@ -103,6 +104,7 @@ def prijava_post():
 uspesna_prijava = True        
 sporocilo = ""
 uporabnik = ""
+pravilen_simbol = True
 
 @get('/uporabnik')
 def uporabnik():
@@ -117,23 +119,36 @@ def dodaj():
 
 @post('/dodaj_potrdi')
 def dodaj_potrdi():
+    global pravilen_simbol, sporocilo
     symbol = request.forms.symbol
-    try: 
-        gh.get_historic_data(['{0}'.format(symbol)])
-    except gh.get_historic_data(['{0}'.format(symbol)]) !=
+    name = request.forms.ime
+    if gh.preveri_ustreznost('{}'.format(symbol)) == 0:
+        pravilen_simbol = False
+        sporocilo = "Vnešen napačen simbol"
+        redirect(url('/dodaj'))
+    else:
+        cur.execute("INSERT INTO pair (symbol, name) VALUES (%s, %s)", (symbol, name))
+        conn.commit()
+        gh.get_historic_data(['{}'.format(symbol)])
+        uvozi_Price_History('{}.csv'.format(symbol))
+        pravilen_simbol = True
+        sporocilo = "Simbol uspešno dodan"
+        redirect(url('/dodaj'))
 
-    #try:
-    #    cur.execute("INSERT INTO app_user (name, surname, date_of_birth) VALUES (%s, %s, %s) RETURNING id_user",
-    #                (name, surname, date_of_birth))
-    #    conn.commit()
-    #except Exception as ex:
-    #    conn.rollback()
-    #    return template('add_user.html', name=name, surname=surname, date_of_birth=date_of_birth,
-    #                    napaka='Zgodila se je napaka: %s' % ex)
-
-    redirect(url('/users'))
-
-
+def uvozi_Price_History(tabela):
+    # ce uvozim iz uvoz_podatkov vrne error 'no module named auth'
+    with open('Podatki/Posamezni_simboli/{0}'.format(tabela)) as csvfile:
+        podatki = csv.reader(csvfile)
+        next(podatki)
+        for r in podatki:
+            r = [None if x in ('', '-') else x for x in r]
+            cur.execute("""
+                INSERT INTO price_history
+                (symbol_id, date, price)
+                VALUES (%s, %s, %s)
+            """, r)
+        conn.commit()
+        print("Uspesno uvozil csv datoteko!")
 
 
 if __name__ == "__main__":
