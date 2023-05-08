@@ -1,5 +1,4 @@
-
-
+%from server import sporocilo
 <!DOCTYPE html>
 <html lang="slo">
     <head>
@@ -8,41 +7,33 @@
     </head>
     <body>
         <h2>Assets</h2>
-        <form action="/dodaj_potrdi" method="post" autocomplete="off">
-            <div class="form-group col-md-6">
-              <label for="symbol">Vpiši simbol:</label>
-              <input id="symbol" name="symbol" type="text" class="form-control" required
-                oninput="this.setCustomValidity('')"
-                oninvalid="this.setCustomValidity('Obvezno polje')"
-                placeholder="BTC-USD"
-                />
-            </div>
-            <div class="form-row">
-              <div class="form-group col-md-6">
-                <label for="ime">Vpiši ime:</label>
-                <input id="ime" name="ime" type="text" class="form-control" required
-                  oninput="this.setCustomValidity('')"
-                  oninvalid="this.setCustomValidity('Obvezno polje')"
-                  placeholder="Bitcoin"
-                  />
-              </div>
-            </div>
-            <div class="form-row col">
-                <button class="btn btn-primary" type="submit">
-                  Potrdi
-                </button>
-            </div>
+        % if sporocilo == "":
+            %pass
+        % else:
+        <div>{{sporocilo}}</div>
+        % end
+        <form action="/buy_sell" method="post">
+            <span>Simbol:</span> <input name="symbol" type="text" required
+            placeholder="BTC-USD"/><br>
+            <span>Datum izvedbe:</span> <input name="datum" type="date" required
+            /><br>
+            <span>Količina:</span> <input name="amount" required
+            placeholder="2.5"/><br>
+            <label for="type">Izberi tip:</label>
+                <select name="tip" required>
+                    <option value="Buy">Kupim</option>
+                    <option value="Sell">Prodam</option>
+                </select><br>
+            <input value="Potrdi" type="submit" />
         </form>
         <div>
-            <table cellpadding="0" cellspacing="0" border="1">
+            <table>
                 <tr>
-                    <th>Name</th>
                     <th>Symbol</th>
                     <th>Amount</th>
                 </tr>
-                %for (name, symbol_id,amount) in asset:
+                %for (symbol_id,amount) in asset:
                 <tr>
-                    <td>{{name}}</td>
                     <td>{{symbol_id}}</td>
                     <td>{{amount}}</td>
                 </tr>
@@ -50,4 +41,4 @@
             </table>
         </div>
     </body>
-</html> 
+</html>

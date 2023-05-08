@@ -7,6 +7,8 @@ psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
 
 import os
 
+import re
+
 import csv
 
 from Podatki import get_history as gh
@@ -73,20 +75,24 @@ def pairs():
 
 @get('/assets')
 def asset():
-    cur.execute("""SELECT app_user.name, symbol_id, amount FROM asset 
-    INNER JOIN app_user ON user_id = id_user 
-    ORDER BY app_user.name """)
+    cur.execute("""SELECT symbol_id, amount FROM asset 
+    WHERE user_id = {} ORDER BY amount """.format(user_id))
     return template('assets.html', asset=cur)
+
+"""SELECT app_user.name, symbol_id, amount FROM asset 
+    INNER JOIN app_user ON user_id = id_user 
+    ORDER BY app_user.name """
 
 @post('/prijava')
 def prijava_post():
     uporabnisko_ime = request.forms.getunicode("ime")
     geslo = request.forms.getunicode('geslo')
-    global uspesna_prijava, sporocilo, uporabnik
-    row = cur.execute("SELECT DISTINCT name FROM app_user WHERE user_name = '{0}' and password = '{1}'".format(uporabnisko_ime, geslo))
+    global uspesna_prijava, sporocilo, user_id, user_ime
+    row = cur.execute("SELECT DISTINCT id_user, name FROM app_user WHERE user_name = '{0}' and password = '{1}'".format(uporabnisko_ime, geslo))
     row = cur.fetchone()
     if row != None:
-        uporabnik = row[0]
+        user_id = row[0]
+        user_ime = row[1]
         sporocilo = ""
         redirect(url('/uporabnik'))
     else:
@@ -94,9 +100,10 @@ def prijava_post():
         sporocilo = "Napačno uporabinško ime ali geslo!"
         redirect(url('/'))
 
+user_ime = ""
 uspesna_prijava = True        
 sporocilo = ""
-uporabnik = ""
+user_id = 0
 pravilen_simbol = True
 
 @get('/uporabnik')
@@ -143,6 +150,60 @@ def uvozi_Price_History(tabela):
         conn.commit()
         print("Uspesno uvozil csv datoteko!")
 
+@post('/buy_sell')
+def buy_sell():
+    symbol = request.forms.symbol
+    datum = request.forms.datum
+    tip = request.forms.tip
+    amount = request.forms.amount
+    amount = float(amount)
+    amount = sign(amount, tip)
+    check_user(user_id)
+    row = cur.execute("SELECT  symbol FROM pair WHERE symbol = '{}'".format(symbol))
+    row = cur.fetchone()
+    if row != None:
+        cur.execute("INSERT INTO trade (user_id, symbol_id, type, date, pnl) VALUES (%s, %s, %s, %s, %s) RETURNING id_trade",
+                    (user_id, symbol, tip, datum, amount))
+        conn.commit()
+        trade = [user_id, symbol, float(amount)]
+        trade_result(trade)
+        sporocilo = "Transakcija potrjena"
+        redirect(url('/assets'))
+    else:
+        sporocilo = "Napačen simbol!"
+        redirect(url('/assets'))
+
+def sign(amount: float, bs):
+    if bs == 'Buy':
+        return abs(amount)
+    elif bs == 'Sell':
+         return -abs(amount)
+    else:
+        return print(bs)
+
+def trade_result(trade):
+    uid = trade[0]
+    simbol = trade[1]
+    pnl = trade[2]
+    row = cur.execute("SELECT amount FROM asset WHERE user_id = '{0}' AND symbol_id = '{1}'".format(uid, simbol))
+    row = cur.fetchone()
+    if row == None:
+        cur.execute("INSERT INTO asset (user_id, symbol_id, amount) VALUES (%s, %s, %s)", (uid, simbol, pnl))
+    else:
+        print(row[0])
+        amount = pnl + float(row[0])
+        print(amount)
+        cur.execute("UPDATE  asset SET amount = {0} WHERE user_id = '{1}' AND symbol_id = '{2}'".format(amount, uid, simbol))
+    conn.commit()
+
+def check_user(user_id):
+    if user_id > 0:
+        pass
+    else:
+        print('user_id is still 0')
+        ValueError
+
 
 if __name__ == "__main__":
     run(host='localhost', port=8080, reloader=True)
+psycopg2.extras.DictRow
