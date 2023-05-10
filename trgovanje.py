@@ -35,6 +35,7 @@ user_ime = ""
 uspesna_prijava = True        
 sporocilo = ""
 user_id = 0
+user_assets  = []
 pravilen_simbol = True
 uspesna_registracija = True
 
@@ -93,6 +94,12 @@ def registracija_post():
 
 @get('/uporabnik')
 def uporabnik():
+    global user_id, user_assets
+    cur.execute("""SELECT symbol_id FROM asset WHERE user_id = {}""".format(user_id))
+    seznam = cur.fetchall()
+    for i in seznam:
+        user_assets.append(i[0])
+    print(user_assets)
     return template('uporabnik.html', uporabnik=cur)
 
 ########################### Pari-dodajanje ###########################
@@ -250,8 +257,18 @@ def dodaj_trade():
 
 @get('/performance')
 def performance():
-    return template('performance.html')
+    cur.execute("""SELECT symbol_id, amount FROM asset
+    WHERE user_id = {}""".format(user_id))
+    return template('performance.html', assets=cur, naslov = "Poglej napredek")
 
+
+@post('/new_equity_graph')
+def new_equity_graph():
+    for i in user_assets:
+        if request.forms.i == True:
+            print(i)
+    print(user_assets)
+    return
 
 
 #############################################################################
