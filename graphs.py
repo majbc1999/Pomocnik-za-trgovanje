@@ -97,14 +97,18 @@ def fix_stocks(symbol_id):
                 if df['date'][row] == stock['date'][i]:
                     df.loc[row, 'price'] = stock['price'][i]
         # Popravi ceno, kjer je ta 0, da bo graf zvezen
-        for row in df.index:
-            i = 1
-            while df['price'][row] == 0:
-                if row < (len(df) - 10):
-                    df.loc[row, 'price'] = df['price'][row + i]
-                elif row > (len(df) - 10):
-                    df.loc[row, 'price'] = df['price'][row - i]
-                i += 1
+        if len(stock) > 0:
+            for row in df.index:
+                i = 1
+                while df['price'][row] == 0:
+                    if row < (len(df) - 3):
+                        try:
+                            df.loc[row, 'price'] = df['price'][row + i]
+                        except KeyError or ValueError:
+                            df.loc[row, 'price'] = 0
+                    elif row > (len(df) - 5):
+                        df.loc[row, 'price'] = df['price'][row - i]
+                    i += 1
         # Dodamo symbol_id in preuredimo stolpce
         df['symbol_id'] = [symbol_id] * len(df.index)
         df = df[['symbol_id', 'date', 'price']]
@@ -130,7 +134,10 @@ def assets_on_day(user_id, symbol_id):
                 elif (price_df['date'][row] != trade_df['date'][item]) and (same_amount == True):
                     same_amount = False
                     try:
-                        price_df.loc[row, 'amount'] = price_df['amount'][row-1]
+                        if row != 0:
+                            price_df.loc[row, 'amount'] = price_df['amount'][row-1]
+                        else:
+                            price_df.loc[row, 'amount'] = 0
                     except KeyError:
                         price_df.loc[row, 'amount'] = 0
     price_df['value'] = price_df['price'] * price_df['amount']
@@ -197,9 +204,35 @@ def multy_asset(s_list, user_id):
 
 i = 0
 def graph_url(user_id, symbol_list, X_column='date', Y_column='value'):
+    global i
     data = multy_asset(symbol_list, user_id)
     fig = go.Figure([go.Scatter(x=data[X_column], y=data[Y_column])])
     url = py.plot(fig, filename = str(i), auto_open=False)
     url = url[:-1] + '.embed'
     i += 1
     return url
+
+def graph_cake(user_id, date):
+    global i
+    seznam = list()
+    zacasni = list()
+    asset_data = pd.read_sql("SELECT symbol_id FROM asset WHERE user_id  = {}".format(user_id), con)
+    for row in asset_data.index:
+        seznam.append(asset_data['symbol_id'][row])
+    for simbol in seznam:
+        if simbol != 'USD':
+            df = assets_on_day(user_id, simbol)
+        if simbol == 'USD':
+            df = usd_case(user_id)
+            df['symbol_id'] = ['USD'] * len(df.index)
+        df = df.iloc[[-1]]
+        zacasni.append(df)
+    df = pd.concat(zacasni, copy=False)
+    fig = px.pie(df, values='value', names='symbol_id', title='Celotni portfolio',
+                 color_discrete_sequence=px.colors.sequential.RdBu)
+    url = py.plot(fig, filename = str(i), auto_open=False)
+    url = url[:-1] + '.embed'
+    i += 1
+    return url
+
+print(graph_cake(1, '2023-04-30'))

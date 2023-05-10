@@ -1,18 +1,21 @@
 % rebase('base.html', naslov=naslov)
-% from trgovanje import naslov
+% from trgovanje import user_id
 % from graphs import graph_url
-#####       graph_url(user_id, symbol_list)
 
 <div>
   <p>Izberi naložbe za prikaz na grafu</p>
-  <form action="/action_page.php">
-    % for symbol_id in asset:
-    <input type="checkbox" name="option" value ={{symbol_id}} >
+  <form action="/new_equity_graph" method="post">
+    % for (symbol_id, amount) in assets:
+    <input type="checkbox" name="{}".format(symbol_id) value="True">
     <label>{{symbol_id}}</label><br>
     % end
     <input type="submit" value="Submit">
   </form>
 </div>
 <iframe id="igraph" scrolling="no" style="border:none;" 
-seamless="seamless" src="https://chart-studio.plotly.com/~Avto2703/1.embed" 
+ seamless="seamless" src="https://chart-studio.plotly.com/~Avto2703/10.embed"
+height="1024" width="50%"></iframe>
+
+<iframe id="igraph" scrolling="no" style="border:none;" 
+seamless="seamless" src="https://plotly.com/~Avto2703/13.embed"
 height="1024" width="50%"></iframe>
