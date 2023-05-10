@@ -42,7 +42,7 @@ uspesna_registracija = True
 ########################### Prijava in registracija ###########################
 @get('/')
 def zacetna_stran():
-    return template('home.html', pair=cur, naslov="Tukaj se prijaviš v aplikacijo Trgovanje")
+    return template('home.html', pair=cur, naslov="Pomočnik za trgovanje")
 
 @post('/prijava')
 def prijava_post():
@@ -212,7 +212,7 @@ def check_user(user_id):
 def trades():
     cur.execute("""SELECT symbol_id, type, strategy, RR, target, date, duration, TP, PNL FROM trade
     WHERE user_id = {} ORDER BY symbol_id """.format(user_id))
-    return template('trade.html', trade=cur, naslov="Dodaj trade")
+    return template('trades.html', trade=cur, naslov="Dodaj trade")
 
 @post('/dodaj_trade')
 def dodaj_trade():
@@ -235,8 +235,6 @@ def dodaj_trade():
         conn.commit()
         pnl_trade(user_id, simbol, PNL)
         sporocilo = "Trade dodan"
-        #trade = [user_id, simbol, float(PNL)]
-        #trade_result(trade)
         redirect(url('/trades'))
         sporocilo = ""
     else:
@@ -257,11 +255,6 @@ def pnl_trade(user_id, simbol, pnl):
 
 #kako dodati da bo RR in tarča le decimalke, ne text (numeric ne gre so samo cela števila)
 #kako dodati da bo TP lahko dodal v tabelo '' ker ni nujno da imaš TP
-
-#treba dodati da pod asset preračuna
-
-
-
 
 
 

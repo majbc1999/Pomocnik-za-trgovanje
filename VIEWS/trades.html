@@ -31,32 +31,32 @@
     </form> <br>
 
     <p class="naslov-tabele">TABELA TVOJIH TRADE-ov</p>
-    <table class="center" cellpadding="10" cellspacing="0" border="1">
+    <table class="tabela-trade" border="1">
     <tr>
-        <th>Simbol</th>
-        <th>Tip</th>
-        <th>Strategija</th>
-        <th>RR</th>
-        <th>Tarča</th>
-        <th>Datum</th>
-        <th>Trajanje</th>
-        <th>TP</th>
-        <th>PNL</th>
+        <th class="th">Simbol</th>
+        <th class="th">Tip</th>
+        <th class="th">Strategija</th>
+        <th class="th">RR</th>
+        <th class="th">Tarča</th>
+        <th class="th">Datum</th>
+        <th class="th">Trajanje</th>
+        <th class="th">TP</th>
+        <th class="th">PNL</th>
     </tr>
     %for (symbol_id, type, strategy, RR, target, date, duration, TP, PNL) in trade:
-    <tr>
-        <td>{{symbol_id}}</td>
-        <td>{{type}}</td>
-        <td>{{strategy}}</td>
-        <td>{{RR}}</td>
-        <td>{{target}}</td>
-        <td>{{date}}</td>
-        <td>{{duration}}</td>
-        <td>{{TP}}</td>
-        <td>{{PNL}}</td>
+    <tr class="tr">
+        <td class="td">{{symbol_id}}</td>
+        <td class="td">{{type}}</td>
+        <td class="td">{{strategy}}</td>
+        <td class="td">{{RR}}</td>
+        <td class="td">{{target}}</td>
+        <td class="td">{{date}}</td>
+        <td class="td">{{duration}}</td>
+        <td class="td">{{TP}}</td>
+        <td class="td">{{PNL}}</td>
     </tr>
     %end
     </table>
-</div>
+</div><br>
 
 <a href="/uporabnik" class="Button"><input class= "gumb" type='button' value='Nazaj' /></a>

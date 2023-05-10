@@ -1,5 +1,6 @@
 .besedilo {
     text-align: center;
+    font-size: 35px;
 }
 
 .besedilo2{
@@ -17,9 +18,14 @@
     border: 1px solid #669999;
 }
 
-.center {
-    margin-left: auto;
-    margin-right: auto;
+.footer {
+   position: fixed;
+   left: 0;
+   bottom: 0;
+   width: 100%;
+   background-color: #334d4d;
+   color: white;
+   text-align: center;
 }
 
 .gumb {
@@ -46,7 +52,7 @@
 
 .naslov-tabele {
     color: #669999;
-    font-size: 20px;
+    font-size: 25px;
     font-weight: bold;
     text-align: center;
 }
@@ -77,6 +83,31 @@
     background-color: #f1f1f1;
   }
 
+.tabela {
+    border-collapse: collapse;
+    margin-left: auto;
+    margin-right: auto;
+    border-spacing: 0px;
+    width:80%;
+}
+
+.tabela-trade {
+    border-collapse: collapse;
+    margin-left: auto;
+    margin-right: auto;
+    border-spacing: 0px;
+    width:100%;
+}
+
+.td, th {
+    text-align: center;
+    padding: 10px;
+  }
+
+.th {
+    background-color: #669999;
+}
+
 .text {
     width: 100%;
     padding: 10px 15px;
@@ -86,6 +117,10 @@
     border-radius: 4px;
     box-sizing: border-box;
   }
+
+.tr:hover{
+    background-color:  #c2d6d6;
+}
 
 .uspesno {
     color: green;

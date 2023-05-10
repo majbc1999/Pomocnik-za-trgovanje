@@ -2,20 +2,25 @@
 % from trgovanje import user_id
 % from graphs import graph_url
 
-<div>
-  <p>Izberi naložbe za prikaz na grafu</p>
-  <form action="/new_equity_graph" method="post">
-    % for (symbol_id, amount) in assets:
-    <input type="checkbox" name="{}".format(symbol_id) value="True">
-    <label>{{symbol_id}}</label><br>
-    % end
-    <input type="submit" value="Submit">
-  </form>
-</div>
-<iframe id="igraph" scrolling="no" style="border:none;" 
- seamless="seamless" src="https://chart-studio.plotly.com/~Avto2703/10.embed"
-height="1024" width="100%"></iframe>
+<div class="obroba">
+  <div>
+    <p class="besedilo2">Izberi naložbe za prikaz na grafu</p>
+    <form action="/new_equity_graph" method="post">
+      % for (symbol_id, amount) in assets:
+      <input type="checkbox" name="{}".format(symbol_id) value="True">
+      <label>{{symbol_id}}</label><br>
+      % end
+      <input class="gumb" type="submit" value="Submit">
+    </form>
+  </div> <br>
+  <iframe id="igraph" scrolling="no" style="border:none;" 
+  seamless="seamless" src="https://chart-studio.plotly.com/~Avto2703/10.embed"
+  height="500" width="100%"></iframe><br>
 
-<iframe id="igraph" scrolling="no" style="border:none;" 
-seamless="seamless" src="https://plotly.com/~Avto2703/13.embed"
-height="1024" width="50%"></iframe>
+  <p class="besedilo2">Celotni portfolio</p>
+  <iframe id="igraph" scrolling="no" style="border:none;" 
+  seamless="seamless" src="https://plotly.com/~Avto2703/13.embed"
+  height="500" width="100%"></iframe>
+</div><br>
+
+<a href="/uporabnik" class="Button"><input class="gumb" type='button' value='Nazaj' /></a>

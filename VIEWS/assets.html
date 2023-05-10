@@ -19,17 +19,18 @@
         <input class="gumb" value="Potrdi" type="submit" />
     </form>
     <p class="naslov-tabele">TABELA TVOJIH NALOŽB</p>
-    <table class="center" cellpadding="10" cellspacing="0" border="1">
+    <table class="tabela" border="1">
         <tr>
-            <th>Simbol</th>
-            <th>Količina</th>
+            <th class="th">Simbol</th>
+            <th class="th">Količina</th>
         </tr>
         %for (symbol_id,amount) in asset:
-        <tr>
-            <td>{{symbol_id}}</td>
-            <td>{{amount}}</td>
+        <tr class="tr">
+            <td class="td">{{symbol_id}}</td>
+            <td class="td">{{amount}}</td>
         </tr>
         %end
     </table>
-</div>
+</div><br>
+
 <a href="/uporabnik" class="Button"><input class= "gumb" type='button' value='Nazaj' /></a>

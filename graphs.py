@@ -228,8 +228,8 @@ def graph_cake(user_id, date):
         df = df.iloc[[-1]]
         zacasni.append(df)
     df = pd.concat(zacasni, copy=False)
-    fig = px.pie(df, values='value', names='symbol_id', title='Celotni portfolio',
-                 color_discrete_sequence=px.colors.sequential.RdBu)
+    fig = px.pie(df, values='value', names='symbol_id',
+                 color_discrete_sequence=px.colors.sequential.Purp_r)
     url = py.plot(fig, filename = str(i), auto_open=False)
     url = url[:-1] + '.embed'
     i += 1
