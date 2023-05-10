@@ -1,23 +1,18 @@
-<!DOCTYPE html>
-<html lang="slo">
-  <head>
-    <meta charset="UTF-8">
-    <title>Pomočnik za trgovanje</title>
-  </head>
-  <body>
-    <div>
-      <h2>Dodaj naložbo</h2>
-      <p>SIMBOL ZAPIŠI Z VELIKIMI ČRKAMI!</p>
-    </div>
-    <div>
-      <h3>Naložbe, ki so že na voljo za trgovanje</h3>
-      <table class="table table-striped">
-        <tr>
-          <th>Ime</th>
-          <th>Simbol</th>
-        </tr>
-      </table>
-    </div>
-    <a href="/uporabnik" class="Button"><input type='button' value='Nazaj' /></a>
-  </body>
-</html>
+% rebase('base.html', naslov=naslov)
+% from trgovanje import naslov
+% from graphs import graph_url
+#####       graph_url(user_id, symbol_list)
+
+<div>
+  <p>Izberi naložbe za prikaz na grafu</p>
+  <form action="/action_page.php">
+    % for symbol_id in asset:
+    <input type="checkbox" name="option" value ={{symbol_id}} >
+    <label>{{symbol_id}}</label><br>
+    % end
+    <input type="submit" value="Submit">
+  </form>
+</div>
+<iframe id="igraph" scrolling="no" style="border:none;" 
+seamless="seamless" src="https://chart-studio.plotly.com/~Avto2703/1.embed" 
+height="1024" width="50%"></iframe>
