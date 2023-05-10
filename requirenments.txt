@@ -4,4 +4,3 @@ bottle
 psycopg2-binary
 plotly
 chart_studio
-kaleido

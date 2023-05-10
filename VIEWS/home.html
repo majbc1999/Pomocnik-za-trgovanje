@@ -1,26 +1,18 @@
 %from trgovanje import uspesna_prijava, sporocilo
+%rebase('base.html', naslov=naslov)
 
-<!DOCTYPE html>
-<html lang="slo">
-    <head>
-        <meta charset="UTF-8">
-        <title>Pomočnik za trgovanje - Prijava</title>
-    </head>
-    <body>
-        <h2>Tukaj se prijaviš v aplikacijo Trgovanje</h2>
-        % if uspesna_prijava == True:
-        <div><b>Prijava</b></div>
-        % elif uspesna_prijava == False:
-        <div class="opozorilo">{{sporocilo}}</div>  
-        % end
-        <form action="/prijava" method="post">
-            <span>Uporabniško ime:</span> <input name="ime" type="text" /><br>
-            <span>Geslo:</span> <input name="geslo" type="password" /><br>
-            <input value="Prijava" type="submit" />
-        </form>
-        <p>
-          Prvič tukaj? <a href="/registracija">Ustvari račun</a>
-        </p>
-    </body>
-</html>
-
+% if uspesna_prijava == True:
+<div class="obroba">
+    <p class="naslov-tabele">PRIJAVA</p>
+    % elif uspesna_prijava == False:
+    <div class="opozorilo">{{sporocilo}}</div>  
+    % end
+    <form action="/prijava" method="post">
+        <span>Uporabniško ime:</span> <input class="text" name="ime" type="text" /><br>
+        <span>Geslo:</span> <input class="text" name="geslo" type="password" /><br>
+        <input class="gumb" value="Prijava" type="submit" />
+    </form>
+    <p class="naslov-tabele">
+        Prvič tukaj? <a href="/registracija" class="link">Ustvari račun</a>
+    </p>
+</div>
