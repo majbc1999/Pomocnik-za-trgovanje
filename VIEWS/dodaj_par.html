@@ -1,50 +1,40 @@
 % from Podatki import get_history
 % from trgovanje import pravilen_simbol, sporocilo
+%rebase('base.html', naslov=naslov)
 
-<!DOCTYPE html>
-<html lang="slo">
-  <head>
-    <meta charset="UTF-8">
-    <title>Pomočnik za trgovanje</title>
-  </head>
-  <body>
-    <div>
-      <h2>Dodaj naložbo</h2>
-      <p>Uporabnik lahko doda nove naložbe v program, tako da izbere simbol, ki je na
-          voljo na spletni strani <a href="https://finance.yahoo.com">YahooFinance</a>
-          in ga vpiše v spodnje okno. Takoj ko potrdi izbiro, je nova naložba
-          na voljo za uporabo, če je simbol le te pravilno vnešen. Dodati pa mora tudi
-          polno ime, ki ga predstavlja simbol.
-      </p>
-      <p>SIMBOL ZAPIŠI Z VELIKIMI ČRKAMI!</p>
-    </div>
-    % if pravilen_simbol == True:
-    <div class="uspesno">{{sporocilo}}</div>
-    % elif pravilen_simbol == False:
-    <div class="opozorilo">{{sporocilo}}</div>  
-    % end
-    <form action="/dodaj_potrdi" method="post">
-      <span>Vpiši simbol:</span> <input name="symbol" type="text" required
-      placeholder="BTC-USD"/><br>
-      <span>Vpiši ime:</span> <input name="ime" type="password" required
-      placeholder="Bitcoin"/><br>
-      <input value="Potrdi" type="submit" />
-    </form>
-    <div>
-      <h3>Naložbe, ki so že na voljo za trgovanje</h3>
-      <table class="table table-striped">
-        <tr>
-          <th>Ime</th>
-          <th>Simbol</th>
-        </tr>
-        %for symbol, name in pair:
-        <tr>
-          <td>{{name}}</td>
-          <td>{{symbol}}</td>
-        </tr>
-        %end
-      </table>
-    </div>
-    <a href="/uporabnik" class="Button"><input type='button' value='Nazaj' /></a>
-  </body>
-</html>
+<p>Uporabnik lahko doda nove naložbe v program, tako da izbere simbol, ki je na
+    voljo na spletni strani <a href="https://finance.yahoo.com">YahooFinance</a>
+    in ga vpiše v spodnje okno. Takoj ko potrdi izbiro, je nova naložba
+    na voljo za uporabo, če je simbol le te pravilno vnešen. Dodati pa mora tudi
+    polno ime, ki ga predstavlja simbol.
+</p>
+<p>SIMBOL ZAPIŠI Z VELIKIMI ČRKAMI!</p>
+</div>
+% if pravilen_simbol == True:
+<div class="uspesno">{{sporocilo}}</div>
+% elif pravilen_simbol == False:
+<div class="opozorilo">{{sporocilo}}</div>  
+% end
+<form action="/dodaj_potrdi" method="post">
+  <span>Vpiši simbol:</span> <input name="symbol" type="text" required
+  placeholder="BTC-USD"/><br>
+  <span>Vpiši ime:</span> <input name="ime" type="password" required
+  placeholder="Bitcoin"/><br>
+  <input value="Potrdi" type="submit" />
+</form>
+<div>
+  <h3>Naložbe, ki so že na voljo za trgovanje</h3>
+  <table cellpadding="10" cellspacing="0" border="1">
+    <tr>
+      <th>Ime</th>
+      <th>Simbol</th>
+    </tr>
+    %for symbol, name in pair:
+    <tr>
+      <td>{{name}}</td>
+      <td>{{symbol}}</td>
+    </tr>
+    %end
+  </table>
+</div>
+<a href="/uporabnik" class="Button"><input type='button' value='Nazaj' /></a>

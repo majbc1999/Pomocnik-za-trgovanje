@@ -1,45 +1,35 @@
 %from trgovanje import sporocilo
-<!DOCTYPE html>
-<html lang="slo">
-    <head>
-        <meta charset="UTF-8">
-        <title>Assets</title>
-    </head>
-    <body>
-        <h2>Assets</h2>
-        % if sporocilo == "":
-        <div>{{sporocilo}}</div>
-        % else:
-        <div>{{sporocilo}}</div>
-        % end
-        <form action="/buy_sell" method="post">
-            <span>Simbol:</span> <input name="symbol" type="text" required
-            placeholder="BTC-USD"/><br>
-            <span>Datum izvedbe:</span> <input name="datum" type="date" required
-            /><br>
-            <span>Količina:</span> <input name="amount" required
-            placeholder="2.5"/><br>
-            <label for="type">Izberi tip:</label>
-                <select name="tip" required>
-                    <option value="Buy">Kupim</option>
-                    <option value="Sell">Prodam</option>
-                </select><br>
-            <input value="Potrdi" type="submit" />
-        </form>
-        <div>
-            <table>
-                <tr>
-                    <th>Simbol</th>
-                    <th>Količina</th>
-                </tr>
-                %for (symbol_id,amount) in asset:
-                <tr>
-                    <td>{{symbol_id}}</td>
-                    <td>{{amount}}</td>
-                </tr>
-                %end
-            </table>
-        </div>
-        <a href="/uporabnik" class="Button"><input type='button' value='Nazaj' /></a>
-    </body>
-</html>
+%rebase('base.html', naslov=naslov)
+
+% if sporocilo == "":
+<div>{{sporocilo}}</div>
+% else:
+<div>{{sporocilo}}</div>
+% end
+<form action="/buy_sell" method="post">
+    <span>Simbol:</span> <input name="symbol" type="text" required
+    placeholder="BTC-USD"/><br>
+    <span>Datum izvedbe:</span> <input name="datum" type="date" required
+    /><br>
+    <span>Količina:</span> <input name="amount" required
+    placeholder="2.5"/><br>
+    <label for="type">Izberi tip:</label>
+        <select name="tip" required>
+            <option value="Buy">Kupim</option>
+            <option value="Sell">Prodam</option>
+        </select><br>
+    <input value="Potrdi" type="submit" />
+</form>
+<table cellpadding="10" cellspacing="0" border="1">
+    <tr>
+        <th>Simbol</th>
+        <th>Količina</th>
+    </tr>
+    %for (symbol_id,amount) in asset:
+    <tr>
+        <td>{{symbol_id}}</td>
+        <td>{{amount}}</td>
+    </tr>
+    %end
+</table>
+<a href="/uporabnik" class="Button"><input type='button' value='Nazaj' /></a>

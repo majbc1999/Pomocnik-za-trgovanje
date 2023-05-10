@@ -1,0 +1,62 @@
+%rebase('base.html', naslov=naslov)
+%from trgovanje import sporocilo
+
+% if sporocilo == "Trade dodan":
+<div class="uspesno">{{sporocilo}}</div>
+% else:
+<div class="opozorilo">{{sporocilo}}</div>
+% end
+<div class="div-dodaj-trade">
+    <form action="/dodaj_trade" method="post">
+        <span>Simbol:</span> <input class="text" name="symbol" type="text" required placeholder="BTC-USD"/><br>
+        <label for="type">Tip:</label>
+            <select class="select" name="type" required>
+                <option value="S">Short</option>
+                <option value="L">Long</option>
+            </select><br>
+        <span>Strategija:</span> <input class="text" name="strategy" type="text" placeholder="WVR"/><br>
+        <span>Razmerje tveganja (RR):</span> <input class="text" name="RR" type="text" placeholder="6.81"/><br>
+        <span>Tarča:</span> <input class="text" name="target" type="text" placeholder="4.06"/><br>
+        <span>Datum:</span> <input class="text" name="date" type="date" required/><br>
+        <span>Trajanje:</span> <input class="text" name="duration" type="text" placeholder="1h"/><br>
+        <label for="TP">Delni profit (TP):</label>
+            <select class="select" name="TP">
+                <option value=""></option>
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+            </select><br>
+            <span>Profit/Izguba (PNL):</span> <input class="text" name="PNL" type="text" required placeholder="11.2$/-11.2$"/><br>
+        <input class= "dodaj" value="Dodaj" type="submit"/>
+    </form> <br>
+
+    <p class="trade">TABELA TVOJIH TRADE-ov</p>
+    <table class="center" cellpadding="10" cellspacing="0" border="1">
+    <tr>
+        <th>Simbol</th>
+        <th>Tip</th>
+        <th>Strategija</th>
+        <th>RR</th>
+        <th>Tarča</th>
+        <th>Datum</th>
+        <th>Trajanje</th>
+        <th>TP</th>
+        <th>PNL</th>
+    </tr>
+    %for (symbol_id, type, strategy, RR, target, date, duration, TP, PNL) in trade:
+    <tr>
+        <td>{{symbol_id}}</td>
+        <td>{{type}}</td>
+        <td>{{strategy}}</td>
+        <td>{{RR}}</td>
+        <td>{{target}}</td>
+        <td>{{date}}</td>
+        <td>{{duration}}</td>
+        <td>{{TP}}</td>
+        <td>{{PNL}}</td>
+    </tr>
+    %end
+    </table>
+</div>
+
+<a href="/uporabnik" class="Button"><input class= "dodaj" type='button' value='Nazaj' /></a>

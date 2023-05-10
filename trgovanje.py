@@ -103,7 +103,7 @@ def dodaj():
     cur.execute("""
       SELECT symbol,name from pair
    """)
-    return template('dodaj_par.html', pair=cur)
+    return template('dodaj_par.html', pair=cur, naslov="Dodaj naložbo")
 
 @post('/dodaj_potrdi')
 def dodaj_potrdi():
@@ -144,7 +144,7 @@ def uvozi_Price_History(tabela):
 def asset():
     cur.execute("""SELECT symbol_id, amount FROM asset 
     WHERE user_id = {} ORDER BY amount """.format(user_id))
-    return template('assets.html', asset=cur)
+    return template('assets.html', naslov = "Asset", asset=cur)
 
 @post('/buy_sell')
 def buy_sell():
@@ -204,7 +204,7 @@ def check_user(user_id):
 def trades():
     cur.execute("""SELECT symbol_id, type, strategy, RR, target, date, duration, TP, PNL FROM trade
     WHERE user_id = {} ORDER BY symbol_id """.format(user_id))
-    return template('trades.html', trade=cur, naslov = "Dodaj trade")
+    return template('tradestest.html', trade=cur, naslov="Dodaj trade")
 
 @post('/dodaj_trade')
 def dodaj_trade():
@@ -226,16 +226,21 @@ def dodaj_trade():
                     (user_id, simbol, tip, strategija, RR, tarča, datum, trajanje, TP, PNL))
         conn.commit()
         sporocilo = "Trade dodan"
+        #trade = [user_id, simbol, float(PNL)]
+        #trade_result(trade)
         redirect(url('/trades'))
+        sporocilo = ""
     else:
         sporocilo = "Napačen simbol, če želite dodati trade za njega, ga najprej dodajte v tabelo pari!"
         redirect(url('/trades'))
 
-#kako dati da bo barva Trade dodan zelene barve ne pa rdeče
+# če zbrišeš trade potem od asset ne odšteje vrednost ampak jo v asset pusti
+
 #kako dodati da bo RR in tarča le decimalke, ne text (numeric ne gre so samo cela števila)
 #kako dodati da bo TP lahko dodal v tabelo '' ker ni nujno da imaš TP
 
 #treba dodati da pod asset preračuna
+
 
 
 
