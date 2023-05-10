@@ -105,6 +105,7 @@ def uporabnik():
 ########################### Pari-dodajanje ###########################
 @get('/dodaj')
 def dodaj():
+    #ce je global sporocilo = ""ga ne izpise ker ga da skos na "", ce pa ni tega pa ne zgine
     global sporocilo
     sporocilo = ""
     cur.execute("""
@@ -215,7 +216,7 @@ def trades():
 
 @post('/dodaj_trade')
 def dodaj_trade():
-    global sporocilo
+    global sporocilo, user_id
     simbol = request.forms.symbol
     tip = request.forms.type
     strategija = request.forms.strategy
@@ -232,6 +233,7 @@ def dodaj_trade():
         cur.execute("INSERT INTO trade (user_id, symbol_id, type, strategy, rr, target, date, duration, tp, pnl) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING id_trade",
                     (user_id, simbol, tip, strategija, RR, tarča, datum, trajanje, TP, PNL))
         conn.commit()
+        pnl_trade(user_id, simbol, PNL)
         sporocilo = "Trade dodan"
         #trade = [user_id, simbol, float(PNL)]
         #trade_result(trade)
@@ -241,7 +243,17 @@ def dodaj_trade():
         sporocilo = "Napačen simbol, če želite dodati trade za njega, ga najprej dodajte v tabelo pari!"
         redirect(url('/trades'))
 
-# če zbrišeš trade potem od asset ne odšteje vrednost ampak jo v asset pusti
+def pnl_trade(user_id, simbol, pnl):
+    dollar = re.findall(r'\$', pnl)
+    # PNL doda pri assetu na katerem je trade
+    if dollar == []:
+        trade = [user_id, simbol, float(pnl)]
+        trade_result(trade)
+    # PNL dodda pri USD
+    elif dollar != []:
+        pnl = re.sub('\$','',pnl)
+        trade = [user_id, 'USD', float(pnl)]
+        trade_result(trade)
 
 #kako dodati da bo RR in tarča le decimalke, ne text (numeric ne gre so samo cela števila)
 #kako dodati da bo TP lahko dodal v tabelo '' ker ni nujno da imaš TP
