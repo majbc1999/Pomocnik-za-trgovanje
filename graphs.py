@@ -4,8 +4,9 @@ import os
 import re
 import pandas as pd
 
-import plotly
+import plotly.express as px
 import plotly.graph_objects as go
+import chart_studio.tools as tls
 
 import psycopg2, psycopg2.extensions, psycopg2.extras
 psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
@@ -108,6 +109,7 @@ def fix_stocks(symbol_id):
         return stock
 
 def assets_on_day(user_id, symbol_id):
+    ''' Vrne df, v katerem je vrednost naše naložbe za vsak dan '''
     price_df = fix_stocks(symbol_id)
     trade_df = pripravi_trade_data(user_id, symbol_id)
     price_df['amount'] = [0] * len(price_df.index)
@@ -131,6 +133,8 @@ def assets_on_day(user_id, symbol_id):
     return price_df
 
 def usd_case(user_id):
+    ''' Simbol USD je obravnavan drugače, ker imajo lahko tradi
+        v drugih assetih dobiček v USD '''
     df = datumi()
     trade_df = get_usd_data(user_id)
     df.rename(columns = {'price':'value'}, inplace = True)
@@ -152,6 +156,7 @@ def usd_case(user_id):
     return df
 
 def get_usd_data(user_id):
+    ''' Pomožna funkcija, ki vrne vse dobičke odražene v $ '''
     df = datumi()
     trade_1 = pripravi_trade_data(user_id, 'dollar', True)
     trade_2 = pripravi_trade_data(user_id, 'USD', True)
@@ -171,6 +176,8 @@ def get_usd_data(user_id):
     return df
 
 def multy_asset(s_list, user_id):
+    ''' Sprejme seznam simbolov, za katere združi podatke
+        za vsak dan '''
     seznam = list()
     for simbol in s_list:
         if simbol == 'USD':
@@ -184,12 +191,26 @@ def multy_asset(s_list, user_id):
     df = df.sort_values(by='date').reset_index(drop=True)
     return df
 
-def graph(df, X_column, Y_column):
+def graph(df, X_column, Y_column, name):
     fig = go.Figure([go.Scatter(x=df[X_column], y=df[Y_column])])
-    fig.show()
+    #fig_to_jpeg(fig, name)
+    fig_to_html(fig, name)
 
+# Graf da v sliko
+def fig_to_jpeg(fig, name):
+    if not os.path.exists('images'):
+        os.mkdir('images')
+    fig.write_image('images/{}.jpeg'.format(name))
+
+def fig_to_html(fig, name):
+    if not os.path.exists('images'):
+        os.mkdir('images')
+    fig.write_html('images/{}.html'.format(name))
+
+tls.get_embed('https://plot.ly/~elizabethts/9/')
 
 symbol_list = ['BTC-USD', 'ETH-USD', 'SPY', 'USD']
 
 data = multy_asset(symbol_list, 1)
-graph(data, 'date', 'value')
+
+graph(data, 'date', 'value', 'test')
