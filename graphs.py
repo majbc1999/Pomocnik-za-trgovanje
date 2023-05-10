@@ -7,6 +7,7 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import chart_studio.tools as tls
+import plotly.io as pio
 
 import psycopg2, psycopg2.extensions, psycopg2.extras
 psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
@@ -203,11 +204,11 @@ def fig_to_jpeg(fig, name):
     fig.write_image('images/{}.jpeg'.format(name))
 
 def fig_to_html(fig, name):
-    if not os.path.exists('images'):
-        os.mkdir('images')
-    fig.write_html('images/{}.html'.format(name))
+    if not os.path.exists('Images'):
+        os.mkdir('Images')
+    pio.write_html(fig, 'Images/{}.html'.format(name), auto_open=True)
 
-tls.get_embed('https://plot.ly/~elizabethts/9/')
+#tls.get_embed('https://plot.ly/~elizabethts/9/')
 
 symbol_list = ['BTC-USD', 'ETH-USD', 'SPY', 'USD']
 
