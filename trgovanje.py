@@ -42,7 +42,7 @@ uspesna_registracija = True
 ########################### Prijava in registracija ###########################
 @get('/')
 def zacetna_stran():
-    return template('home.html', pair=cur)
+    return template('home.html', pair=cur, naslov="Tukaj se prijaviš v aplikacijo Trgovanje")
 
 @post('/prijava')
 def prijava_post():
@@ -212,7 +212,7 @@ def check_user(user_id):
 def trades():
     cur.execute("""SELECT symbol_id, type, strategy, RR, target, date, duration, TP, PNL FROM trade
     WHERE user_id = {} ORDER BY symbol_id """.format(user_id))
-    return template('tradestest.html', trade=cur, naslov="Dodaj trade")
+    return template('trade.html', trade=cur, naslov="Dodaj trade")
 
 @post('/dodaj_trade')
 def dodaj_trade():
