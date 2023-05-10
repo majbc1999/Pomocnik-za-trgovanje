@@ -8,9 +8,12 @@ import plotly.express as px
 import plotly.graph_objects as go
 import chart_studio.tools as tls
 import plotly.io as pio
+import chart_studio.plotly as py
 
 import psycopg2, psycopg2.extensions, psycopg2.extras
 psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
+
+tls.set_credentials_file(username='Avto2703', api_key='nxfzKttfX0xGZsWMSttd')
 
 DB_PORT = os.environ.get('POSTGRES_PORT', 5432)
 con = psycopg2.connect(database=db, host=host, user=user, password=password, port=DB_PORT)
@@ -192,26 +195,11 @@ def multy_asset(s_list, user_id):
     df = df.sort_values(by='date').reset_index(drop=True)
     return df
 
-def graph(df, X_column, Y_column, name):
-    fig = go.Figure([go.Scatter(x=df[X_column], y=df[Y_column])])
-    #fig_to_jpeg(fig, name)
-    fig_to_html(fig, name)
-
-# Graf da v sliko
-def fig_to_jpeg(fig, name):
-    if not os.path.exists('images'):
-        os.mkdir('images')
-    fig.write_image('images/{}.jpeg'.format(name))
-
-def fig_to_html(fig, name):
-    if not os.path.exists('Images'):
-        os.mkdir('Images')
-    pio.write_html(fig, 'Images/{}.html'.format(name), auto_open=True)
-
-#tls.get_embed('https://plot.ly/~elizabethts/9/')
-
-symbol_list = ['BTC-USD', 'ETH-USD', 'SPY', 'USD']
-
-data = multy_asset(symbol_list, 1)
-
-graph(data, 'date', 'value', 'test')
+i = 0
+def graph_url(user_id, symbol_list, X_column='date', Y_column='value'):
+    data = multy_asset(symbol_list, user_id)
+    fig = go.Figure([go.Scatter(x=data[X_column], y=data[Y_column])])
+    url = py.plot(fig, filename = str(i), auto_open=False)
+    url = url[:-1] + '.embed'
+    i += 1
+    return url
