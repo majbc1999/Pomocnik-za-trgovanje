@@ -212,6 +212,8 @@ def graph_url(user_id, symbol_list, X_column='date', Y_column='value'):
     i += 1
     return url
 
+graf = graph_url(1, ['ETH-USD', 'USD'])
+
 def graph_cake(user_id, date):
     global i
     seznam = list()
@@ -228,11 +230,12 @@ def graph_cake(user_id, date):
         df = df.iloc[[-1]]
         zacasni.append(df)
     df = pd.concat(zacasni, copy=False)
-    fig = px.pie(df, values='value', names='symbol_id',
+    df = df.rename(columns={'symbol_id': 'simbol', 'value': 'vrednost'})
+    fig = px.pie(df, values='vrednost', names='simbol',
                  color_discrete_sequence=px.colors.sequential.Purp_r)
     url = py.plot(fig, filename = str(i), auto_open=False)
     url = url[:-1] + '.embed'
     i += 1
     return url
 
-print(graph_cake(1, '2023-04-30'))
+cake  = graph_cake(1, '2023-04-30')
