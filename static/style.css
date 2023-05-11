@@ -66,6 +66,15 @@
     height: 30%;
 }
 
+.obroba-graf {
+    margin: auto;
+    border-radius: 5px;
+    background-color: #f2f2f2;
+    padding: 20px;
+    width: 70%;
+    height: 30%;
+}
+
 .opozorilo {
     color: red; 
 }
@@ -81,7 +90,12 @@
     border-radius: 4px;
     height: 30px;
     background-color: #f1f1f1;
-  }
+}
+
+.sredina {
+    display: inline-block center;
+    text-align: center;
+}
 
 .tabela {
     border-collapse: collapse;
