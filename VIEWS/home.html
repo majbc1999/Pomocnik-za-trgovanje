@@ -1,8 +1,8 @@
 %from trgovanje import uspesna_prijava, sporocilo
 %rebase('base.html', naslov=naslov)
 
-% if uspesna_prijava == True:
 <div class="obroba">
+    % if uspesna_prijava == True:
     <p class="naslov-tabele">PRIJAVA</p>
     % elif uspesna_prijava == False:
     <div class="opozorilo">{{sporocilo}}</div>  

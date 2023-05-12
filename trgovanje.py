@@ -1,5 +1,7 @@
 from bottleext import get, post, run, request, template, redirect, static_file, url
 
+from bottle import TEMPLATES
+
 from auth_public import *
 
 import psycopg2, psycopg2.extensions, psycopg2.extras
@@ -12,6 +14,8 @@ import re
 import csv
 
 from Podatki import get_history as gh
+
+from graphs import graph_html, graph_cake
 
 import hashlib
 
@@ -99,7 +103,8 @@ def uporabnik():
     seznam = cur.fetchall()
     for i in seznam:
         user_assets.append(i[0])
-    print(user_assets)
+    # Pripravi default graf za /performance.html
+    graph_html(user_id, user_assets)
     return template('uporabnik.html', uporabnik=cur)
 
 ########################### Pari-dodajanje ###########################
@@ -259,7 +264,6 @@ def pnl_trade(user_id, simbol, pnl):
 
 
 #############################################################################
-
 @get('/performance')
 def performance():
     cur.execute("""SELECT symbol_id, amount FROM asset
@@ -269,12 +273,26 @@ def performance():
 
 @post('/new_equity_graph')
 def new_equity_graph():
-    for i in user_assets:
-        if request.forms.i == True:
-            print(i)
-    print(user_assets)
-    return
+    simboli_graf = request.forms.simboli
+    seznam = re.split(r' ', simboli_graf)
+    #########################################################
+    ##### Tudi to ne dela zaradi - : if request.forms.BTC-USD == 1:
+    ##### Ne obarva item, ne zazna ga kot iterable ampak string?
+    #for item in user_assets:
+    #    seznam.append(exec("request.forms.{}".format(item)))
+    #print(seznam)
+    #########################################################
+    graph_html(user_id, seznam)
+    TEMPLATES.clear()
+    return redirect(url('/performance'))
 
+@get('/Graphs/assets.html')
+def Graf_assets():
+    return template('Graphs/assets.html')
+
+@get('/Graphs/cake.html')
+def Graf_assets():
+    return template('Graphs/cake.html')
 
 #############################################################################
 if __name__ == "__main__":

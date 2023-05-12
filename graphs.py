@@ -202,17 +202,14 @@ def multy_asset(s_list, user_id):
     df = df.sort_values(by='date').reset_index(drop=True)
     return df
 
-i = 0
-def graph_url(user_id, symbol_list, X_column='date', Y_column='value'):
+def graph_html(user_id, symbol_list, X_column='date', Y_column='value'):
     global i
     data = multy_asset(symbol_list, user_id)
     fig = go.Figure([go.Scatter(x=data[X_column], y=data[Y_column])])
-    url = py.plot(fig, filename = str(i), auto_open=False)
-    url = url[:-1] + '.embed'
-    i += 1
-    return url
-
-graf = graph_url(1, ['ETH-USD', 'USD'])
+    imenik = os.path.dirname("Views/Graphs/assets.html")
+    if imenik:
+        os.makedirs(imenik, exist_ok=True)
+    fig.write_html("Views/Graphs/assets.html")
 
 def graph_cake(user_id, date):
     global i
@@ -233,9 +230,9 @@ def graph_cake(user_id, date):
     df = df.rename(columns={'symbol_id': 'simbol', 'value': 'vrednost'})
     fig = px.pie(df, values='vrednost', names='simbol',
                  color_discrete_sequence=px.colors.sequential.Purp_r)
-    url = py.plot(fig, filename = str(i), auto_open=False)
-    url = url[:-1] + '.embed'
-    i += 1
-    return url
+    imenik = os.path.dirname("Views/Graphs/cake.html")
+    if imenik:
+        os.makedirs(imenik, exist_ok=True)
+    fig.write_html("Views/Graphs/cake.html")
 
 cake  = graph_cake(1, '2023-04-30')

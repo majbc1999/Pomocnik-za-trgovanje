@@ -1,25 +1,27 @@
 % rebase('base.html', naslov=naslov)
 % from trgovanje import user_id
-% from graphs import graph_url
 
 <div class="obroba-graf">
   <div>
-    <p class="besedilo2">Izberi naložbe za prikaz na grafu</p>
-    <form action="/new_equity_graph" method="post">
+    <p class="besedilo2">Izberi naložbe za prikaz na grafu. Par izbereš tako,
+      da njegov simbol vpišeš v spodnje polje. Lahko izbereš več simbolov hkrati,
+      tako da jih ločiš s presledkom. Prikazani so vsi ki jih imaš na voljo.</p>
       % for (symbol_id, amount) in assets:
-      <input type="checkbox" name="{}".format(symbol_id) value="True">
-      <label>{{symbol_id}}</label><br>
+      <span>{{symbol_id}}</span>
       % end
+    <form action="/new_equity_graph" method="post">
+      <span>Simboli:</span> <input class="text" name="simboli" type="text"
+      required placeholder="BTC-USD SPY USD"/>
       <input class="gumb" type="submit" value="Submit">
     </form>
   </div> <br>
   <iframe id="igraph" scrolling="no" style="border:none;" 
-  seamless="seamless" src="https://chart-studio.plotly.com/~Avto2703/10.embed"
+  seamless="seamless" src="Graphs/assets.html"
   height="500" width="100%"></iframe><br>
 
   <p class="besedilo2">Celotni portfolio</p>
   <iframe id="igraph" scrolling="no" style="border:none;" 
-  seamless="seamless" src="https://plotly.com/~Avto2703/13.embed"
+  seamless="seamless" src="Graphs/cake.html"
   height="500" width="100%"></iframe>
 </div><br>
 
