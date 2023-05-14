@@ -39,6 +39,17 @@
     cursor: pointer;
 }
 
+.gumb_nazaj {
+    width: 100%;
+    background-color: #669999;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0 50px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
 .link {
     color: #334d4d;
 }
