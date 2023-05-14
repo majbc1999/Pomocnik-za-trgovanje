@@ -202,8 +202,13 @@ def multy_asset(s_list, user_id):
     df = df.sort_values(by='date').reset_index(drop=True)
     return df
 
+def save_graph(ime, fig):
+    imenik = os.path.dirname("Views/Graphs/{}.html".format(ime))
+    if imenik:
+        os.makedirs("Views/Graphs/{}.html".format(ime), exist_ok=True)
+    fig.write_html("Views/Graphs/{}.html".format(ime))
+
 def graph_html(user_id, symbol_list, X_column='date', Y_column='value'):
-    global i
     data = multy_asset(symbol_list, user_id)
     fig = go.Figure([go.Scatter(x=data[X_column], y=data[Y_column])])
     imenik = os.path.dirname("Views/Graphs/assets.html")
@@ -212,7 +217,6 @@ def graph_html(user_id, symbol_list, X_column='date', Y_column='value'):
     fig.write_html("Views/Graphs/assets.html")
 
 def graph_cake(user_id, date):
-    global i
     seznam = list()
     zacasni = list()
     asset_data = pd.read_sql("SELECT symbol_id FROM asset WHERE user_id  = {}".format(user_id), con)
@@ -235,4 +239,93 @@ def graph_cake(user_id, date):
         os.makedirs(imenik, exist_ok=True)
     fig.write_html("Views/Graphs/cake.html")
 
-cake  = graph_cake(1, '2023-04-30')
+# cake  = graph_cake(1, '2023-04-30')
+
+#############################################################################
+#############################################################################
+#############################################################################
+
+#stats_data = pd.read_sql(
+#    "SELECT user_id, symbol_id, type, strategy, rr, target,date, duration, tp, pnl FROM trade WHERE type = 'L' OR type = 'S'", con)
+
+def win_rate(df):
+    ''' Pripravi win rate cake graf '''
+    rate = df['tp'].value_counts(normalize=True)
+    try:
+        l  = round(rate[0], 2)
+    except KeyError:
+        l = 0
+    d = {'wr': [1 - l, l], 'value': ['Win', 'Loss']}
+    data = pd.DataFrame(data=d)
+    fig = px.pie(data, values='wr', names='value')
+    fig.write_html("Views/Graphs/win_rate.html")
+    ''' Pripravi win rate glede na tip L/S in označi št. dobljenih TPjev '''
+    df_long = filter_by_row(df, 'type', ['L'])
+    rate_long = df_long['tp'].value_counts()
+    df_short = filter_by_row(df, 'type', ['S'])
+    rate_short = df_short['tp'].value_counts()
+    index_error_fix(rate_long, rate_short)
+    d_2 = {'type': ['Long', 'Long','Long', 'Short', 'Short', 'Short'],
+            'TPs': [2, 1, 0, 2, 1, 0],
+            'count': [rate_long[2], rate_long[1], rate_long[0], rate_short[2], rate_short[1], rate_short[0]]
+            }
+    data_2 = pd.DataFrame(data=d_2)
+    fig = px.bar(data_2, x='count', y='type', color='TPs')
+    fig.write_html("Views/Graphs/win_by_type.html")
+
+def index_error_fix(rate_long, rate_short):
+    for i in [0, 1, 2]:
+        try:
+            rate_long[i]
+        except KeyError:
+            rate_long[i] = 0
+    for i in [0, 1, 2]:
+        try:
+            rate_short[i]
+        except KeyError:
+            rate_short[i] = 0
+
+def string_stats(df):
+    #print(df)
+    avg_RR, avg_tar, avg_dur, avg_w, avg_l, max_w, max_l = 0, 0, 0, 0, 0, 0, 0
+    avg_RR = round(df.loc[:, 'rr'].mean(), 2)
+    avg_tar = round(df.loc[:, 'target'].mean(), 2)
+    dur_df = df.loc[:, 'duration']
+    # Odstranimo h pri duration in spremenimo str -> numeric
+    for item in dur_df.index:
+        dur_df.at[item] = re.sub('h', '', dur_df[item])
+    dur_df = pd.to_numeric(dur_df)
+    avg_dur = round(dur_df.mean(), 2)
+    # Avg in Max vrednosti upoštevajo le vrednosti z $,
+    # saj bi sicer potrebovali cene za vsak tenutek,
+    # ne le 1x v dnevu
+    pnl_df = pnl_type(df, True)
+    pnl_df = pnl_df.loc[:, 'pnl']
+    max_w = pnl_df.max()
+    if max_w < 0:
+        max_w = 0
+    max_l = pnl_df.min()
+    if max_l > 0:
+        max_l = 0
+    pnl_df = pnl_df.groupby(pnl_df > 0).mean()
+    try:
+        avg_w = round(pnl_df[True], 2)
+    except KeyError:
+        avg_w = 0
+    try:
+        avg_l = round(pnl_df[False], 2)
+    except KeyError:
+        avg_l = 0
+    return (avg_RR, avg_tar, avg_dur, avg_w, avg_l, max_w, max_l)
+
+def graph_stats(user_id, strategy):
+    stats_data = pd.read_sql(
+    "SELECT user_id, symbol_id, type, strategy, rr, target,date, duration, tp, pnl FROM trade WHERE type = 'L' OR type = 'S'", con)
+    stats_data = filter_by_row(stats_data, 'user_id', [user_id])
+    if strategy == 'All':
+        win_rate(stats_data)
+        return string_stats(stats_data)
+    else:
+        stats_data = filter_by_row(stats_data, 'strategy', [strategy])
+        win_rate(stats_data)
+        return string_stats(stats_data)

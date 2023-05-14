@@ -15,7 +15,7 @@ import csv
 
 from Podatki import get_history as gh
 
-from graphs import graph_html, graph_cake
+from graphs import graph_html, graph_cake, graph_stats
 
 import hashlib
 
@@ -98,13 +98,15 @@ def registracija_post():
 
 @get('/uporabnik')
 def uporabnik():
-    global user_id, user_assets
+    global user_id, user_assets, stats_tuple
     cur.execute("""SELECT symbol_id FROM asset WHERE user_id = {}""".format(user_id))
     seznam = cur.fetchall()
     for i in seznam:
         user_assets.append(i[0])
     # Pripravi default graf za /performance.html
     graph_html(user_id, user_assets)
+    # Pripravi default tuple za /stats.html
+    stats_tuple = graph_stats(user_id, 'All')
     return template('uporabnik.html', uporabnik=cur)
 
 ########################### Pari-dodajanje ###########################
@@ -293,6 +295,30 @@ def Graf_assets():
 @get('/Graphs/cake.html')
 def Graf_assets():
     return template('Graphs/cake.html')
+#############################################################################
+@get('/stats')
+def stats():
+    cur.execute("""SELECT strategy FROM trade
+    WHERE user_id = {} AND (type = 'L' OR type = 'S') GROUP BY strategy""".format(user_id))
+    return template('stats.html', strategy=cur, naslov = "Statistika")
+
+@post('/strategy')
+def strategy():
+    global stats_tuple
+    strategy = request.forms.strategy
+    stats_tuple = graph_stats(user_id, strategy)
+    TEMPLATES.clear()
+    return redirect(url('/stats'))
+
+stats_tuple = tuple()
+
+@get('/Graphs/win_rate.html')
+def Graf_assets():
+    return template('Graphs/win_rate.html')
+
+@get('/Graphs/win_by_type.html')
+def Graf_assets():
+    return template('Graphs/win_by_type.html')
 
 #############################################################################
 if __name__ == "__main__":

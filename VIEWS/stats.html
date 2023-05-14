@@ -1,0 +1,41 @@
+% rebase('base.html', naslov=naslov)
+% from trgovanje import user_id, stats_tuple
+
+<div class="obroba-graf">
+  <div>
+    <p class="besedilo2">Prikazana je statistika tvojih tradov. Lahko izbereš vse hkrati,
+      ali pa jih ločiš po strategiji.</p>
+    <div>
+      <p>V polju lahko izbereš strategijo, za katero se ti prikaže statistika:</span>
+      <form action="/strategy" method="post">
+        <label for="strategy">Izberi strategijo:</label>
+            <select class="select" name="strategy">
+                <option value="All">Vsi tradi</option>
+                % for strat in strategy:
+                <option value="{{strat[0]}}">{{strat[0]}}</option>
+                % end
+            </select><br>
+        <input class="gumb" type="submit" value="Submit">
+      </form>
+    </div>
+    <div>
+      <p>Povprečni zaslužek: {{stats_tuple[3]}}$</p><br>
+      <p>Povprečna izguba: {{stats_tuple[4]}}$</p><br>
+      <p>Največji zaslužek: {{stats_tuple[5]}}$</p><br>
+      <p>Največja izguba: {{stats_tuple[6]}}$</p><br>
+      <p>Povprečno razmerje tveganje: {{stats_tuple[0]}}</p><br>
+      <p>Povprečna tarča: {{stats_tuple[1]}}%</p><br>
+      <p>Povprečno trajanje: {{stats_tuple[2]}}h</p><br>
+    </div>
+  </div> <br>
+  <iframe id="igraph" scrolling="no" style="border:none;" 
+  seamless="seamless" src="Graphs/win_rate.html"
+  height="500" width="100%"></iframe><br>
+
+  <p class="besedilo2">Celotni portfolio</p>
+  <iframe id="igraph" scrolling="no" style="border:none;" 
+  seamless="seamless" src="Graphs/win_by_type.html"
+  height="500" width="100%"></iframe>
+</div><br>
+
+<a href="/uporabnik" class="Button"><input class="gumb" type='button' value='Nazaj' /></a>
