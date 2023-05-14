@@ -318,14 +318,28 @@ def string_stats(df):
         avg_l = 0
     return (avg_RR, avg_tar, avg_dur, avg_w, avg_l, max_w, max_l)
 
+def graph_pnl(df):
+    df = pnl_type(df, True)
+    df1 = df[['date', 'pnl']]
+    df1 = df1.sort_values(by=['date'])
+    sum = 0
+    for item in df1.index:
+        sum += round(df1['pnl'][item], 2)    
+        df1.loc[item, 'pnl'] = sum
+    fig = px.line(df1, x='date', y='pnl')
+    fig.write_html("Views/Graphs/pnl_graph.html")
+
 def graph_stats(user_id, strategy):
     stats_data = pd.read_sql(
-    "SELECT user_id, symbol_id, type, strategy, rr, target,date, duration, tp, pnl FROM trade WHERE type = 'L' OR type = 'S'", con)
+    "SELECT user_id, symbol_id, type, strategy, rr, target, date, duration, tp, pnl FROM trade WHERE type = 'L' OR type = 'S'", con)
     stats_data = filter_by_row(stats_data, 'user_id', [user_id])
     if strategy == 'All':
         win_rate(stats_data)
+        graph_pnl(stats_data)
         return string_stats(stats_data)
     else:
         stats_data = filter_by_row(stats_data, 'strategy', [strategy])
         win_rate(stats_data)
+        graph_pnl(stats_data)
         return string_stats(stats_data)
+

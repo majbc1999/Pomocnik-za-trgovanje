@@ -320,6 +320,20 @@ def Graf_assets():
 def Graf_assets():
     return template('Graphs/win_by_type.html')
 
+@get('/Graphs/pnl_graph.html')
+def Graf_assets():
+    return template('Graphs/pnl_graph.html')
 #############################################################################
+@get('/analysis')
+def stats():
+    cur.execute("""SELECT strategy FROM trade
+    WHERE user_id = {} AND (type = 'L' OR type = 'S') GROUP BY strategy""".format(user_id))
+    return template('analysis.html', strategy=cur, naslov = "Analiza")
+
+
+
+
+#############################################################################
+
 if __name__ == "__main__":
     run(host='localhost', port=8080, reloader=True)
