@@ -237,8 +237,12 @@ def dodaj_trade():
     row = cur.execute("SELECT symbol FROM pair WHERE symbol = '{}'".format(simbol))
     row = cur.fetchone()
     if row != None:
-        cur.execute("INSERT INTO trade (user_id, symbol_id, type, strategy, rr, target, date, duration, tp, pnl) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING id_trade",
-                    (user_id, simbol, tip, strategija, RR, tarča, datum, trajanje, TP, PNL))
+        if TP == '':
+            cur.execute("INSERT INTO trade (user_id, symbol_id, type, strategy, rr, target, date, duration, pnl) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING id_trade",
+                        (user_id, simbol, tip, strategija, RR, tarča, datum, trajanje, PNL))
+        else:
+            cur.execute("INSERT INTO trade (user_id, symbol_id, type, strategy, rr, target, date, duration, tp, pnl) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING id_trade",
+                        (user_id, simbol, tip, strategija, RR, tarča, datum, trajanje, TP, PNL))
         conn.commit()
         pnl_trade(user_id, simbol, PNL)
         sporocilo = "Trade dodan"
