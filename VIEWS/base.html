@@ -1,17 +1,19 @@
 <!DOCTYPE html>
 <html lang="slo">
-    <head>
-        <meta charset="UTF-8">
-        <title>
-            {{naslov}}
-        </title>
-        <link rel="stylesheet" type="text/css" href="{{url('static', filename='style.css')}}" />
-    </head>
+
+<head>
+    <meta charset="UTF-8">
+    <title>{{naslov}}</title>
+    <link rel="stylesheet" type="text/css" href="{{url('static', filename='style.css')}}" />
+</head>
+
 <body class="ozadje">
     <h2 class="besedilo">{{naslov}}</h2>
-{{!base}}
-<br>
+    {{!base}}
+    <br>
+    <a href="/uporabnik" class="Button"><input class="gumb_nazaj" type='button' value='Nazaj' /></a>
 </body>
+
 <footer class="footer">
     <p>by <a style="color: white;" href="https://github.com/sarazuzek/Pomocnik-za-trgovanje">Sara Žužek & Alan Marinić</a> </p>
 </footer>

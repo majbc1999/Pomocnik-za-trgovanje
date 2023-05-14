@@ -6,7 +6,7 @@
     <p class="besedilo2">Prikazana je statistika tvojih tradov. Lahko izbereš vse hkrati,
       ali pa jih ločiš po strategiji.</p>
     <div>
-      <p>V polju lahko izbereš strategijo, za katero se ti prikaže statistika:</span>
+      <p>V polju lahko izbereš strategijo, za katero se ti prikaže statistika:</p>
       <form action="/strategy" method="post">
         <label for="strategy">Izberi strategijo:</label>
             <select class="select" name="strategy">
@@ -27,18 +27,18 @@
       <p>Povprečna tarča: {{stats_tuple[1]}}%</p><br>
       <p>Povprečno trajanje: {{stats_tuple[2]}}h</p><br>
     </div>
-  </div> <br>
+  </div>
+    <br>
   <iframe id="igraph" scrolling="no" style="border:none;" 
   seamless="seamless" src="Graphs/pnl_graph.html"
-  height="500" width="100%"></iframe><br>
+  height="500" width="100%"></iframe>
+    <br>
   <iframe id="igraph" scrolling="no" style="border:none;" 
   seamless="seamless" src="Graphs/win_rate.html"
-  height="500" width="100%"></iframe><br>
-
+  height="500" width="100%"></iframe>
+    <br>
   <p class="besedilo2">Celotni portfolio</p>
   <iframe id="igraph" scrolling="no" style="border:none;" 
   seamless="seamless" src="Graphs/win_by_type.html"
   height="500" width="100%"></iframe>
-</div><br>
-
-<a href="/uporabnik" class="Button"><input class="gumb_nazaj" type='button' value='Nazaj' /></a>
+</div>

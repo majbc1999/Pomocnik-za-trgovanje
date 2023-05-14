@@ -1,5 +1,5 @@
-%rebase('base.html', naslov=naslov)
-%from trgovanje import sporocilo
+% rebase('base.html', naslov=naslov)
+% from trgovanje import sporocilo
 
 <div class="obroba">
     % if sporocilo == "Trade dodan":
@@ -28,35 +28,33 @@
             </select><br>
             <span>Profit/Izguba (PNL):</span> <input class="text" name="PNL" type="text" required placeholder="11.2$/-11.2$"/><br>
         <input class= "gumb" value="Dodaj" type="submit"/>
-    </form> <br>
-
+    </form>
+        <br>
     <p class="naslov-tabele">TABELA TVOJIH TRADE-ov</p>
     <table class="tabela-trade" border="1">
-    <tr>
-        <th class="th">Simbol</th>
-        <th class="th">Tip</th>
-        <th class="th">Strategija</th>
-        <th class="th">RR</th>
-        <th class="th">Tarča</th>
-        <th class="th">Datum</th>
-        <th class="th">Trajanje</th>
-        <th class="th">TP</th>
-        <th class="th">PNL</th>
-    </tr>
-    %for (symbol_id, type, strategy, RR, target, date, duration, TP, PNL) in trade:
-    <tr class="tr">
-        <td class="td">{{symbol_id}}</td>
-        <td class="td">{{type}}</td>
-        <td class="td">{{strategy}}</td>
-        <td class="td">{{RR}}</td>
-        <td class="td">{{target}}</td>
-        <td class="td">{{date}}</td>
-        <td class="td">{{duration}}</td>
-        <td class="td">{{TP}}</td>
-        <td class="td">{{PNL}}</td>
-    </tr>
-    %end
+        <tr>
+            <th class="th">Simbol</th>
+            <th class="th">Tip</th>
+            <th class="th">Strategija</th>
+            <th class="th">RR</th>
+            <th class="th">Tarča</th>
+            <th class="th">Datum</th>
+            <th class="th">Trajanje</th>
+            <th class="th">TP</th>
+            <th class="th">PNL</th>
+        </tr>
+        % for (symbol_id, type, strategy, RR, target, date, duration, TP, PNL) in trade:
+        <tr class="tr">
+            <td class="td">{{symbol_id}}</td>
+            <td class="td">{{type}}</td>
+            <td class="td">{{strategy}}</td>
+            <td class="td">{{RR}}</td>
+            <td class="td">{{target}}</td>
+            <td class="td">{{date}}</td>
+            <td class="td">{{duration}}</td>
+            <td class="td">{{TP}}</td>
+            <td class="td">{{PNL}}</td>
+        </tr>
+        % end
     </table>
-</div><br>
-
-<a href="/uporabnik" class="Button"><input class= "gumb_nazaj" type='button' value='Nazaj' /></a>
+</div>

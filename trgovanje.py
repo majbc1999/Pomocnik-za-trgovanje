@@ -90,6 +90,10 @@ def registracija_post():
         sporocilo = ""
         redirect('/uporabnik')
 
+@get('/logout')
+def logout():
+    redirect(url('/'))
+
 #############################################################################
 
 """SELECT app_user.name, symbol_id, amount FROM asset 

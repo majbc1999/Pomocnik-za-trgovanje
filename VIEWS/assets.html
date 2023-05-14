@@ -1,5 +1,5 @@
-%from trgovanje import sporocilo
-%rebase('base.html', naslov=naslov)
+% rebase('base.html', naslov=naslov)
+% from trgovanje import sporocilo
 
 <div class="obroba">
     % if sporocilo == "":
@@ -24,12 +24,11 @@
             <th class="th">Simbol</th>
             <th class="th">Količina</th>
         </tr>
-        %for (symbol_id,amount) in asset:
+        % for (symbol_id,amount) in asset:
         <tr class="tr">
             <td class="td">{{symbol_id}}</td>
             <td class="td">{{amount}}</td>
         </tr>
-        %end
+        % end
     </table>
-</div><br>
-<a href="/uporabnik" class="Button"><input class= "gumb_nazaj" type='button' value='Nazaj' /></a>
+</div>

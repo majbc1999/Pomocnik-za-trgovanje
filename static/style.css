@@ -38,6 +38,21 @@
     border-radius: 4px;
     cursor: pointer;
 }
+.gumb_logout {
+    width: 6%;
+    background-color: #669999;
+    color: white;
+    padding: 20px 20px;
+    margin: 8px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    position: fixed;
+    right: 10px;
+    top: 5px;
+    font-size: 20px;
+
+}
 
 .gumb_nazaj {
     width: 100%;

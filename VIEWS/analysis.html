@@ -9,26 +9,26 @@
       <p>Izberi strategijo:</span>
       <form action="/analyze" method="post">
         <label for="strategy">Izberi strategijo:</label>
-            <select class="select" name="strategy">
-                % for strat in strategy:
-                <option value="{{strat[0]}}">{{strat[0]}}</option>
-                % end
-            </select><br>
-            <label for="duration">Čas trajanja (1, 100):</label>
-            <input type="range" name="duration" min="1" max="100">
-            <br>
-            <label for="rr">Razmerje tveganja (1, 15):</label>
-            <input type="range" name="rr" min="1" max="15">
-            <br>
-            <label for="target">Tarča (1, 10):</label>
-            <input type="range" name="target" min="1" max="100">
-            <br>
-            <label for="tip">Izberi tip:</label>
-            <select class="select" name="tip">
-              <option value="Oba">Oba</option>  
-              <option value="L">Long</option>
-              <option value="S">Short</option>
-            </select><br>
+          <select class="select" name="strategy">
+              % for strat in strategy:
+              <option value="{{strat[0]}}">{{strat[0]}}</option>
+              % end
+          </select><br>
+        <label for="duration">Čas trajanja (1, 100):</label>
+        <input type="range" name="duration" min="1" max="100">
+          <br>
+        <label for="rr">Razmerje tveganja (1, 15):</label>
+        <input type="range" name="rr" min="1" max="15">
+          <br>
+        <label for="target">Tarča (1, 10):</label>
+        <input type="range" name="target" min="1" max="100">
+          <br>
+        <label for="tip">Izberi tip:</label>
+        <select class="select" name="tip">
+          <option value="Oba">Oba</option>  
+          <option value="L">Long</option>
+          <option value="S">Short</option>
+        </select><br>
         <input class="gumb" type="submit" value="Submit">
       </form>
     </div>
@@ -40,9 +40,8 @@
       <p>Povprečna tarča: {{anl_stats[4]}}%</p><br>
       <p>Povprečno trajanje: {{anl_stats[5]}}h</p><br>
     </div>
-  </div> <br>
+  </div><br>
   <iframe id="igraph" scrolling="no" style="border:none;" 
   seamless="seamless" src="Graphs/win_rate_anl.html"
-  height="500" width="100%"></iframe><br>
+  height="500" width="100%"></iframe>
 </div>
-<a href="/uporabnik" class="Button"><input class="gumb_nazaj" type='button' value='Nazaj' /></a>
