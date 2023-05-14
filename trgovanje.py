@@ -15,7 +15,7 @@ import csv
 
 from Podatki import get_history as gh
 
-from graphs import graph_html, graph_cake, graph_stats
+from graphs import graph_html, graph_cake, graph_stats, analyze
 
 import hashlib
 
@@ -330,8 +330,23 @@ def stats():
     WHERE user_id = {} AND (type = 'L' OR type = 'S') GROUP BY strategy""".format(user_id))
     return template('analysis.html', strategy=cur, naslov = "Analiza")
 
+@post('/analyze')
+def analyze_f():
+    global anl_stats
+    strat = request.forms.strategy
+    duration = int(request.forms.duration)
+    rr = int(request.forms.rr)
+    target = int(request.forms.target)
+    tip = request.forms.tip
+    anl_stats = analyze(user_id, strat, duration, rr, target, tip)
+    TEMPLATES.clear()
+    return redirect(url('/analysis'))
 
+anl_stats = (0, 0, 0, 0, 0, 0)
 
+@get('/Graphs/win_rate_anl.html')
+def Graf_assets():
+    return template('Graphs/win_rate_anl.html')
 
 #############################################################################
 

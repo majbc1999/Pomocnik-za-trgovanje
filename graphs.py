@@ -343,3 +343,54 @@ def graph_stats(user_id, strategy):
         graph_pnl(stats_data)
         return string_stats(stats_data)
 
+
+#############################################################################
+#############################################################################
+#############################################################################
+def stats(df):
+    #print(df)
+    w_rate, avg_w, avg_l, avg_rr, avg_tar, avg_dur = 0, 0, 0, 0, 0, 0
+    rate = df['tp'].value_counts(normalize=True)
+    try:
+        w_rate = round(1 - rate[0], 2)
+    except KeyError:
+        w_rate = 100
+    pnl_df = df.loc[:, 'pnl']
+    pnl_df = pnl_df.groupby(pnl_df > 0).mean()
+    try:
+        avg_w = round(pnl_df[True], 2)
+    except KeyError:
+        avg_w = 0
+    try:
+        avg_l = round(pnl_df[False], 2)
+    except KeyError:
+        avg_l = 0
+    avg_rr = round(df.loc[:, 'rr'].mean(), 2)
+    avg_tar = round(df.loc[:, 'target'].mean(), 2)
+    avg_dur = round(df.loc[:, 'duration'].mean(), 2)
+    # Graf win_rate_anl
+    d = {'wr': [w_rate, 1 - w_rate], 'value': ['Win', 'Loss']}
+    data = pd.DataFrame(data=d)
+    fig = px.pie(data, values='wr', names='value')
+    fig.write_html("Views/Graphs/win_rate_anl.html")
+    return (w_rate, avg_w, avg_l, avg_rr, avg_tar, avg_dur)
+
+
+def analyze(user_id, strategy, duration: int, rr: int, target: int, tip):
+    df = pd.read_sql(
+    "SELECT user_id, symbol_id, type, strategy, rr, target, date, duration, tp, pnl FROM trade WHERE type = 'L' OR type = 'S'", con)
+    df = filter_by_row(df, 'user_id', [user_id])
+    df = filter_by_row(df, 'strategy', [strategy])
+    df = pnl_type(df, True)
+    for item in df.index:
+        df.loc[item, 'duration'] = re.sub('h', '', df['duration'][item])
+    df['duration'] = pd.to_numeric(df['duration'])
+    df = df[df['duration'] <= duration]
+    df = df[df['rr'] <= rr]
+    df = df[df['target'] <= target]
+    df = df.reset_index()
+    if tip == 'Oba':
+        return stats(df)
+    else:
+        df = filter_by_row(df, 'type', [tip])
+        return stats(df)
