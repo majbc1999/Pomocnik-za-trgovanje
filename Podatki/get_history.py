@@ -2,12 +2,13 @@ import csv
 import os
 import pandas as pd
 from yahoofinancials import YahooFinancials as yf
+from datetime import date
+import pickle
+import re
 
 trading_pairs = ['BTC-USD', 'ETH-USD', 'LINK-USD', 'XMR-USD', 'AAPL', 'SPY', 'NVDA', 'TSLA', 'EURUSD=X', 'MATIC-USD', 'PAXG-USD']
 
 begin_date = '2022-01-01'
-end_date = '2023-4-30'
-
 
 def clean_dict(slovar):
     '''Iz slovarja odstrani odvečne elemente.'''
@@ -40,7 +41,7 @@ def zapisi_csv(slovarji, imena_polj, ime_datoteke):
         for slovar in slovarji:
             writer.writerow(slovar)
 
-def get_historic_data(seznam_parov):
+def get_historic_data(seznam_parov, end_date):
     '''Za vsak simbol ustvari csv dokument, ter
     v njega shrani zadnjo dnevno ceno za določeno casovno obdobje'''
     for simbol in seznam_parov:
@@ -57,6 +58,16 @@ def get_symbols():
     for _, _, files in os.walk(r'Podatki/Posamezni_simboli'):
         for file in files:
             if (file.endswith('.csv')):
+                sez_datotek.append(file)
+    return sez_datotek
+
+def get_symbols_list():
+    '''Vrne seznam csv datotek v mapi'''
+    sez_datotek = list()
+    for _, _, files in os.walk(r'Podatki/Posamezni_simboli'):
+        for file in files:
+            if (file.endswith('.csv')):
+                file = re.sub('.csv', '', file)
                 sez_datotek.append(file)
     return sez_datotek
 
@@ -79,5 +90,38 @@ def preveri_ustreznost(simbol):
         else:
             return 1
 
-get_historic_data(trading_pairs)
-merge_csv(get_symbols(), 'price_history.csv')
+def update_price_history():
+    ''' Vzeto iz
+    https://stackoverflow.com/questions/74813518/how-to-save-a-variable-and-read-it-on-the-next-run
+    '''
+    STORE = os.path.join(os.path.dirname(__file__), 'last_run.pickle')
+
+    today = date.today()
+
+    print("Today is", today)
+
+    # Load the stored date from last run:
+    if os.path.isfile(STORE):
+        print('Read last_run from:', STORE)
+        with open(STORE, 'rb') as store:
+            last_run = pickle.load(store)
+    else:
+        print('No STORE detected. Assuming this is the first run...')
+        last_run = today
+
+    print("Last run was", last_run)
+    if last_run < today:
+        old = pd.read_csv(r'Podatki/price_history.csv')
+        get_historic_data(get_symbols_list(), str(today))
+        merge_csv(get_symbols(), 'price_history.csv')
+        new = pd.read_csv(r'Podatki/price_history.csv')
+        new_df = pd.concat([old, new]).reset_index(drop=True)
+        df = new_df.drop_duplicates(subset=['symbol_id','date'], keep=False)
+
+    # store todays run date for the next run:
+    with open(STORE, 'wb') as store:
+        pickle.dump(today, store)
+
+    print('Saved last_run to:', STORE)
+
+    return df

@@ -13,10 +13,13 @@ import re
 
 import csv
 
+import pandas
+
 from Podatki import get_history as gh
 
 from graphs import graph_html, graph_cake, graph_stats, analyze
 
+from datetime import date
 import hashlib
 
 # privzete nastavitve
@@ -107,11 +110,19 @@ def uporabnik():
     seznam = cur.fetchall()
     for i in seznam:
         user_assets.append(i[0])
+    # Posodobi price_history
+    df = gh.update_price_history()
+    for i in df.index:
+        cur.execute('''
+            INSERT INTO price_history (symbol_id, date, price)
+            VALUES (%s, %s, %s)''', (df['symbol_id'][i], df['date'][i], df['price'][i]))
+    conn.commit()
     # Pripravi default graf za /performance.html
     graph_html(user_id, user_assets)
     # Pripravi default tuple za /stats.html
     stats_tuple = graph_stats(user_id, 'All')
     return template('uporabnik.html', uporabnik=cur)
+
 
 ########################### Pari-dodajanje ###########################
 @get('/dodaj')
@@ -136,7 +147,7 @@ def dodaj_potrdi():
     else:
         cur.execute("INSERT INTO pair (symbol, name) VALUES (%s, %s)", (symbol, name))
         conn.commit()
-        gh.get_historic_data(['{}'.format(symbol)])
+        gh.get_historic_data(['{}'.format(symbol)], date.today())
         uvozi_Price_History('{}.csv'.format(symbol))
         pravilen_simbol = True
         sporocilo = "Simbol uspešno dodan"
@@ -161,8 +172,11 @@ def uvozi_Price_History(tabela):
 ######################## Assets - pregled, dodajanje ########################
 @get('/assets')
 def asset():
-    cur.execute("""SELECT symbol_id, amount FROM asset 
-    WHERE user_id = {} ORDER BY amount """.format(user_id))
+    cur.execute("""
+        SELECT symbol_id, amount 
+        FROM asset 
+        WHERE user_id = {} ORDER BY amount
+    """.format(user_id))
     return template('assets.html', naslov = "Asset", asset=cur)
 
 @post('/buy_sell')
@@ -293,6 +307,7 @@ def new_equity_graph():
     #print(seznam)
     #########################################################
     graph_html(user_id, seznam)
+    graph_cake(user_id, str(date.today()))
     TEMPLATES.clear()
     return redirect(url('/performance'))
 

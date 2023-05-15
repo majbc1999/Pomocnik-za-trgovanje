@@ -211,9 +211,9 @@ def save_graph(ime, fig):
 def graph_html(user_id, symbol_list, X_column='date', Y_column='value'):
     data = multy_asset(symbol_list, user_id)
     fig = go.Figure([go.Scatter(x=data[X_column], y=data[Y_column])])
-    imenik = os.path.dirname("Views/Graphs/assets.html")
-    if imenik:
-        os.makedirs(imenik, exist_ok=True)
+    #imenik = os.path.dirname("Views/Graphs/assets.html")
+    #if imenik:
+    #    os.makedirs(imenik, exist_ok=True)
     fig.write_html("Views/Graphs/assets.html")
 
 def graph_cake(user_id, date):
@@ -394,3 +394,4 @@ def analyze(user_id, strategy, duration: int, rr: int, target: int, tip):
     else:
         df = filter_by_row(df, 'type', [tip])
         return stats(df)
+print(len(price_data))
