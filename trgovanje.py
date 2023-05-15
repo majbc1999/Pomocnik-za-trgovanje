@@ -74,8 +74,12 @@ def cookie_required(f):
 def prijava_post():
     uporabnisko_ime = request.forms.getunicode("ime")
     geslo = request.forms.getunicode('geslo')
+    h = hashlib.blake2b()
+    h.update(geslo.encode(encoding='utf-8'))
+    hashed_pass = h.hexdigest()
+    print(hashed_pass)
     global uspesna_prijava, sporocilo, user_id, user_ime
-    row = cur.execute("SELECT DISTINCT id_user, name FROM app_user WHERE user_name = '{0}' and password = '{1}'".format(uporabnisko_ime, geslo))
+    row = cur.execute("SELECT DISTINCT id_user, name FROM app_user WHERE user_name = '{0}' and password = '{1}'".format(uporabnisko_ime, hashed_pass))
     row = cur.fetchone()
     if row != None:
         user_id = row[0]
@@ -107,8 +111,11 @@ def registracija_post():
         sporocilo = "Registracija ni možna, to uporabniško ime že obstaja."
         redirect('/registracija')
     else:
+        h = hashlib.blake2b()
+        h.update(geslo.encode(encoding='utf-8'))
+        hashed_pass = h.hexdigest()
         cur.execute("INSERT INTO app_user (name, surname, date_of_birth, user_name, password) VALUES (%s, %s, %s, %s, %s) RETURNING id_user",
-                (ime, priimek, datum_rojstva, uporabnisko_ime, geslo))
+                (ime, priimek, datum_rojstva, uporabnisko_ime, hashed_pass))
         conn.commit()
         sporocilo = ""
         redirect('/uporabnik')
