@@ -123,5 +123,8 @@ def update_price_history():
         pickle.dump(today, store)
 
     print('Saved last_run to:', STORE)
-
-    return df
+    try:
+        return df
+    except UnboundLocalError:
+        print('Vsa zgodovina je naložena!')
+        pass

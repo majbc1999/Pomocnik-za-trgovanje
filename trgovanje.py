@@ -1,4 +1,5 @@
-from bottleext import get, post, run, request, template, redirect, static_file, url
+from bottleext import get, post, run, request, template, redirect, static_file, url, response, template_user
+
 
 from bottle import TEMPLATES
 
@@ -20,7 +21,10 @@ from Podatki import get_history as gh
 from graphs import graph_html, graph_cake, graph_stats, analyze
 
 from datetime import date
+
 import hashlib
+
+from functools import wraps
 
 # privzete nastavitve
 SERVER_PORT = os.environ.get('BOTTLE_PORT', 8080)
@@ -51,6 +55,21 @@ uspesna_registracija = True
 def zacetna_stran():
     return template('home.html', pair=cur, naslov="Pomočnik za trgovanje")
 
+def cookie_required(f):
+    """
+    Dekorator, ki zahteva veljaven piškotek. Če piškotka ni, uporabnika preusmeri na stran za prijavo.
+    """
+    @wraps(f)
+    def decorated( *args, **kwargs): 
+           
+        cookie = request.get_cookie("uporabnik")
+        if cookie:
+            return f(*args, **kwargs)
+        
+        return template("home.html", napaka="Potrebna je prijava!")
+        
+    return decorated
+
 @post('/prijava')
 def prijava_post():
     uporabnisko_ime = request.forms.getunicode("ime")
@@ -62,6 +81,7 @@ def prijava_post():
         user_id = row[0]
         user_ime = row[1]
         sporocilo = ""
+        response.set_cookie("uporabnik", uporabnisko_ime)
         redirect(url('/uporabnik'))
     else:
         uspesna_prijava = False
@@ -95,6 +115,9 @@ def registracija_post():
 
 @get('/logout')
 def logout():
+
+    response.delete_cookie("uporabnik")
+
     redirect(url('/'))
 
 #############################################################################
@@ -104,6 +127,7 @@ def logout():
     ORDER BY app_user.name """
 
 @get('/uporabnik')
+@cookie_required
 def uporabnik():
     global user_id, user_assets, stats_tuple
     cur.execute("""SELECT symbol_id FROM asset WHERE user_id = {}""".format(user_id))
@@ -112,20 +136,25 @@ def uporabnik():
         user_assets.append(i[0])
     # Posodobi price_history
     df = gh.update_price_history()
-    for i in df.index:
-        cur.execute('''
-            INSERT INTO price_history (symbol_id, date, price)
-            VALUES (%s, %s, %s)''', (df['symbol_id'][i], df['date'][i], df['price'][i]))
-    conn.commit()
+    try:
+        for i in df.index:
+            cur.execute('''
+                INSERT INTO price_history (symbol_id, date, price)
+                VALUES (%s, %s, %s)''', (df['symbol_id'][i], df['date'][i], df['price'][i]))
+        conn.commit()
+    except AttributeError:
+        pass
     # Pripravi default graf za /performance.html
     graph_html(user_id, user_assets)
     # Pripravi default tuple za /stats.html
     stats_tuple = graph_stats(user_id, 'All')
+    print(request.get_cookie("uporabnik"))
     return template('uporabnik.html', uporabnik=cur)
 
 
 ########################### Pari-dodajanje ###########################
 @get('/dodaj')
+@cookie_required
 def dodaj():
     #ce je global sporocilo = ""ga ne izpise ker ga da skos na "", ce pa ni tega pa ne zgine
     global sporocilo
@@ -171,6 +200,7 @@ def uvozi_Price_History(tabela):
 #############################################################################
 ######################## Assets - pregled, dodajanje ########################
 @get('/assets')
+@cookie_required
 def asset():
     cur.execute("""
         SELECT symbol_id, amount 
@@ -234,6 +264,7 @@ def check_user(user_id):
 #############################################################################
 ######################## Trades - pregled, dodajanje ########################
 @get('/trades')
+@cookie_required
 def trades():
     cur.execute("""SELECT symbol_id, type, strategy, RR, target, date, duration, TP, PNL FROM trade
     WHERE user_id = {} ORDER BY symbol_id """.format(user_id))
@@ -289,9 +320,12 @@ def pnl_trade(user_id, simbol, pnl):
 
 #############################################################################
 @get('/performance')
+@cookie_required
 def performance():
     cur.execute("""SELECT symbol_id, amount FROM asset
     WHERE user_id = {}""".format(user_id))
+    graph_cake(user_id, str(date.today()))
+    TEMPLATES.clear()
     return template('performance.html', assets=cur, naslov = "Poglej napredek")
 
 
@@ -307,8 +341,6 @@ def new_equity_graph():
     #print(seznam)
     #########################################################
     graph_html(user_id, seznam)
-    graph_cake(user_id, str(date.today()))
-    TEMPLATES.clear()
     return redirect(url('/performance'))
 
 @get('/Graphs/assets.html')
@@ -320,6 +352,7 @@ def Graf_assets():
     return template('Graphs/cake.html')
 #############################################################################
 @get('/stats')
+@cookie_required
 def stats():
     cur.execute("""SELECT strategy FROM trade
     WHERE user_id = {} AND (type = 'L' OR type = 'S') GROUP BY strategy""".format(user_id))
@@ -348,6 +381,7 @@ def Graf_assets():
     return template('Graphs/pnl_graph.html')
 #############################################################################
 @get('/analysis')
+@cookie_required
 def stats():
     cur.execute("""SELECT strategy FROM trade
     WHERE user_id = {} AND (type = 'L' OR type = 'S') GROUP BY strategy""".format(user_id))
