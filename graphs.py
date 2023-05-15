@@ -190,6 +190,7 @@ def multy_asset(s_list, user_id):
     ''' Sprejme seznam simbolov, za katere združi podatke
         za vsak dan '''
     seznam = list()
+    df = pd.DataFrame([(0, 0), (0, 0)], columns=['date', 'value'])
     for simbol in s_list:
         if simbol == 'USD':
             s = usd_case(user_id)
@@ -197,9 +198,12 @@ def multy_asset(s_list, user_id):
             s = assets_on_day(user_id, simbol)
             s = s.drop(['symbol_id', 'price', 'amount'], axis=1)
         seznam.append(s)
-    df = pd.concat(seznam, copy=False)
-    df = df.groupby('date', as_index=False).sum()
-    df = df.sort_values(by='date').reset_index(drop=True)
+    try:
+        df = pd.concat(seznam, copy=False)
+        df = df.groupby('date', as_index=False).sum()
+        df = df.sort_values(by='date').reset_index(drop=True)
+    except ValueError:
+        pass
     return df
 
 def save_graph(ime, fig):
@@ -230,8 +234,11 @@ def graph_cake(user_id, date):
             df['symbol_id'] = ['USD'] * len(df.index)
         df = df.iloc[[-1]]
         zacasni.append(df)
-    df = pd.concat(zacasni, copy=False)
-    df = df.rename(columns={'symbol_id': 'simbol', 'value': 'vrednost'})
+    try:
+        df = pd.concat(zacasni, copy=False)
+        df = df.rename(columns={'symbol_id': 'simbol', 'value': 'vrednost'})
+    except ValueError:
+        df = pd.DataFrame([(0, 0), (0, 0)], columns=['vrednost', 'simbol'])
     fig = px.pie(df, values='vrednost', names='simbol',
                  color_discrete_sequence=px.colors.sequential.Purp_r)
     imenik = os.path.dirname("Views/Graphs/cake.html")
@@ -394,4 +401,4 @@ def analyze(user_id, strategy, duration: int, rr: int, target: int, tip):
     else:
         df = filter_by_row(df, 'type', [tip])
         return stats(df)
-print(len(price_data))
+print(pd.DataFrame([(0, 0), (0, 0)], columns=['date', 'values']))
