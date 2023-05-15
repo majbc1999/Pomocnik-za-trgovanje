@@ -4,9 +4,7 @@ from bottle import *
 
 
 class Route(bottle.Route):
-    """
-    Nadomestni razred za poti s privzetimi imeni.
-    """
+    ''' Nadomestni razred za poti s privzetimi imeni '''
     def __init__(self, app, rule, method, callback, name=None, plugins=None, skiplist=None, **config):
         if name is None:
             name = callback.__name__
@@ -15,24 +13,16 @@ class Route(bottle.Route):
             return callback(*largs, **kwargs)
         super().__init__(app, rule, method, decorator, name, plugins, skiplist, **config)
 
-
 def template(*largs, **kwargs):
-    """
-    Izpis predloge s podajanjem funkcije url.
-    """
-
-
+    ''' Izpis predloge s podajanjem funkcije url '''
     return bottle.template(*largs, **kwargs, url=bottle.url)
 
 def template_user(*largs, **kwargs):
-    """
-    Izpis predloge s podajanjem funkcije url in dodanim uporabnikom ter njegovo.
-    """
+    ''' Izpis predloge s podajanjem funkcije url in dodanim uporabnikom '''
     # Dodamo ime uporabnika, ki je prebran iz cookija direktno v vsak html, ki ga uporabimo kot template.
-    usr_cookie = request.get_cookie("uporabnik")
+    usr_cookie = request.get_cookie('uporabnik')
 
     return bottle.template(*largs, **kwargs, uporabnik=usr_cookie, url=bottle.url)
-
 
 
 bottle.Route = Route

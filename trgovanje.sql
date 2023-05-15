@@ -55,7 +55,7 @@ GRANT CONNECT ON DATABASE sem2023_saraz TO javnost;
 GRANT USAGE ON SCHEMA public TO javnost;
 GRANT SELECT ON ALL TABLES IN SCHEMA public TO javnost;
 
--- dodatne pravice za uporabo aplikacije
+-- Dodatne pravice za uporabo aplikacije
 
 GRANT USAGE ON ALL SEQUENCES IN SCHEMA public TO javnost;
 GRANT INSERT ON app_user TO javnost;

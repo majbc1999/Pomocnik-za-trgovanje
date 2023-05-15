@@ -1,17 +1,18 @@
-import csv
 import os
-import pandas as pd
-from yahoofinancials import YahooFinancials as yf
-from datetime import date
-import pickle
 import re
+import csv
+import pickle
+import pandas as pd
+from datetime import date
+from yahoofinancials import YahooFinancials as yf
+
 
 trading_pairs = ['BTC-USD', 'ETH-USD', 'LINK-USD', 'XMR-USD', 'AAPL', 'SPY', 'NVDA', 'TSLA', 'EURUSD=X', 'MATIC-USD', 'PAXG-USD']
-
 begin_date = '2022-01-01'
 
+
 def clean_dict(slovar):
-    '''Iz slovarja odstrani odvečne elemente.'''
+    ''' Iz slovarja odstrani odvečne elemente '''
     new_dict = dict()
     for key in slovar.keys():
         if key == 'formatted_date':
@@ -27,13 +28,13 @@ def shorten_list(seznam):
     return sez
 
 def pripravi_imenik(ime_datoteke):
-    '''Ce se ne obstaja, pripravi prazen imenik za dano datoteko.'''
+    ''' Če še ne obstaja, pripravi prazen imenik za dano datoteko '''
     imenik = os.path.dirname(ime_datoteke)
     if imenik:
         os.makedirs(imenik, exist_ok=True)
 
 def zapisi_csv(slovarji, imena_polj, ime_datoteke):
-    '''Iz seznama slovarjev ustvari CSV datoteko z glavo.'''
+    ''' Iz seznama slovarjev ustvari CSV datoteko z glavo '''
     pripravi_imenik(ime_datoteke)
     with open(ime_datoteke, 'w', encoding='utf-8') as csv_datoteka:
         writer = csv.DictWriter(csv_datoteka, fieldnames=imena_polj)
@@ -42,18 +43,18 @@ def zapisi_csv(slovarji, imena_polj, ime_datoteke):
             writer.writerow(slovar)
 
 def get_historic_data(seznam_parov, end_date):
-    '''Za vsak simbol ustvari csv dokument, ter
-    v njega shrani zadnjo dnevno ceno za določeno casovno obdobje'''
+    ''' Za vsak simbol ustvari csv dokument, ter
+        v njega shrani zadnjo dnevno ceno za določeno casovno obdobje '''
     for simbol in seznam_parov:
         zacasni_sez = yf(simbol).get_historical_price_data( begin_date, end_date, 'daily')
         seznam_cen = zacasni_sez[simbol]['prices']
         seznam_cen = shorten_list(seznam_cen)
         for i in seznam_cen:
-            i.update({"symbol_id": str(simbol)})
+            i.update({'symbol_id': str(simbol)})
         zapisi_csv(seznam_cen,  ['symbol_id', 'date', 'price'], 'Podatki/Posamezni_simboli/' + str(simbol) + '.csv')
 
 def get_symbols():
-    '''Vrne seznam csv datotek v mapi'''
+    ''' Vrne seznam csv datotek v mapi '''
     sez_datotek = list()
     for _, _, files in os.walk(r'Podatki/Posamezni_simboli'):
         for file in files:
@@ -62,7 +63,7 @@ def get_symbols():
     return sez_datotek
 
 def get_symbols_list():
-    '''Vrne seznam csv datotek v mapi'''
+    ''' Vrne seznam simbolov v mapi '''
     sez_datotek = list()
     for _, _, files in os.walk(r'Podatki/Posamezni_simboli'):
         for file in files:
@@ -72,7 +73,7 @@ def get_symbols_list():
     return sez_datotek
 
 def merge_csv(seznam, csv_name):
-    '''Zdruzi izbrane posamezne csv dokumente'''
+    ''' Združi izbrane posamezne csv dokumente '''
     zacasni = list()
     for item in seznam:
          zacasni.append(pd.read_csv(r'Podatki/Posamezni_simboli/' + str(item)))
@@ -80,7 +81,8 @@ def merge_csv(seznam, csv_name):
     df.to_csv('Podatki/'+ str(csv_name), index=False)
 
 def preveri_ustreznost(simbol):
-    '''Preveri če simbol obstaja, če ne obstaja vrne 0, sicer pa 1'''
+    ''' Preveri če simbol obstaja, če ne obstaja vrne 0, sicer pa 1 '''
+    # Če bi dodali novejše simbole, je treba funkcijo posodobit
     data = yf(str(simbol)).get_historical_price_data('2023-05-03', '2023-05-04', 'daily')
     if isinstance(data[simbol], type(None)):
         return 0
@@ -92,13 +94,11 @@ def preveri_ustreznost(simbol):
 
 def update_price_history():
     ''' Vzeto iz
-    https://stackoverflow.com/questions/74813518/how-to-save-a-variable-and-read-it-on-the-next-run
-    '''
+        https://stackoverflow.com/questions/74813518/how-to-save-a-variable-and-read-it-on-the-next-run '''
     STORE = os.path.join(os.path.dirname(__file__), 'last_run.pickle')
 
     today = date.today()
-
-    print("Today is", today)
+    print('Today is', today)
 
     # Load the stored date from last run:
     if os.path.isfile(STORE):
@@ -109,7 +109,7 @@ def update_price_history():
         print('No STORE detected. Assuming this is the first run...')
         last_run = today
 
-    print("Last run was", last_run)
+    print('Last run was', last_run)
     if last_run < today:
         old = pd.read_csv(r'Podatki/price_history.csv')
         get_historic_data(get_symbols_list(), str(today))
