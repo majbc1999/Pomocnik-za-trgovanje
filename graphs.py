@@ -281,7 +281,7 @@ def win_rate(df):
             'TPs': [2, 1, 0, 2, 1, 0],
             'count': [rate_long[2], rate_long[1], rate_long[0], rate_short[2], rate_short[1], rate_short[0]]}
     data_2 = pd.DataFrame(data=d_2)
-    fig = px.bar(data_2, x='count', y='type', color='TPs')
+    fig = px.bar(data_2, x='count', y='type', color='TPs',  color_continuous_scale= ['darksalmon','darkseagreen', 'olivedrab'])
     fig.write_html("Views/Graphs/win_by_type.html")
 
 def index_error_fix(rate_long, rate_short):
@@ -401,7 +401,7 @@ def stats(df):
     d = {'wr': [w_rate, 1 - w_rate], 
          'value': ['Win', 'Loss']}
     data = pd.DataFrame(data=d)
-    fig = px.pie(data, values='wr', names='value')
+    fig = px.pie(data, values='wr', names='value', color='value', color_discrete_map={'Win':'darkseagreen', 'Loss':'darksalmon'})
     fig.write_html('Views/Graphs/win_rate_anl.html')
     return (w_rate, avg_w, avg_l, avg_rr, avg_tar, avg_dur)
 

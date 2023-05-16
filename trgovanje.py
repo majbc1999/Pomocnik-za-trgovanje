@@ -423,7 +423,7 @@ def pnl_trade(user_id, simbol, pnl):
 
 #############################################################
 
-stats_tuple = tuple()
+stats_tuple = (0, 0, 0, 0, 0, 0, 0)
 
 @get('/stats')
 @cookie_required

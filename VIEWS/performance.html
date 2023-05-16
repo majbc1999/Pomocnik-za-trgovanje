@@ -5,23 +5,31 @@
   <div>
     <p class="besedilo2">Izberi naložbe za prikaz na grafu. Par izbereš tako,
       da njegov simbol vpišeš v spodnje polje. Lahko izbereš več simbolov hkrati,
-      tako da jih ločiš s presledkom. Prikazani so vsi ki jih imaš na voljo.</p>
-      % for (symbol_id, amount) in assets:
-      <span>{{symbol_id}}</span>
-      % end
-    <form action="/new_equity_graph" method="post">
-      <span>Simboli:</span> <input class="text" name="simboli" type="text"
-      required placeholder="BTC-USD SPY USD"/>
-      <input class="gumb" type="submit" value="Submit">
-    </form>
+      tako da jih ločiš s presledkom. Spodaj so prikazani vsi ki jih imaš na voljo. </p>
+    <div class="clearfix">
+      <div class="box" style="height: 567px; padding-top:15%;">
+        % for (symbol_id, amount) in assets:
+        <span><li class="li">{{symbol_id}}</li></span>
+        % end 
+        <br>
+        <div style="text-align: center;">
+          <form action="/new_equity_graph" method="post">
+            <span>Vpiši simbole:</span> <br>
+            <input class="text" name="simboli" type="text" required placeholder="BTC-USD SPY USD"/> <br>
+            <input class="gumb" type="submit" value="Prikaži">
+          </form>
+        </div>
+      </div>
+      <div class="box">
+        <p class="besedilo2">Celotni portfolio</p>
+        <iframe id="igraph" scrolling="no" style="border:none;" 
+        seamless="seamless" src="Graphs/cake.html"
+        height="400" width="100%"></iframe>
+      </div>
+    </div>
   </div>
     <br>
   <iframe id="igraph" scrolling="no" style="border:none;" 
   seamless="seamless" src="Graphs/assets.html"
-  height="500" width="100%"></iframe>
-    <br>
-  <p class="besedilo2">Celotni portfolio</p>
-  <iframe id="igraph" scrolling="no" style="border:none;" 
-  seamless="seamless" src="Graphs/cake.html"
   height="500" width="100%"></iframe>
 </div>
