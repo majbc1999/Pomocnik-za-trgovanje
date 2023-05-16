@@ -157,11 +157,12 @@ def uporabnik():
             cur.execute('''
                 INSERT INTO price_history (symbol_id, date, price)
                 VALUES (%s, %s, %s)
-            ''', (df['symbol_id'][i], df['date'][i], df['price'][i]))
+                ON CONFLICT (symbol_id, date)
+                DO UPDATE SET price = {}
+            '''.format(df['price'][i]), (df['symbol_id'][i], df['date'][i], df['price'][i]))
         conn.commit()
     except AttributeError:
         pass
-
     # Pripravi default graf za /performance.html
     graph_html(user_id, user_assets)
 

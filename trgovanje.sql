@@ -62,5 +62,6 @@ GRANT INSERT ON app_user TO javnost;
 GRANT INSERT ON trade TO javnost;
 GRANT INSERT ON pair TO javnost;
 GRANT INSERT ON price_history TO javnost;
+GRANT UPDATE ON price_history TO javnost;
 GRANT INSERT ON asset TO javnost;
 GRANT UPDATE ON asset TO javnost;
