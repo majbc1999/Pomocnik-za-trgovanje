@@ -2,7 +2,6 @@ import os
 import re
 import pandas as pd
 import plotly.express as px
-import plotly.graph_objects as go
 
 from auth_public import *
 
@@ -218,7 +217,7 @@ def multy_asset(s_list, user_id):
 def graph_html(user_id, symbol_list, X_column='date', Y_column='value'):
     ''' Ustvari in shrani graf kot assets.html '''
     data = multy_asset(symbol_list, user_id)
-    fig = go.Figure([go.Scatter(x=data[X_column], y=data[Y_column])])
+    fig = px.line(data, x='date', y='value')
     fig.write_html("Views/Graphs/assets.html")
 
 def graph_cake(user_id, date):
@@ -250,7 +249,7 @@ def graph_cake(user_id, date):
                  color_discrete_sequence=px.colors.sequential.Purp_r)
     fig.write_html('Views/Graphs/cake.html')
 
-
+graph_html(1, ['BTC-USD', 'USD'])
 ##################################################
 ############         STATISTIKA       ############
 ##################################################
@@ -281,7 +280,8 @@ def win_rate(df):
             'TPs': [2, 1, 0, 2, 1, 0],
             'count': [rate_long[2], rate_long[1], rate_long[0], rate_short[2], rate_short[1], rate_short[0]]}
     data_2 = pd.DataFrame(data=d_2)
-    fig = px.bar(data_2, x='count', y='type', color='TPs',  color_continuous_scale= ['darksalmon','darkseagreen', 'olivedrab'])
+    fig = px.bar(data_2, x='count', y='type', color='TPs',
+                 color_continuous_scale= ['darksalmon','darkseagreen', 'olivedrab'])
     fig.write_html("Views/Graphs/win_by_type.html")
 
 def index_error_fix(rate_long, rate_short):
@@ -401,7 +401,8 @@ def stats(df):
     d = {'wr': [w_rate, 1 - w_rate], 
          'value': ['Win', 'Loss']}
     data = pd.DataFrame(data=d)
-    fig = px.pie(data, values='wr', names='value', color='value', color_discrete_map={'Win':'darkseagreen', 'Loss':'darksalmon'})
+    fig = px.pie(data, values='wr', names='value', color='value',
+                 color_discrete_map={'Win':'darkseagreen', 'Loss':'darksalmon'})
     fig.write_html('Views/Graphs/win_rate_anl.html')
     return (w_rate, avg_w, avg_l, avg_rr, avg_tar, avg_dur)
 

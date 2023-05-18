@@ -32,6 +32,8 @@ user_id = 0
 user_assets  = []
 uspesna_prijava = True  
 pravilen_simbol = True
+first_load_assets = True
+first_load_stats = True
 uspesna_registracija = True
 
 
@@ -140,7 +142,7 @@ def registracija_post():
 @get('/uporabnik')
 @cookie_required
 def uporabnik():
-    global user_id, user_assets, stats_tuple
+    global user_id, user_assets
     cur.execute('''
         SELECT symbol_id 
         FROM asset 
@@ -163,12 +165,6 @@ def uporabnik():
         conn.commit()
     except AttributeError:
         pass
-    # Pripravi default graf za /performance.html
-    graph_html(user_id, user_assets)
-
-    # Pripravi default tuple za /stats.html
-    stats_tuple = graph_stats(user_id, 'All')
-
     return template('uporabnik.html', uporabnik=cur)
 
 
@@ -317,14 +313,20 @@ def trade_result(trade):
 @get('/performance')
 @cookie_required
 def performance():
+    global first_load_assets, first_load_stats
     cur.execute('''
         SELECT symbol_id, amount 
         FROM asset
         WHERE user_id = {}
     '''.format(user_id))
-    
-    # Posodobi graf cake.html
-    graph_cake(user_id, str(date.today()))
+    # Naloži grafe, če smo program zagnali na novo
+    if first_load_assets == True:
+       # Pripravi default graf za /performance.html
+        graph_html(user_id, user_assets) 
+        # Posodobi graf cake.html
+        graph_cake(user_id, str(date.today()))
+        first_load_assets = False
+        first_load_stats = True
     # Počisti cache, da se naloži nov graf 
     TEMPLATES.clear()
     return template('performance.html', assets=cur, naslov='Poglej napredek')
@@ -428,12 +430,19 @@ stats_tuple = (0, 0, 0, 0, 0, 0, 0)
 @get('/stats')
 @cookie_required
 def stats():
+    global stats_tuple, first_load_stats, first_load_assets
     cur.execute('''
         SELECT strategy FROM trade
         WHERE user_id = {} 
         AND (type = 'L' OR type = 'S') 
         GROUP BY strategy
     '''.format(user_id))
+    if first_load_stats == True:
+        # Pripravi default tuple za /stats.html
+        stats_tuple = graph_stats(user_id, 'All')
+        first_load_stats = False
+        first_load_assets = True
+    TEMPLATES.clear()
     return template('stats.html', strategy=cur, naslov='Statistika')
 
 @post('/strategy')
