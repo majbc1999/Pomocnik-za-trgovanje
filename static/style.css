@@ -18,6 +18,19 @@
     border: 1px solid #669999;
 }
 
+.box {
+    float: left;
+    width: 50%;
+    padding: 50px;
+    box-sizing: border-box;
+}
+
+.clearfix::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
 .footer {
    position: fixed;
    left: 0;
@@ -67,7 +80,7 @@
 }
 
 .li {
-    list-style-type: square;
+    list-style-type: none;
 }
 
 .link {
@@ -123,6 +136,16 @@
     background-color: #f1f1f1;
 }
 
+.select-analiza {
+    width: 70%;
+    padding: 16px 20px;
+    border: none;
+    border-radius: 4px;
+    height: 20px;
+    background-color: #f1f1f1;
+}
+
+
 .sredina {
     display: inline-block center;
     text-align: center;
@@ -171,16 +194,10 @@
     color: green;
 }
 
-
-.clearfix::after {
-    content: "";
-    clear: both;
-    display: table;
-}
-
-.box {
-    float: left;
-    width: 50%;
-    padding: 50px;
-    box-sizing: border-box;
-}
+.range {
+    margin-right: 1px;
+    width: 150px;
+    height: 7px;
+    border-radius: 5px;
+    background-size: 70% 100%;
+  }

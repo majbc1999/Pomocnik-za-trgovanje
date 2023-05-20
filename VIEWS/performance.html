@@ -8,11 +8,11 @@
       tako da jih ločiš s presledkom. Spodaj so prikazani vsi ki jih imaš na voljo. </p>
     <div class="clearfix">
       <div class="box" style="height: 567px; padding-top:15%;">
-        % for (symbol_id, amount) in assets:
-        <span><li class="li">{{symbol_id}}</li></span>
-        % end 
-        <br>
         <div style="text-align: center;">
+        % for (symbol_id, amount) in assets:
+          <span><li class="li">{{symbol_id}}</li></span>
+          % end 
+          <br>
           <form action="/new_equity_graph" method="post">
             <span>Vpiši simbole:</span> <br>
             <input class="text" name="simboli" type="text" required placeholder="BTC-USD SPY USD"/> <br>

@@ -265,7 +265,7 @@ def win_rate(df):
     d1 = {  'wr': [1 - l, l],
             'value': ['Win', 'Loss']}
     data = pd.DataFrame(data=d1)
-    fig = px.pie(data, values='wr', names='value')
+    fig = px.pie(data, values='wr', names='value', color='value', color_discrete_map={'Win':'darkseagreen', 'Loss':'darksalmon'})
     fig.write_html("Views/Graphs/win_rate.html")
 
     ''' Pripravi win rate glede na tip L/S in označi št. dobljenih TPjev '''

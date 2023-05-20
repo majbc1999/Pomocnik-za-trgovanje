@@ -2,28 +2,31 @@
 % from trgovanje import user_id, anl_stats
 
 <div class="obroba-graf">
-  <div>
-    <p class="besedilo2">Tu lahko analiziraš in izboljšuješ svoje strategije.
-      Za analizo potrebuješ vsaj 20 tradov! S prilagajanjem parametrov </p>
-    <div>
+  <p class="besedilo2">Tu lahko analiziraš in izboljšuješ svoje strategije.
+    Za analizo potrebuješ vsaj 20 tradov!</p>
+  <div class="clearfix">
+    <div class="box">
       <form action="/analyze" method="post">
-        <label for="strategy">Izberi strategijo:</label>
-          <select class="select" name="strategy">
-              % for strat in strategy:
-              <option value="{{strat[0]}}">{{strat[0]}}</option>
-              % end
+        <label for="strategy">Strategija:</label>
+          <select class="select-analiza" name="strategy">
+            % for strat in strategy:
+            <option value="{{strat[0]}}">{{strat[0]}}</option>
+            % end
           </select><br>
-        <label for="duration">Čas trajanja (1, 100):</label>
-        <input type="range" name="duration" min="1" max="100">
+        <label for="duration">Čas trajanja:</label>
+        <input class="range" type="range" name="duration" min="1" max="100" id="duration" value="50" oninput="durationnumber.value=value">
+        <input type="number" id="durationnumber" min="1" max="100" value="50" oninput="duration.value=value">
+        <br>
+        <label for="rr">Razmerje tveganja:</label>
+        <input class="range" type="range" name="rr" min="1" max="15" id="rr" value="7" oninput="rrnumber.value=value">
+        <input type="number" id="rrnumber" min="1" max="15" value="7" oninput="rr.value=value">
+        <br>
+        <label for="target">Tarča:</label>
+        <input class="range" type="range" name="target" min="1" max="10" id="target" value="5" oninput="targetnumber.value=value">
+        <input type="number" id="targetnumber" min="1" max="10" value="5" oninput="target.value=value">
           <br>
-        <label for="rr">Razmerje tveganja (1, 15):</label>
-        <input type="range" name="rr" min="1" max="15">
-          <br>
-        <label for="target">Tarča (1, 10):</label>
-        <input type="range" name="target" min="1" max="100">
-          <br>
-        <label for="tip">Izberi tip:</label>
-        <select class="select" name="tip">
+        <label for="tip">Tip:</label>
+        <select class="select-analiza" name="tip">
           <option value="Oba">Oba</option>  
           <option value="L">Long</option>
           <option value="S">Short</option>
@@ -31,7 +34,7 @@
         <input class="gumb" type="submit" value="Potrdi">
       </form>
     </div>
-    <div>
+    <div class="box" style="text-align: center;">
       <p>Uspešnost: {{anl_stats[0]}}%</p>
       <p>Povprečni zaslužek: {{anl_stats[1]}}$</p>
       <p>Povprečna izguba: {{anl_stats[2]}}$</p>
@@ -39,7 +42,8 @@
       <p>Povprečna tarča: {{anl_stats[4]}}%</p>
       <p>Povprečno trajanje: {{anl_stats[5]}}h</p><br>
     </div>
-  </div><br>
+  </div>
+  <br>
   <iframe id="igraph" scrolling="no" style="border:none;" 
   seamless="seamless" src="Graphs/win_rate_anl.html"
   height="500" width="100%"></iframe>
