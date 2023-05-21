@@ -35,6 +35,8 @@ pravilen_simbol = True
 first_load_assets = True
 first_load_stats = True
 uspesna_registracija = True
+anl_stats = (0, 0, 0, 0, 0, 0)
+stats_tuple = (0, 0, 0, 0, 0, 0, 0)
 
 
 @get('/static/<filename:path>')
@@ -336,12 +338,15 @@ def new_equity_graph():
     simboli_graf = request.forms.simboli
     seznam = re.split(r' ', simboli_graf)
     #########################################################
-    #Tudi to ne dela zaradi - : if request.forms.BTC-USD == 1:
-    
     # Ne obarva item, ne zazna ga kot iterable ampak string?
+    #x
+    #or item in user_assets:
+    #    x = request.forms.item
+    #
     #for item in user_assets:
     #    seznam.append(exec('request.forms.{}'.format(item)))
     #print(seznam)
+    # Tudi to ne dela zaradi - : if request.forms.BTC-USD == 1:
     #########################################################
     graph_html(user_id, seznam)
     return redirect('/performance')
@@ -425,8 +430,6 @@ def pnl_trade(user_id, simbol, pnl):
 
 #############################################################
 
-stats_tuple = (0, 0, 0, 0, 0, 0, 0)
-
 @get('/stats')
 @cookie_required
 def stats():
@@ -468,8 +471,6 @@ def Graf_assets():
     return template('Graphs/pnl_graph.html')
 
 #############################################################
-
-anl_stats = (0, 0, 0, 0, 0, 0)
 
 @get('/analysis')
 @cookie_required
