@@ -15,6 +15,13 @@ from auth_public import *
 from Podatki import get_history as gh
 from graphs import graph_html, graph_cake, graph_stats, analyze
 
+from Database import Repo
+from modeli import *
+from Services import AuthService
+
+repo = Repo()
+auth = AuthService(repo)
+
 
 # Privzete nastavitve
 SERVER_PORT = os.environ.get('BOTTLE_PORT', 8080)
@@ -70,20 +77,14 @@ def prijava_post():
     uporabnisko_ime = request.forms.getunicode('ime')
     geslo = request.forms.getunicode('geslo')
 
-    # Zakriptira geslo in shrani njegov hash
-    h = hashlib.blake2b()
-    h.update(geslo.encode(encoding='utf-8'))
-    hashed_pass = h.hexdigest()
+    if not auth.obstaja_uporabnik(uporabnisko_ime):
+        return template("home.html", napaka="Uporabnik s tem imenom ne obstaja")
 
     # Preveri ali sta uporabnisko_ime in geslo pravilna
-    row = cur.execute('''
-            SELECT DISTINCT id_user, name FROM app_user 
-            WHERE user_name = '{0}' and password = '{1}'
-        '''.format(uporabnisko_ime, hashed_pass))
-    row = cur.fetchone()
-    if row != None:
-        user_id = row[0]
-        user_ime = row[1]
+    prijava = auth.prijavi_uporabnika(uporabnisko_ime, geslo)
+    if prijava[0] != 0:
+        user_id = prijava[0]
+        user_ime = prijava[1]
         sporocilo = ''
         # Nastavi piškotek
         response.set_cookie('uporabnik', uporabnisko_ime)
@@ -91,7 +92,9 @@ def prijava_post():
     else:
         uspesna_prijava = False
         sporocilo = 'Napačno uporabinško ime ali geslo!'
-        redirect('/')
+        return template("prijava.html", napaka="Neuspešna prijava. Napačno geslo ali uporabniško ime.")
+
+
 
 @get('/logout')
 def logout():
@@ -115,29 +118,17 @@ def registracija_post():
     geslo = request.forms.password
 
     # Preveri da uporabnisko_ime še ni zasedeno
-    row = cur.execute('''
-            SELECT name FROM app_user 
-            WHERE user_name = '{}'
-        '''.format(uporabnisko_ime))
-    row = cur.fetchone()
-    if row != None:
+    if not auth.obstaja_uporabnik(uporabnisko_ime):
         uspesna_registracija = False
         sporocilo = 'Registracija ni možna, to uporabniško ime že obstaja.'
         redirect('/registracija')
+        return template("home.html", napaka=f'Uporabniško ime {uporabnisko_ime} že obstaja')
     else:
-        h = hashlib.blake2b()
-        h.update(geslo.encode(encoding='utf-8'))
-        hashed_pass = h.hexdigest()
-        cur.execute('''
-            INSERT INTO app_user (name, surname, date_of_birth, user_name, password)
-            VALUES (%s, %s, %s, %s, %s) 
-            RETURNING id_user 
-        ''', (ime, priimek, datum_rojstva, uporabnisko_ime, hashed_pass))
-        conn.commit()
-
+        auth.dodaj_uporabnika(ime, priimek, datum_rojstva, uporabnisko_ime, geslo)
         sporocilo = ''
         response.set_cookie('uporabnik', uporabnisko_ime)
         redirect('/uporabnik')
+    
 
 #############################################################
 

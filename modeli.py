@@ -1,38 +1,38 @@
 from dataclasses import dataclass, field
-
+from datetime import date
 
 @dataclass
-class Uporabnik:
+class app_user:
     id_user: int = field(default=0)
     name: str = field(default="")
     surname: str = field(default="")
-    date_of_birth: str = field(default="")
-    username: str = field(default="")
-    password_hash: str = field(default="")
+    date_of_birth: date = field(default=(date(2000, 1, 1)))
+    user_name: str = field(default="")
+    password: str = field(default="")
 
 
 @dataclass
-class Pair:
+class pair:
     symbol_id: str = field(default="")
     name: str = field(default="")
 
 
 @dataclass
-class Price:
+class price_history:
     symbol_id: str = field(default="")
     date: str = field(default="")
     price: float = field(default=0)
 
 
 @dataclass
-class Asset:
+class asset:
     user_id: int = field(default=0)
     symbol_id: str = field(default="")
     amount: float = field(default=0)
 
 
 @dataclass
-class Trade:
+class trade:
     id_trade: int = field(default=0)
     user_id: int = field(default=0)
     symbold_id: str = field(default="")
