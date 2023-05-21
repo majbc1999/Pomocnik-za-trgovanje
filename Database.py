@@ -60,7 +60,6 @@ class Repo:
             raise Exception(f'Vrstica z id-jem {id} ne obstaja v {tbl_name}');
     
         return d
-        return typ.from_dict(d)
 
 ########################################################################################################
 ########################################################################################################
@@ -290,7 +289,7 @@ class Repo:
         self.cur.execute(sql_cmd)
         self.conn.commit()
 
-    '''
+    
     def izdelki(self) -> List[IzdelekDto]: 
         izdelki = self.cur.execute(
             """
@@ -452,9 +451,111 @@ class Repo:
         cena_izdelka.id = self.cur.fetchone()[0]
         return cena_izdelka
     
-    '''
+    ##################################################################################################
+    ##################################################################################################
+
+    def dobi_asset_by_user(self, typ: Type[T], id: int | str, id_col = "user_id") -> List[str]:
+        """
+        Generična metoda, ki vrne seznam dataclass objektov pridobljen iz baze na podlagi njegovega idja.
+        """
+        tbl_name = typ.__name__
+        sql_cmd = f'SELECT * FROM {tbl_name} WHERE {id_col} = %s';
+        self.cur.execute(sql_cmd, (id,))
+
+        d = self.cur.fetchall()
+
+        if d is None:
+            raise Exception(f'Vrstica z id-jem {id} ne obstaja v {tbl_name}');
+    
+        seznam = list()
+        for i in d:
+            seznam.append(i[1])
+
+        return seznam
     
 
+
+    def dobi_asset_amount_by_user(self, user_id: int) -> List[List]:
+        self.cur.execute('''
+            SELECT symbol_id, amount
+            FROM asset
+            WHERE user_id = %s
+        ''', (user_id,))
+        return self.cur.fetchall()
+    
+
+
+
+    def dobi_strategije(self, user_id: int) -> List[str]:
+        self.cur.execute('''
+            SELECT strategy 
+            FROM trade
+            WHERE user_id = {} 
+            AND (type = 'L' OR type = 'S') 
+            GROUP BY strategy
+        '''.format(user_id))
+        zacasni = self.cur.fetchall()
+        seznam = list()
+        for item in zacasni:
+            seznam.append(item[0])
+        return seznam
+
+
+
+    def sign(self, amount: float | str, tip: str) -> float:
+        amount = float(amount)
+    # Določi predznak
+        if tip == 'Sell':
+            return -abs(amount)
+        return abs(amount)
+
+
+
+
+
+    def trade_result(self, user_id: int, simbol: str, pnl: float | str):
+        self.cur.execute('''
+            SELECT amount 
+            FROM asset
+            WHERE user_id = '{0}' 
+            AND symbol_id = '{1}'
+        '''.format(user_id, simbol))
+        row = self.cur.fetchone()
+        if row is None:
+            self.cur.execute('''
+                INSERT INTO asset (user_id, symbol_id, amount) 
+                VALUES (%s, %s, %s)
+            ''', (user_id, simbol, pnl))
+        else:
+            amount = round(pnl + float(row[0]), 2)
+            self.cur.execute('''
+                UPDATE  asset 
+                SET amount = {0} 
+                WHERE user_id = '{1}' 
+                AND symbol_id = '{2}'
+            '''.format(amount, user_id, simbol))
+        self.conn.commit()
+
+
+
+
+
+Trejd = trade(
+    user_id = 2,
+    symbol_id  = 'SPY',
+    type = 'L',
+    date  = date(2023, 4, 19),
+    duration = '3h',
+    #tp  = 2,
+    pnl = '20$'
+)
+
+
+#Repo().dodaj_gen(Trejd, serial_col='id_trade')
+
+
+#print(Repo().dobi_gen_id(pair, 'BT-USD', id_col='symbol'))
+# print(Repo().dobi_asset_amount_by_user(1))
 #print(Repo().dobi_gen_id(app_user, 'sara.zuzek', id_col = "user_name")['password'])
 
-
+#print(Repo().dobi_gen_list(asset, 1, id_col = "user_id"))

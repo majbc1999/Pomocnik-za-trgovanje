@@ -9,8 +9,8 @@
     <div class="clearfix">
       <div class="box" style="height: 567px; padding-top:15%;">
         <div style="text-align: center;">
-        % for (symbol_id, amount) in assets:
-          <span><li class="li">{{symbol_id}}</li></span>
+        % for item in assets:
+          <span><li class="li">{{item}}</li></span>
           % end 
           <br>
           <form action="/new_equity_graph" method="post">

@@ -9,8 +9,8 @@
       <form action="/analyze" method="post">
         <label for="strategy">Strategija:</label>
           <select class="select-analiza" name="strategy">
-            % for strat in strategy:
-            <option value="{{strat[0]}}">{{strat[0]}}</option>
+            % for strategija in strategy:
+            <option value="{{strategija}}">{{strategija}}</option>
             % end
           </select><br>
         <label for="duration">Čas trajanja:</label>

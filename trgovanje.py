@@ -1,7 +1,6 @@
 import os
 import re
 import csv
-import hashlib
 
 from datetime import date
 from functools import wraps
@@ -136,16 +135,9 @@ def registracija_post():
 @cookie_required
 def uporabnik():
     global user_id, user_assets
-    cur.execute('''
-        SELECT symbol_id 
-        FROM asset 
-        WHERE user_id = {}
-    '''.format(user_id))
-    seznam = cur.fetchall()
-    for i in seznam:
-        user_assets.append(i[0])
+    user_assets = repo.dobi_asset_by_user(asset, user_id)
     
-    # V bazi posodobi price_history - če ne dela dodaj: importat pandas
+    # V bazi posodobi price_history - če ne dela dodaj: import pandas
     df = gh.update_price_history()
     try:
         for i in df.index:
@@ -222,13 +214,9 @@ def uvozi_Price_History(tabela):
 
 @get('/assets')
 @cookie_required
-def asset():
-    cur.execute('''
-        SELECT symbol_id, amount 
-        FROM asset 
-        WHERE user_id = {} ORDER BY amount
-    '''.format(user_id))
-    return template('assets.html', asset=cur, naslov='Asset')
+def assets():
+    seznam_asset = repo.dobi_asset_amount_by_user(user_id)
+    return template('assets.html', asset=seznam_asset, naslov='Asset')
 
 @post('/buy_sell')
 def buy_sell():
@@ -238,68 +226,28 @@ def buy_sell():
     symbol = request.forms.symbol
     datum = request.forms.datum
     tip = request.forms.tip
-    amount = request.forms.amount
-    amount = float(amount)
-    amount = sign(amount, tip)
+    amount = float(repo.sign(request.forms.amount, tip))
 
-    # Preveri da smo vnesli pravilen simbol
-    row = cur.execute('''
-            SELECT symbol 
-            FROM pair 
-            WHERE symbol = '{}' 
-        '''.format(symbol))
-    row = cur.fetchone()
-    if row != None:
-        # Zabeleži trade v tabelo trades
-        cur.execute('''
-            INSERT INTO trade (user_id, symbol_id, type, date, pnl) 
-            VALUES (%s, %s, %s, %s, %s) 
-            RETURNING id_trade
-        ''', (user_id, symbol, tip, datum, amount))
-        conn.commit()
-        # Vnese spremembo v tabelo assets
-        trade = [user_id, symbol, float(amount)]
-        trade_result(trade)
-        sporocilo = 'Transakcija potrjena'
-    else:
+    try:
+        # Preveri da smo vnesli pravilen simbol
+        repo.dobi_gen_id(pair, symbol, id_col="symbol")
+    except:
         sporocilo = 'Napačen simbol!'
+        redirect('/assets')
+
+    # Zabeleži trade v tabelo trades
+    trejd = trade(  user_id = user_id,
+                    symbol_id = symbol, 
+                    type = tip,
+                    date = datum, 
+                    pnl = amount
+                )
+    repo.dodaj_gen(trejd, serial_col='id_trade')
+
+    # Vnese spremembo v tabelo assets
+    repo.trade_result(user_id, symbol, amount)
+    sporocilo = 'Transakcija potrjena'
     redirect('/assets')
-
-def sign(amount: float, bs):
-    # Določi predznak
-    if bs == 'Buy':
-        return abs(amount)
-    elif bs == 'Sell':
-         return -abs(amount)
-    else:
-        return print(bs)
-
-def trade_result(trade):
-    uid = trade[0]
-    simbol = trade[1]
-    pnl = trade[2]
-
-    row = cur.execute('''
-            SELECT amount 
-            FROM asset
-            WHERE user_id = '{0}' 
-            AND symbol_id = '{1}'
-        '''.format(uid, simbol))
-    row = cur.fetchone()
-    if row == None:
-        cur.execute('''
-            INSERT INTO asset (user_id, symbol_id, amount) 
-            VALUES (%s, %s, %s)
-        ''', (uid, simbol, pnl))
-    else:
-        amount = round(pnl + float(row[0]), 2)
-        cur.execute('''
-            UPDATE  asset 
-            SET amount = {0} 
-            WHERE user_id = '{1}' 
-            AND symbol_id = '{2}'
-        '''.format(amount, uid, simbol))
-    conn.commit()
 
 #############################################################
 
@@ -307,11 +255,6 @@ def trade_result(trade):
 @cookie_required
 def performance():
     global first_load_assets, first_load_stats
-    cur.execute('''
-        SELECT symbol_id, amount 
-        FROM asset
-        WHERE user_id = {}
-    '''.format(user_id))
     # Naloži grafe, če smo program zagnali na novo
     if first_load_assets == True:
        # Pripravi default graf za /performance.html
@@ -322,23 +265,12 @@ def performance():
         first_load_stats = True
     # Počisti cache, da se naloži nov graf 
     TEMPLATES.clear()
-    return template('performance.html', assets=cur, naslov='Poglej napredek')
+    return template('performance.html', assets=user_assets, naslov='Poglej napredek')
 
 @post('/new_equity_graph')
 def new_equity_graph():
     simboli_graf = request.forms.simboli
     seznam = re.split(r' ', simboli_graf)
-    #########################################################
-    # Ne obarva item, ne zazna ga kot iterable ampak string?
-    #x
-    #or item in user_assets:
-    #    x = request.forms.item
-    #
-    #for item in user_assets:
-    #    seznam.append(exec('request.forms.{}'.format(item)))
-    #print(seznam)
-    # Tudi to ne dela zaradi - : if request.forms.BTC-USD == 1:
-    #########################################################
     graph_html(user_id, seznam)
     return redirect('/performance')
 
@@ -425,19 +357,15 @@ def pnl_trade(user_id, simbol, pnl):
 @cookie_required
 def stats():
     global stats_tuple, first_load_stats, first_load_assets
-    cur.execute('''
-        SELECT strategy FROM trade
-        WHERE user_id = {} 
-        AND (type = 'L' OR type = 'S') 
-        GROUP BY strategy
-    '''.format(user_id))
+    seznam = repo.dobi_strategije(user_id)
+
     if first_load_stats == True:
         # Pripravi default tuple za /stats.html
         stats_tuple = graph_stats(user_id, 'All')
         first_load_stats = False
         first_load_assets = True
     TEMPLATES.clear()
-    return template('stats.html', strategy=cur, naslov='Statistika')
+    return template('stats.html', strategy=seznam, naslov='Statistika')
 
 @post('/strategy')
 def strategy():
@@ -466,14 +394,8 @@ def Graf_assets():
 @get('/analysis')
 @cookie_required
 def stats():
-    cur.execute('''
-        SELECT strategy 
-        FROM trade
-        WHERE user_id = {} 
-        AND (type = 'L' OR type = 'S') 
-        GROUP BY strategy
-    '''.format(user_id))
-    return template('analysis.html', strategy=cur, naslov='Analiza')
+    seznam = repo.dobi_strategije(user_id)
+    return template('analysis.html', strategy=seznam, naslov='Analiza')
 
 @post('/analyze')
 def analyze_f():
@@ -488,6 +410,7 @@ def analyze_f():
     anl_stats = analyze(user_id, strat, duration, rr, target, tip)
     TEMPLATES.clear()
     return redirect('/analysis')
+
 
 @get('/Graphs/win_rate_anl.html')
 def Graf_assets():
