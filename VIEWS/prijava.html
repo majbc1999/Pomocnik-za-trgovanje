@@ -1,0 +1,31 @@
+% from trgovanje import piskot
+
+<!DOCTYPE html>
+<html lang="slo">
+    <head>
+        <meta charset="UTF-8">
+        <title>Trading Assistant</title>
+        <link rel="stylesheet" type="text/css" href="{{url('static', filename='style.css')}}" />
+    </head>
+    <body class="ozadje">
+        <h2 class="besedilo">{{naslov}}</h2>
+        <div class="obroba">
+            <p class="naslov-tabele">PRIJAVA</p>
+            % if uspesna_prijava == False:
+            <div class="opozorilo">{{piskot.sporocilo}}</div>  
+            % end
+            <form action="/prijava" method="post">
+                <span>Uporabniško ime:</span> <input class="text" name="ime" type="text" /><br>
+                <span>Geslo:</span> <input class="text" name="geslo" type="password" /><br>
+                <input class="gumb" value="Prijava" type="submit" />
+            </form>
+            <p class="naslov-tabele">
+                Prvič tukaj? <a href="/registracija" class="link">Ustvari račun</a>
+            </p>
+        </div>
+        <br>
+    </body>
+    <footer class="footer">
+        <p>by <a style="color: white;" href="https://github.com/sarazuzek/Pomocnik-za-trgovanje">Sara Žužek & Alan Marinić</a> </p>
+    </footer>
+</html>

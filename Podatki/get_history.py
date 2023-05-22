@@ -105,7 +105,6 @@ def update_price_history():
 
     # Load the stored date from last run:
     if os.path.isfile(STORE):
-        print('Read last_run from:', STORE)
         with open(STORE, 'rb') as store:
             last_run = pickle.load(store)
     else:
@@ -125,7 +124,6 @@ def update_price_history():
     with open(STORE, 'wb') as store:
         pickle.dump(today, store)
 
-    print('Saved last_run to:', STORE)
     try:
         return df
     except UnboundLocalError:

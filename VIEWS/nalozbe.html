@@ -2,7 +2,7 @@
 % from trgovanje import piskot
 
 <div class="obroba">
-    % if piskot.sporocilo == "":
+    % if napaka == False:
     <div class="uspesno">{{piskot.sporocilo}}</div>
     % else:
     <div class="opozorilo">{{piskot.sporocilo}}</div>
@@ -24,7 +24,7 @@
             <th class="th">Simbol</th>
             <th class="th">Količina</th>
         </tr>
-        % for item in asset:
+        % for item in assets:
         <tr class="tr">
             <td class="td">{{item[0]}}</td>
             <td class="td">{{item[1]}}</td>

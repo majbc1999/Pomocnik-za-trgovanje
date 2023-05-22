@@ -621,28 +621,3 @@ class Repo:
 
 
 
-
-
-#print(Repo().dobi_trade_delno(1)[7])
-
-
-
-Trejd = trade(
-    user_id = 2,
-    symbol_id  = 'SPY',
-    type = 'L',
-    date  = date(2023, 4, 19),
-    duration = '3h',
-    #tp  = 2,
-    pnl = '20$'
-)
-#print(Repo().dobi_pare())
-
-#Repo().dodaj_gen(Trejd, serial_col='id_trade')
-
-
-#print(Repo().dobi_gen_id(pair, 'BT-USD', id_col='symbol'))
-# print(Repo().dobi_asset_amount_by_user(1))
-#print(Repo().dobi_gen_id(app_user, 'sara.zuzek', id_col = "user_name")['password'])
-
-#print(Repo().dobi_gen_list(asset, 1, id_col = "user_id"))

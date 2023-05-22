@@ -56,11 +56,6 @@ class UporabnikCookie:
     sporocilo: str = field(default='')
     user_id: int = field(default=0)
     user_assets: list[str] = field(default_factory=lambda: [])
-    uspesna_prijava: bool = field(default=True)  
-    pravilen_simbol: bool = field(default=True)
-    first_load_assets: bool = field(default=True)
-    first_load_stats: bool = field(default=True)
-    uspesna_registracija: bool = field(default=True)
     anl_stats: tuple = field(default=(0, 0, 0, 0, 0, 0))
     stats_tuple: tuple = field(default=(0, 0, 0, 0, 0, 0, 0))
 
