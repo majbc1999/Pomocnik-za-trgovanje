@@ -1,25 +1,19 @@
-# uvozimo psycopg2
+import auth_public as auth
+
 import psycopg2, psycopg2.extensions, psycopg2.extras
 psycopg2.extensions.register_type(psycopg2.extensions.UNICODE) # se znebimo problemov s šumniki
 
-from typing import List, TypeVar, Type, Callable, Any
+from typing import List, TypeVar, Type
 from modeli import *
-from pandas import DataFrame
+from csv import reader
 from re import sub, findall
-import auth_public as auth
 from datetime import date
-# from dataclasses_json import dataclass_json
+from pandas import DataFrame
+from dataclasses import fields
 
-import pandas as pd
-import csv
 
-import dataclasses
 # Ustvarimo generično TypeVar spremenljivko. Dovolimo le naše entitene, ki jih imamo tudi v bazi
 # kot njene vrednosti. Ko dodamo novo entiteno, jo moramo dodati tudi v to spremenljivko.
-
-
-
-
 T = TypeVar(
     "T",
     app_user,
@@ -91,7 +85,7 @@ class Repo:
 
         tbl_name = type(typ).__name__
 
-        cols =[c.name for c in dataclasses.fields(typ) if c.name != serial_col]
+        cols =[c.name for c in fields(typ) if c.name != serial_col]
         
         sql_cmd = f'''
         INSERT INTO {tbl_name} ({", ".join(cols)})
@@ -128,7 +122,7 @@ class Repo:
 
         tbl_name = type(typ).__name__
 
-        cols =[c.name for c in dataclasses.fields(typ) if c.name != serial_col]
+        cols =[c.name for c in fields(typ) if c.name != serial_col]
         sql_cmd = f'''
             INSERT INTO {tbl_name} ({", ".join(cols)})
             VALUES
@@ -163,7 +157,7 @@ class Repo:
         
         id = getattr(typ, id_col)
         # dobimo vse atribute objekta razen id stolpca
-        fields = [c.name for c in dataclasses.fields(typ) if c.name != id_col]
+        fields = [c.name for c in fields(typ) if c.name != id_col]
 
         sql_cmd = f'UPDATE {tbl_name} SET \n ' + \
                     ", \n".join([f'{field} = %s' for field in fields]) +\
@@ -461,7 +455,7 @@ class Repo:
     def uvozi_Price_History(self, tabela: str):
         # Vnese zgodovino simbola v tabelo price_history
         with open('Podatki/Posamezni_simboli/{0}'.format(tabela)) as csvfile:
-            podatki = csv.reader(csvfile)
+            podatki = reader(csvfile)
             next(podatki)
             for r in podatki:
                 r = [None if x in ('', '-') else x for x in r]
@@ -496,13 +490,6 @@ class Repo:
                 '''.format(df['price'][i]), (df['symbol_id'][i], df['date'][i], df['price'][i]))
             self.conn.commit()
             
-
-
-
-
-
-
-
 
 
     def dobi_asset_by_user(self, typ: Type[T], id: int | str, id_col = "user_id") -> List[str]:

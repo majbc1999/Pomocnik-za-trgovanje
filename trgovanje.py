@@ -3,15 +3,15 @@ import re
 
 from datetime import date
 from functools import wraps
-from bottle import TEMPLATES, debug
-from bottleext import get, post, run, request, template, redirect, static_file, url, response, template_user
+
+from bottleext import get, post, run, request, template, redirect, static_file, url, response, TEMPLATES
 
 import psycopg2, psycopg2.extensions, psycopg2.extras
 psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
 
 from auth_public import *
 from Podatki import get_history as gh
-from graphs import graph_html, graph_cake, graph_stats, analyze
+from Graphs import Graf
 
 from Database import Repo
 from modeli import *
@@ -20,7 +20,7 @@ from Services import AuthService
 
 repo = Repo()
 auth = AuthService(repo)
-
+graf = Graf()
 piskot = UporabnikCookie()
 
 
@@ -32,9 +32,6 @@ DB_PORT = os.environ.get('POSTGRES_PORT', 5432)
 # Priklop na bazo
 conn = psycopg2.connect(database=db, host=host, user=user, password=password, port=DB_PORT)
 cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor) 
-
-
-debug(True)
 
 
 @get('/static/<filename:path>')
@@ -129,6 +126,20 @@ def index(id: int):
     repo.posodobi_price_history(df)
     return template('index.html')
 
+@get('/<id>/uredi_profil')
+@cookie_required
+def uredi_profil(id: int):
+
+
+    return template('uredi_profil.html', sprememba=False, naslov='Uredi profil')   
+
+@post('/posodobi')
+def posodobi(id: int):
+    global piskot
+    
+    piskot.sporocilo = "Sprememba uspešna!"
+    return template('uredi_profil.html', sprememba=True, naslov='Uredi profil') 
+
 
 #############################################################
 ##############             NALOŽBE             ##############
@@ -212,8 +223,8 @@ def buy_sell():
 @cookie_required
 def performance(id: int):
     global piskot
-    graph_html(piskot.user_id, piskot.user_assets) 
-    graph_cake(piskot.user_id, str(date.today()))
+    graf.graph_html(piskot.user_id, piskot.user_assets) 
+    graf.graph_cake(piskot.user_id)
     TEMPLATES.clear()
     return template('performance.html', assets=piskot.user_assets, naslov='Poglej napredek')
 
@@ -222,7 +233,7 @@ def new_equity_graph():
     global piskot
     simboli_graf = request.forms.simboli
     seznam = re.split(r' ', simboli_graf)
-    graph_html(piskot.user_id, seznam)
+    graf.graph_html(piskot.user_id, seznam)
     TEMPLATES.clear()
     return template('performance.html', assets=piskot.user_assets, naslov='Poglej napredek')
 
@@ -279,7 +290,7 @@ def dodaj_trade():
 def stats(id: int):
     global piskot
     seznam = repo.dobi_strategije(id)
-    piskot.stats_tuple = graph_stats(piskot.user_id, 'All')
+    piskot.stats_tuple = graf.graph_stats(piskot.user_id, 'All')
     TEMPLATES.clear()
     return template('stats.html', strategy=seznam, naslov='Statistika')
 
@@ -287,7 +298,7 @@ def stats(id: int):
 def strategy():
     global piskot
     strategy = request.forms.strategy
-    piskot.stats_tuple = graph_stats(piskot.user_id, strategy)
+    piskot.stats_tuple = graf.graph_stats(piskot.user_id, strategy)
     TEMPLATES.clear()
 
     seznam = repo.dobi_strategije(piskot.user_id)
@@ -304,7 +315,7 @@ def analyze_main(id: int):
 @post('/analyze')
 def analyze_f():
     global piskot
-    piskot.anl_stats = analyze( piskot.user_id, 
+    piskot.anl_stats = graf.analyze( piskot.user_id, 
                                 request.forms.strategy, 
                                 int(request.forms.duration), 
                                 int(request.forms.rr), 

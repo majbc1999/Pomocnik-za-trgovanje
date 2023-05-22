@@ -1,14 +1,9 @@
-
-from Database import Repo
-from modeli import *
-from typing import Dict
-from re import sub
-import dataclasses
-# import bcrypt
-from typing import Type
-from datetime import date
-
 import hashlib
+
+from modeli import *
+from datetime import date
+from Database import Repo
+
 
 class AuthService:
 
@@ -24,6 +19,7 @@ class AuthService:
         except:
             return False
     
+
     def prijavi_uporabnika(self, uporabnik : str, geslo: str) -> list:
 
         # Najprej dobimo uporabnika iz baze
@@ -58,7 +54,7 @@ class AuthService:
         self.repo.dodaj_gen(uporabnik, serial_col='id_user')
 
 
-
     def from_piskot_to_param(self, piskot: str) -> UporabnikCookie:
         piskot = UporabnikCookie()
         return piskot
+    

@@ -1,9 +1,9 @@
 import os
-import re
-import csv
 import pickle
-import pandas as pd
+from re import sub
 from datetime import date
+from csv import DictWriter
+from pandas import read_csv,  concat
 from yahoofinancials import YahooFinancials as yf
 
 
@@ -40,7 +40,7 @@ def zapisi_csv(slovarji, imena_polj, ime_datoteke):
     ''' Iz seznama slovarjev ustvari CSV datoteko z glavo '''
     pripravi_imenik(ime_datoteke)
     with open(ime_datoteke, 'w', encoding='utf-8') as csv_datoteka:
-        writer = csv.DictWriter(csv_datoteka, fieldnames=imena_polj)
+        writer = DictWriter(csv_datoteka, fieldnames=imena_polj)
         writer.writeheader()
         for slovar in slovarji:
             writer.writerow(slovar)
@@ -71,7 +71,7 @@ def get_symbols_list():
     for _, _, files in os.walk(r'Podatki/Posamezni_simboli'):
         for file in files:
             if (file.endswith('.csv')):
-                file = re.sub('.csv', '', file)
+                file = sub('.csv', '', file)
                 sez_datotek.append(file)
     return sez_datotek
 
@@ -79,8 +79,8 @@ def merge_csv(seznam, csv_name):
     ''' Združi izbrane posamezne csv dokumente '''
     zacasni = list()
     for item in seznam:
-         zacasni.append(pd.read_csv(r'Podatki/Posamezni_simboli/' + str(item)))
-    df = pd.concat(zacasni, copy=False)
+         zacasni.append(read_csv(r'Podatki/Posamezni_simboli/' + str(item)))
+    df = concat(zacasni, copy=False)
     df.to_csv('Podatki/'+ str(csv_name), index=False)
 
 def preveri_ustreznost(simbol):
@@ -113,11 +113,11 @@ def update_price_history():
 
     print('Last run was', last_run)
     if last_run < today:
-        old = pd.read_csv(r'Podatki/price_history.csv')
+        old = read_csv(r'Podatki/price_history.csv')
         get_historic_data(get_symbols_list(), today)
         merge_csv(get_symbols(), 'price_history.csv')
-        new = pd.read_csv(r'Podatki/price_history.csv')
-        new_df = pd.concat([old, new]).reset_index(drop=True)
+        new = read_csv(r'Podatki/price_history.csv')
+        new_df = concat([old, new]).reset_index(drop=True)
         df = new_df.drop_duplicates(subset=['symbol_id','date'], keep=False)
 
     # store todays run date for the next run:

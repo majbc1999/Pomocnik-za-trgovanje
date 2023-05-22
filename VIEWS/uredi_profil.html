@@ -1,0 +1,32 @@
+% from trgovanje import piskot
+
+<!DOCTYPE html>
+<html lang="slo">
+  <head>
+      <meta charset="UTF-8">
+      <title>{{naslov}}</title>
+      <link rel="stylesheet" type="text/css" href="{{url('static', filename='style.css')}}" />
+  </head>
+  <body class="ozadje">
+    <h2 class="besedilo">{{naslov}}</h2>
+    <div class="obroba">
+      <div><p class="naslov-tabele">Tvoji podatki:</p></div>
+      % if sprememba == True:
+      <div class="uspesno">{{piskot.sporocilo}}</div>  
+      % end
+      <form action="/registracija" method="post" autocomplete="off">
+        <span>Ime:</span> <input class="text" name="name" type="text" required placeholder="Sara"/><br>
+        <span>Priimek:</span> <input class="text" name="surname" type="text" required placeholder="Žužek"/><br>
+        <span>Datum rojstva:</span> <input class="text" name="date_of_birth" type="date" value="2000-01-01"/><br>
+        <span>Uporabniško ime:</span> <input class="text" name="user_name" type="text" required placeholder="sara.zuzek"/><br>
+        <span>Geslo:</span> <input class="text" name="password" type="password" required/><br>
+        <input class="gumb" value="Ustvari račun" type="submit"/>
+      </form>
+    </div>
+    <br>
+    <a href="/{{piskot.user_id}}/index" class="Button"><input class="gumb_nazaj" type='button' value='Nazaj' /></a>
+  </body>
+  <footer class="footer">
+      <p>by <a style="color: white;" href="https://github.com/sarazuzek/Pomocnik-za-trgovanje">Sara Žužek & Alan Marinić</a> </p>
+  </footer>
+</html>
