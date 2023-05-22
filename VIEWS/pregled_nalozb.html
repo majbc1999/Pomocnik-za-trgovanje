@@ -1,6 +1,5 @@
 % rebase('base.html', naslov=naslov)
-% from Podatki import get_history
-% from trgovanje import pravilen_simbol, sporocilo
+% from trgovanje import piskot
 
 <div class="obroba">
   <p>Uporabnik lahko doda nove naložbe v program, tako da izbere simbol, ki je na
@@ -11,11 +10,11 @@
   </p><br>
   <p>SIMBOL ZAPIŠI Z VELIKIMI ČRKAMI!</p><br>
   % if pravilen_simbol == True:
-  <div class="uspesno">{{sporocilo}}</div>
+  <div class="uspesno">{{piskot.sporocilo}}</div>
   % elif pravilen_simbol == False:
-  <div class="opozorilo">{{sporocilo}}</div>  
+  <div class="opozorilo">{{piskot.sporocilo}}</div>  
   % end
-  <form action="/dodaj_potrdi" method="post">
+  <form action="/dodaj_par" method="post">
     <span>Vpiši simbol:</span> <input class="text" name="symbol" type="text" required placeholder="BTC-USD"/><br>
     <span>Vpiši ime:</span> <input class="text" name="ime" type="text" required placeholder="Bitcoin"/><br>
     <input class="gumb" value="Potrdi" type="submit" />
@@ -27,10 +26,10 @@
         <th class="th">Ime</th>
         <th class="th">Simbol</th>
       </tr>
-      %for symbol, name in pair:
+      %for item in pairs:
       <tr class="tr">
-        <td class="td">{{name}}</td>
-        <td class="td">{{symbol}}</td>
+        <td class="td">{{item[0]}}</td>
+        <td class="td">{{item[1]}}</td>
       </tr>
       %end
     </table>

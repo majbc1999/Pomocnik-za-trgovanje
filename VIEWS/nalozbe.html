@@ -1,11 +1,11 @@
 % rebase('base.html', naslov=naslov)
-% from trgovanje import sporocilo
+% from trgovanje import piskot
 
 <div class="obroba">
-    % if sporocilo == "":
-    <div class="uspesno">{{sporocilo}}</div>
+    % if napaka == False:
+    <div class="uspesno">{{piskot.sporocilo}}</div>
     % else:
-    <div class="opozorilo">{{sporocilo}}</div>
+    <div class="opozorilo">{{piskot.sporocilo}}</div>
     % end
     <form action="/buy_sell" method="post">
         <span>Simbol:</span> <input class="text" name="symbol" type="text" required placeholder="BTC-USD"/><br>
@@ -24,10 +24,10 @@
             <th class="th">Simbol</th>
             <th class="th">Količina</th>
         </tr>
-        % for (symbol_id,amount) in asset:
+        % for item in assets:
         <tr class="tr">
-            <td class="td">{{symbol_id}}</td>
-            <td class="td">{{amount}}</td>
+            <td class="td">{{item[0]}}</td>
+            <td class="td">{{item[1]}}</td>
         </tr>
         % end
     </table>

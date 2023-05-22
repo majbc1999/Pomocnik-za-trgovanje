@@ -1,5 +1,5 @@
 % rebase('base.html', naslov=naslov)
-% from trgovanje import user_id, stats_tuple
+% from trgovanje import piskot
 
 <div class="obroba-graf">
   <div>
@@ -11,33 +11,33 @@
             <select class="select" name="strategy">
                 <option value="All">Vsi tradi</option>
                 % for strat in strategy:
-                <option value="{{strat[0]}}">{{strat[0]}}</option>
+                <option value="{{strat}}">{{strat}}</option>
                 % end
             </select><br>
         <input class="gumb" type="submit" value="Potrdi">
       </form>
     </div>
     <div>
-      <p>Povprečni zaslužek: {{stats_tuple[3]}}$</p>
-      <p>Povprečna izguba: {{stats_tuple[4]}}$</p>
-      <p>Največji zaslužek: {{stats_tuple[5]}}$</p>
-      <p>Največja izguba: {{stats_tuple[6]}}$</p>
-      <p>Povprečno razmerje tveganje: {{stats_tuple[0]}}</p>
-      <p>Povprečna tarča: {{stats_tuple[1]}}%</p>
-      <p>Povprečno trajanje: {{stats_tuple[2]}}h</p><br>
+      <p>Povprečni zaslužek: {{piskot.stats_tuple[3]}}$</p>
+      <p>Povprečna izguba: {{piskot.stats_tuple[4]}}$</p>
+      <p>Največji zaslužek: {{piskot.stats_tuple[5]}}$</p>
+      <p>Največja izguba: {{piskot.stats_tuple[6]}}$</p>
+      <p>Povprečno razmerje tveganje: {{piskot.stats_tuple[0]}}</p>
+      <p>Povprečna tarča: {{piskot.stats_tuple[1]}}%</p>
+      <p>Povprečno trajanje: {{piskot.stats_tuple[2]}}h</p><br>
     </div>
   </div>
     <br>
   <iframe id="igraph" scrolling="no" style="border:none;" 
-  seamless="seamless" src="Graphs/pnl_graph.html"
+  seamless="seamless" src="../Graphs/pnl_graph.html"
   height="500" width="100%"></iframe>
     <br>
   <iframe id="igraph" scrolling="no" style="border:none;" 
-  seamless="seamless" src="Graphs/win_rate.html"
+  seamless="seamless" src="../Graphs/win_rate.html"
   height="500" width="100%"></iframe>
     <br>
   <p class="besedilo2">Celotni portfolio</p>
   <iframe id="igraph" scrolling="no" style="border:none;" 
-  seamless="seamless" src="Graphs/win_by_type.html"
+  seamless="seamless" src="../Graphs/win_by_type.html"
   height="500" width="100%"></iframe>
 </div>

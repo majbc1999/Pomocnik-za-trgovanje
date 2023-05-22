@@ -1,5 +1,5 @@
 % rebase('base.html', naslov=naslov)
-% from trgovanje import user_id
+% from trgovanje import piskot
 
 <div class="obroba-graf">
   <div>
@@ -7,29 +7,29 @@
       da njegov simbol vpišeš v spodnje polje. Lahko izbereš več simbolov hkrati,
       tako da jih ločiš s presledkom. Spodaj so prikazani vsi ki jih imaš na voljo. </p>
     <div class="clearfix">
-      <div class="box" style="height: 567px; padding-top:15%;">
-        <div style="text-align: center;">
-        % for (symbol_id, amount) in assets:
-          <span><li class="li">{{symbol_id}}</li></span>
-          % end 
-          <br>
+      <div class="box" style="height: 400px; padding-top:15%;">
+        <div style="text-align:center">
           <form action="/new_equity_graph" method="post">
             <span>Vpiši simbole:</span> <br>
             <input class="text" name="simboli" type="text" required placeholder="BTC-USD SPY USD"/> <br>
             <input class="gumb" type="submit" value="Prikaži">
           </form>
+          <br>
+          % for item in assets:
+          <span><li class="li">{{item}}</li></span>
+          % end 
         </div>
       </div>
       <div class="box">
         <p class="besedilo2">Celotni portfolio</p>
         <iframe id="igraph" scrolling="no" style="border:none;" 
-        seamless="seamless" src="Graphs/cake.html"
+        seamless="seamless" src="../Graphs/cake.html"
         height="400" width="100%"></iframe>
       </div>
     </div>
   </div>
-    <br>
+  <br>
   <iframe id="igraph" scrolling="no" style="border:none;" 
-  seamless="seamless" src="Graphs/assets.html"
+  seamless="seamless" src="../Graphs/assets.html"
   height="500" width="100%"></iframe>
 </div>

@@ -1,11 +1,11 @@
 % rebase('base.html', naslov=naslov)
-% from trgovanje import sporocilo
+% from trgovanje import piskot
 
 <div class="obroba">
-    % if sporocilo == "Trade dodan":
-    <div class="uspesno">{{sporocilo}}</div>
+    % if piskot.sporocilo == "Trade dodan":
+    <div class="uspesno">{{piskot.sporocilo}}</div>
     % else:
-    <div class="opozorilo">{{sporocilo}}</div>
+    <div class="opozorilo">{{piskot.sporocilo}}</div>
     % end
     <form action="/dodaj_trade" method="post">
         <span>Simbol:</span> <input class="text" name="symbol" type="text" required placeholder="BTC-USD"/><br>
@@ -43,17 +43,17 @@
             <th class="th">TP</th>
             <th class="th">PNL</th>
         </tr>
-        % for (symbol_id, type, strategy, RR, target, date, duration, TP, PNL) in trade:
+        % for item in trade:
         <tr class="tr">
-            <td class="td">{{symbol_id}}</td>
-            <td class="td">{{type}}</td>
-            <td class="td">{{strategy}}</td>
-            <td class="td">{{RR}}</td>
-            <td class="td">{{target}}</td>
-            <td class="td">{{date}}</td>
-            <td class="td">{{duration}}</td>
-            <td class="td">{{TP}}</td>
-            <td class="td">{{PNL}}</td>
+            <td class="td">{{item[0]}}</td>
+            <td class="td">{{item[1]}}</td>
+            <td class="td">{{item[2]}}</td>
+            <td class="td">{{item[3]}}</td>
+            <td class="td">{{item[4]}}</td>
+            <td class="td">{{item[5]}}</td>
+            <td class="td">{{item[6]}}</td>
+            <td class="td">{{item[7]}}</td>
+            <td class="td">{{item[8]}}</td>
         </tr>
         % end
     </table>

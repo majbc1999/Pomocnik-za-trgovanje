@@ -1,5 +1,5 @@
-pandas
-yahoofinancials
-bottle
-psycopg2-binary
-plotly
+pandas==2.0.1
+yahoofinancials==1.14
+bottle==0.12.25
+psycopg2-binary==2.9.6
+plotly==5.14.1
