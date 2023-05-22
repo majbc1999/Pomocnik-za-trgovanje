@@ -130,8 +130,12 @@ dmypy.json
 
 #dodala
 auth.py
-VIEWS/Graphs/
+
+# Grafi
 Views/Graphs/
 VIEWS/Graphs/assets.html
 VIEWS/Graphs/cake.html
+VIEWS/Graphs/pnl_graph.html
+VIEWS/Graphs/win_by_type.html
 VIEWS/Graphs/win_rate_anl.html
+VIEWS/Graphs/win_rate.html

@@ -18,7 +18,10 @@ def clean_dict(slovar):
         if key == 'formatted_date':
             new_dict['date'] = slovar[key]
         elif key == 'close':
-            new_dict['price'] = round(slovar[key], 2)
+            try:
+                new_dict['price'] = round(slovar[key], 2)
+            except:
+                pass
     return new_dict
 
 def shorten_list(seznam):
@@ -46,7 +49,7 @@ def get_historic_data(seznam_parov, end_date):
     ''' Za vsak simbol ustvari csv dokument, ter
         v njega shrani zadnjo dnevno ceno za določeno casovno obdobje '''
     for simbol in seznam_parov:
-        zacasni_sez = yf(simbol).get_historical_price_data( begin_date, end_date, 'daily')
+        zacasni_sez = yf(simbol).get_historical_price_data( begin_date, str(end_date), 'daily')
         seznam_cen = zacasni_sez[simbol]['prices']
         seznam_cen = shorten_list(seznam_cen)
         for i in seznam_cen:
@@ -112,7 +115,7 @@ def update_price_history():
     print('Last run was', last_run)
     if last_run < today:
         old = pd.read_csv(r'Podatki/price_history.csv')
-        get_historic_data(get_symbols_list(), str(today))
+        get_historic_data(get_symbols_list(), today)
         merge_csv(get_symbols(), 'price_history.csv')
         new = pd.read_csv(r'Podatki/price_history.csv')
         new_df = pd.concat([old, new]).reset_index(drop=True)

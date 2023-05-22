@@ -5,10 +5,13 @@ psycopg2.extensions.register_type(psycopg2.extensions.UNICODE) # se znebimo prob
 from typing import List, TypeVar, Type, Callable, Any
 from modeli import *
 from pandas import DataFrame
-from re import sub
+from re import sub, findall
 import auth_public as auth
 from datetime import date
 # from dataclasses_json import dataclass_json
+
+import pandas as pd
+import csv
 
 import dataclasses
 # Ustvarimo generično TypeVar spremenljivko. Dovolimo le naše entitene, ki jih imamo tudi v bazi
@@ -454,6 +457,54 @@ class Repo:
     ##################################################################################################
     ##################################################################################################
 
+
+    def uvozi_Price_History(self, tabela: str):
+        # Vnese zgodovino simbola v tabelo price_history
+        with open('Podatki/Posamezni_simboli/{0}'.format(tabela)) as csvfile:
+            podatki = csv.reader(csvfile)
+            next(podatki)
+            for r in podatki:
+                r = [None if x in ('', '-') else x for x in r]
+                self.cur.execute('''
+                    INSERT INTO price_history
+                    (symbol_id, date, price)
+                    VALUES (%s, %s, %s)
+                ''', r)
+            self.conn.commit()
+            print('Uspesno uvozil csv datoteko!')
+
+
+
+    def dodaj_par(self, simbol: str, name: str):
+        self.cur.execute('''
+            INSERT INTO pair (symbol, name) 
+            VALUES (%s, %s)
+        ''', (simbol, name))
+        self.conn.commit()
+
+
+
+
+    def posodobi_price_history(self, df: DataFrame | None):
+        if not df is None:
+            for i in df.index:
+                self.cur.execute('''
+                    INSERT INTO price_history (symbol_id, date, price)
+                    VALUES (%s, %s, %s)
+                    ON CONFLICT (symbol_id, date)
+                    DO UPDATE SET price = {}
+                '''.format(df['price'][i]), (df['symbol_id'][i], df['date'][i], df['price'][i]))
+            self.conn.commit()
+            
+
+
+
+
+
+
+
+
+
     def dobi_asset_by_user(self, typ: Type[T], id: int | str, id_col = "user_id") -> List[str]:
         """
         Generična metoda, ki vrne seznam dataclass objektov pridobljen iz baze na podlagi njegovega idja.
@@ -483,6 +534,13 @@ class Repo:
         ''', (user_id,))
         return self.cur.fetchall()
     
+
+    def dobi_pare(self) -> List[List]:
+        self.cur.execute('''
+            SELECT symbol, name
+            FROM pair
+        ''')
+        return self.cur.fetchall()
 
 
 
@@ -538,6 +596,35 @@ class Repo:
 
 
 
+    def dobi_trade_delno(self, user_id: int) -> List[T]:
+        self.cur.execute('''
+            SELECT symbol_id, type, strategy, RR, target, date, duration, TP, PNL 
+            FROM trade
+            WHERE user_id = {} 
+            ORDER BY symbol_id 
+        '''.format(user_id))
+        seznam = self.cur.fetchall()
+        return seznam
+
+
+    def pnl_trade(self, user_id: int, simbol: str, pnl: float | str):
+        dollar = findall(r'\$', pnl)
+        
+        if dollar == []:    # PNL doda pri assetu na katerem je trade
+            Repo().trade_result(self, user_id, simbol, float(pnl))
+        
+        elif dollar != []:  # PNL doda pri USD
+            pnl = sub('\$','',pnl)
+            Repo().trade_result(user_id, 'USD', float(pnl))
+
+
+
+
+
+
+
+#print(Repo().dobi_trade_delno(1)[7])
+
 
 
 Trejd = trade(
@@ -549,7 +636,7 @@ Trejd = trade(
     #tp  = 2,
     pnl = '20$'
 )
-
+#print(Repo().dobi_pare())
 
 #Repo().dodaj_gen(Trejd, serial_col='id_trade')
 

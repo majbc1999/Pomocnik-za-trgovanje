@@ -4,7 +4,7 @@ import csv
 
 from datetime import date
 from functools import wraps
-from bottle import TEMPLATES
+from bottle import TEMPLATES, debug
 from bottleext import get, post, run, request, template, redirect, static_file, url, response, template_user
 
 import psycopg2, psycopg2.extensions, psycopg2.extras
@@ -21,6 +21,8 @@ from Services import AuthService
 repo = Repo()
 auth = AuthService(repo)
 
+
+debug(True)
 
 # Privzete nastavitve
 SERVER_PORT = os.environ.get('BOTTLE_PORT', 8080)
@@ -139,17 +141,7 @@ def uporabnik():
     
     # V bazi posodobi price_history - če ne dela dodaj: import pandas
     df = gh.update_price_history()
-    try:
-        for i in df.index:
-            cur.execute('''
-                INSERT INTO price_history (symbol_id, date, price)
-                VALUES (%s, %s, %s)
-                ON CONFLICT (symbol_id, date)
-                DO UPDATE SET price = {}
-            '''.format(df['price'][i]), (df['symbol_id'][i], df['date'][i], df['price'][i]))
-        conn.commit()
-    except AttributeError:
-        pass
+    repo.posodobi_price_history(df)
     return template('uporabnik.html', uporabnik=cur)
 
 
@@ -162,11 +154,8 @@ def uporabnik():
 def dodaj():
     global sporocilo
     sporocilo = ''
-
-    cur.execute('''
-        SELECT symbol,name from pair
-    ''')
-    return template('dodaj_par.html', pair=cur, naslov='Dodaj naložbo')
+    seznam = repo.dobi_pare()
+    return template('dodaj_par.html', pair=seznam, naslov='Dodaj naložbo')
 
 @post('/dodaj_potrdi')
 def dodaj_potrdi():
@@ -182,33 +171,14 @@ def dodaj_potrdi():
         redirect('/dodaj')
     else:
         # Vnese simbol v tabelo par
-        cur.execute('''
-            INSERT INTO pair (symbol, name) 
-            VALUES (%s, %s)
-        ''', (symbol, name))
-        conn.commit()
-
+        repo.dodaj_par(symbol, name)
         gh.get_historic_data(['{}'.format(symbol)], date.today())
-        uvozi_Price_History('{}.csv'.format(symbol))
+        repo.uvozi_Price_History('{}.csv'.format(symbol))
+        gh.merge_csv(gh.get_symbols(), 'price_history.csv')
         pravilen_simbol = True
         sporocilo = 'Simbol uspešno dodan'
         redirect('/dodaj')
 
-def uvozi_Price_History(tabela):
-    # Vnese zgodovino simbola v tabelo price_history
-    # Če uvozim iz uvoz_podatkov vrne error: 'no module named auth'
-    with open('Podatki/Posamezni_simboli/{0}'.format(tabela)) as csvfile:
-        podatki = csv.reader(csvfile)
-        next(podatki)
-        for r in podatki:
-            r = [None if x in ('', '-') else x for x in r]
-            cur.execute('''
-                INSERT INTO price_history
-                (symbol_id, date, price)
-                VALUES (%s, %s, %s)
-            ''', r)
-        conn.commit()
-        print('Uspesno uvozil csv datoteko!')
 
 #############################################################
 
@@ -290,13 +260,8 @@ def Graf_assets():
 @get('/trades')
 @cookie_required
 def trades():
-    cur.execute('''
-        SELECT symbol_id, type, strategy, RR, target, date, duration, TP, PNL 
-        FROM trade
-        WHERE user_id = {} 
-        ORDER BY symbol_id 
-    '''.format(user_id))
-    return template('trades.html', trade=cur, naslov='Dodaj trade')
+    seznam = repo.dobi_trade_delno(user_id)
+    return template('trades.html', trade=seznam, naslov='Dodaj trade')
 
 @post('/dodaj_trade')
 def dodaj_trade():
@@ -305,7 +270,7 @@ def dodaj_trade():
     tip = request.forms.type
     strategija = request.forms.strategy
     RR = request.forms.RR
-    tarča = request.forms.target
+    tarca = request.forms.target
     datum = request.forms.date
     trajanje = request.forms.duration
     TP = request.forms.TP
@@ -314,42 +279,34 @@ def dodaj_trade():
     # Preveri da je simbol veljaven
     row = cur.execute('''SELECT symbol FROM pair WHERE symbol = '{}' '''.format(simbol))
     row = cur.fetchone()
-    if row != None:
-        if TP == '':
-            cur.execute('''
-                INSERT INTO trade (user_id, symbol_id, type, strategy, rr, target, date, duration, pnl) 
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s) 
-                RETURNING id_trade
-            ''', (user_id, simbol, tip, strategija, RR, tarča, datum, trajanje, PNL))
-        else:
-            cur.execute('''
-                INSERT INTO trade (user_id, symbol_id, type, strategy, rr, target, date, duration, tp, pnl) 
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s) 
-                RETURNING id_trade
-            ''', (user_id, simbol, tip, strategija, RR, tarča, datum, trajanje, TP, PNL))
-        conn.commit()
-
-        # Izid trada poračuna v asset
-        pnl_trade(user_id, simbol, PNL)
-
-        sporocilo = 'Trade dodan'
-    else:
+    try:
+        # Preveri da smo vnesli pravilen simbol
+        repo.dobi_gen_id(pair, simbol, id_col="symbol")
+    except:
         sporocilo = 'Napačen simbol, če želite dodati trade za njega, ga najprej dodajte v tabelo pari!'
+        redirect('/trades')
+
+    if TP == '':
+        TP = psycopg2.extensions.AsIs('NULL')
+    trejd = trade(  user_id = user_id,
+                    symbol_id = simbol, 
+                    type = tip,
+                    strategy = strategija,
+                    rr = RR,
+                    target = tarca,
+                    date = datum, 
+                    duration = trajanje,
+                    tp = TP,
+                    pnl = PNL
+                )
+    # Zabeleži trade v tabelo trades
+    repo.dodaj_gen(trejd, serial_col='id_trade')
+    # Izid trada poračuna v asset
+    repo.pnl_trade(user_id, simbol, PNL)
+
+    sporocilo = 'Trade dodan'
     redirect('/trades')
 
-def pnl_trade(user_id, simbol, pnl):
-    dollar = re.findall(r'\$', pnl)
-
-    # PNL doda pri assetu na katerem je trade
-    if dollar == []:
-        trade = [user_id, simbol, float(pnl)]
-        trade_result(trade)
-
-    # PNL doda pri USD
-    elif dollar != []:
-        pnl = re.sub('\$','',pnl)
-        trade = [user_id, 'USD', float(pnl)]
-        trade_result(trade)
 
 #############################################################
 
