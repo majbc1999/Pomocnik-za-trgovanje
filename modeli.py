@@ -52,11 +52,10 @@ class trade:
 
 @dataclass
 class UporabnikCookie:
-    cookie: str = field(default='')
     user_ime: str = field(default='')
     sporocilo: str = field(default='')
     user_id: int = field(default=0)
-    #user_assets: list[str] = field(default=list())
+    user_assets: list[str] = field(default_factory=lambda: [])
     uspesna_prijava: bool = field(default=True)  
     pravilen_simbol: bool = field(default=True)
     first_load_assets: bool = field(default=True)
@@ -128,3 +127,8 @@ class UporabnikDto:
     username: str = field(default="")
     role: str = field(default="")
 
+#uporabnik = UporabnikCookie()
+
+#uporabnik.user_id = 1
+
+#print(uporabnik)

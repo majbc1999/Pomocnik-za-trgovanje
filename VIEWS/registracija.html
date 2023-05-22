@@ -1,4 +1,4 @@
-% from trgovanje import uspesna_registracija, sporocilo
+% from trgovanje import piskot
 
 <!DOCTYPE html>
 <html lang="slo">
@@ -12,10 +12,10 @@
 <body class="ozadje">
   <h2 class="besedilo">{{naslov}}</h2>
   <div class="obroba">
-    % if uspesna_registracija == True:
+    % if piskot.uspesna_registracija == True:
     <div><p class="naslov-tabele">Vpiši svoje podatke</p></div>
-    % elif uspesna_registracija == False:
-    <div class="opozorilo">{{sporocilo}}</div>  
+    % elif piskot.uspesna_registracija == False:
+    <div class="opozorilo">{{piskot.sporocilo}}</div>  
     % end
     <form action="/registracija" method="post" autocomplete="off">
       <span>Ime:</span> <input class="text" name="name" type="text" required placeholder="Sara"/><br>

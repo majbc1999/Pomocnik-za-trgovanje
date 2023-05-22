@@ -1,5 +1,5 @@
 % rebase('base.html', naslov=naslov)
-% from trgovanje import user_id, stats_tuple
+% from trgovanje import piskot
 
 <div class="obroba-graf">
   <div>
@@ -18,13 +18,13 @@
       </form>
     </div>
     <div>
-      <p>Povprečni zaslužek: {{stats_tuple[3]}}$</p>
-      <p>Povprečna izguba: {{stats_tuple[4]}}$</p>
-      <p>Največji zaslužek: {{stats_tuple[5]}}$</p>
-      <p>Največja izguba: {{stats_tuple[6]}}$</p>
-      <p>Povprečno razmerje tveganje: {{stats_tuple[0]}}</p>
-      <p>Povprečna tarča: {{stats_tuple[1]}}%</p>
-      <p>Povprečno trajanje: {{stats_tuple[2]}}h</p><br>
+      <p>Povprečni zaslužek: {{piskot.stats_tuple[3]}}$</p>
+      <p>Povprečna izguba: {{piskot.stats_tuple[4]}}$</p>
+      <p>Največji zaslužek: {{piskot.stats_tuple[5]}}$</p>
+      <p>Največja izguba: {{piskot.stats_tuple[6]}}$</p>
+      <p>Povprečno razmerje tveganje: {{piskot.stats_tuple[0]}}</p>
+      <p>Povprečna tarča: {{piskot.stats_tuple[1]}}%</p>
+      <p>Povprečno trajanje: {{piskot.stats_tuple[2]}}h</p><br>
     </div>
   </div>
     <br>

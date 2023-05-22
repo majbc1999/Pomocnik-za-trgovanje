@@ -1,5 +1,5 @@
 % rebase('base.html', naslov=naslov)
-% from trgovanje import user_id, anl_stats
+% from trgovanje import piskot
 
 <div class="obroba-graf">
   <p class="besedilo2">Tu lahko analiziraš in izboljšuješ svoje strategije.
@@ -35,12 +35,12 @@
       </form>
     </div>
     <div class="box" style="text-align: center;">
-      <p>Uspešnost: {{anl_stats[0]}}%</p>
-      <p>Povprečni zaslužek: {{anl_stats[1]}}$</p>
-      <p>Povprečna izguba: {{anl_stats[2]}}$</p>
-      <p>Povprečno razmerje tveganje: {{anl_stats[3]}}</p>
-      <p>Povprečna tarča: {{anl_stats[4]}}%</p>
-      <p>Povprečno trajanje: {{anl_stats[5]}}h</p><br>
+      <p>Uspešnost: {{piskot.anl_stats[0]}}%</p>
+      <p>Povprečni zaslužek: {{piskot.anl_stats[1]}}$</p>
+      <p>Povprečna izguba: {{piskot.anl_stats[2]}}$</p>
+      <p>Povprečno razmerje tveganje: {{piskot.anl_stats[3]}}</p>
+      <p>Povprečna tarča: {{piskot.anl_stats[4]}}%</p>
+      <p>Povprečno trajanje: {{piskot.anl_stats[5]}}h</p><br>
     </div>
   </div>
   <br>
