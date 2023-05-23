@@ -11,7 +11,7 @@ psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
 
 from auth_public import *
 from Podatki import get_history as gh
-from Graphs import Graf
+from graphs import Graf
 
 from Database import Repo
 from modeli import *
@@ -126,19 +126,27 @@ def index(id: int):
     repo.posodobi_price_history(df)
     return template('index.html')
 
+#############################################################
+
 @get('/<id>/uredi_profil')
 @cookie_required
 def uredi_profil(id: int):
-
-
-    return template('uredi_profil.html', sprememba=False, naslov='Uredi profil')   
+    seznam = repo.get_user(id)
+    return template('uredi_profil.html', sprememba=False, podatki=seznam, naslov='Uredi profil')   
 
 @post('/posodobi')
-def posodobi(id: int):
+def posodobi():
     global piskot
-    
+    ime = request.forms.ime
+    priimek = request.forms.priimek
+    datum = request.forms.datum
+    geslo = request.forms.geslo
+    print(geslo)
+    repo.posodobi_user(piskot.user_id, ime, priimek, datum, geslo)
+
+    seznam = repo.get_user(piskot.user_id)
     piskot.sporocilo = "Sprememba uspešna!"
-    return template('uredi_profil.html', sprememba=True, naslov='Uredi profil') 
+    return template('uredi_profil.html', sprememba=True, podatki=seznam, naslov='Uredi profil') 
 
 
 #############################################################

@@ -38,7 +38,7 @@ class AuthService:
     def dodaj_uporabnika(self, ime: str, priimek: str, datum_rojstva: date, uporabnisko_ime: str, geslo: str):
 
         # Ustvarimo hash iz gesla, ki ga je vnesel uporabnik
-        h = hashlib.sha()
+        h = hashlib.blake2b()
         h.update(geslo.encode(encoding='utf-8'))
         hashed_pass = h.hexdigest()
 

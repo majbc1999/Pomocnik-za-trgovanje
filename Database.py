@@ -1,3 +1,4 @@
+import hashlib
 import auth_public as auth
 
 import psycopg2, psycopg2.extensions, psycopg2.extras
@@ -451,6 +452,36 @@ class Repo:
     ##################################################################################################
     ##################################################################################################
 
+    def get_user(self, user_id: int) -> list:
+        self.cur.execute("""
+            SELECT name, surname, date_of_birth, user_name, password 
+            FROM app_user
+            WHERE id_user = %s
+        """, (user_id,))
+        return self.cur.fetchone()
+
+
+    def posodobi_user(self, user_id: int, ime: str, priimek: str, datum: date, geslo: str):
+        if geslo != '':
+            h = hashlib.blake2b()
+            h.update(geslo.encode(encoding='utf-8'))
+            hash = h.hexdigest()
+            self.cur.execute("""
+                UPDATE app_user
+                SET name = %s, surname = %s, date_of_birth =  %s,  password = %s
+                WHERE id_user = %s; 
+            """, (ime, priimek, datum, hash, user_id,))
+        else:
+            self.cur.execute("""
+                    UPDATE app_user
+                    SET name = %s, surname = %s, date_of_birth =  %s
+                    WHERE id_user = %s; 
+                """, (ime, priimek, datum, user_id,))
+        self.conn.commit()
+
+    ##################################################################################################
+    ##################################################################################################
+
 
     def uvozi_Price_History(self, tabela: str):
         # Vnese zgodovino simbola v tabelo price_history
@@ -603,8 +634,4 @@ class Repo:
         elif dollar != []:  # PNL doda pri USD
             pnl = sub('\$','',pnl)
             Repo().trade_result(user_id, 'USD', float(pnl))
-
-
-
-
 
