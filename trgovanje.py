@@ -119,7 +119,7 @@ def registracija_post():
 @cookie_required
 def index(id: int):
     global piskot
-    piskot.user_assets = repo.dobi_asset_by_user(asset, id)
+    piskot.user_assets = repo.dobi_asset_by_user(id)
 
     # V bazi posodobi price_history
     df = gh.update_price_history()
@@ -145,7 +145,7 @@ def posodobi():
     repo.posodobi_user(piskot.user_id, ime, priimek, datum, geslo)
 
     seznam = repo.get_user(piskot.user_id)
-    piskot.sporocilo = "Sprememba uspešna!"
+    piskot.sporocilo = 'Sprememba uspešna!'
     return template('uredi_profil.html', sprememba=True, podatki=seznam, naslov='Uredi profil') 
 
 
@@ -202,7 +202,7 @@ def buy_sell():
 
     try:
         # Preveri da smo vnesli pravilen simbol
-        if repo.dobi_gen_id(pair, symbol, id_col="symbol"):
+        if repo.dobi_gen_id(pair, symbol, id_col='symbol'):
             pass
     except Exception:
         piskot.sporocilo = 'Napačen simbol!'
@@ -265,7 +265,7 @@ def dodaj_trade():
     PNL = request.forms.PNL
 
     try: # Preveri ali vnešen simbol obstaja
-        if repo.dobi_gen_id(pair, simbol, id_col="symbol"):
+        if repo.dobi_gen_id(pair, simbol, id_col='symbol'):
             if TP == '':
                 TP = psycopg2.extensions.AsIs('NULL')
             trejd = trade(  user_id = piskot.user_id,
@@ -296,6 +296,13 @@ def delete_trade(trade_id: int):
     repo.izbrisi_trade(trade_id)
     piskot.sporocilo = 'Trade izbrisan!'
     seznam = repo.dobi_trade_delno(piskot.user_id)
+    return template('trades.html', trade=seznam, naslov='Dodaj trade')
+
+@get('/<param>/uredi')
+@cookie_required
+def uredi(param: str):
+    global piskot
+    seznam = repo.dobi_trade_delno(piskot.user_id, param)
     return template('trades.html', trade=seznam, naslov='Dodaj trade')
 
 

@@ -66,3 +66,4 @@ GRANT UPDATE ON price_history TO javnost;
 GRANT INSERT ON asset TO javnost;
 GRANT UPDATE ON asset TO javnost;
 GRANT UPDATE ON app_user TO javnost;
+GRANT DELETE ON trade TO javnost;

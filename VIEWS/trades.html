@@ -31,50 +31,77 @@
     </form>
         <br>
     <p class="naslov-tabele">TABELA TVOJIH TRADE-ov</p>
-
-
-    <script src="../static/trades.js"></script>
-
-    <div class="table-container">
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th class="th"><button id="simbol" onclick="uredi(id)">Simbol</button></th>
-                    <th class="th"><button id="tip" onclick="uredi(id)">Tip</button></th>
-                    <th class="th"><button id="strategije" onclick="uredi(id)">Strategija</button></th>
-                    <th class="th"><button id="rr" onclick="uredi(id)">RR</button></th>
-                    <th class="th"><button id="tarca" onclick="uredi(id)">Tarča</button></th>
-                    <th class="th"><button id="datum" onclick="uredi(id)">Datum</button></th>
-                    <th class="th"><button id="trajanje" onclick="uredi(id)">Trajanje</button></th>
-                    <th class="th"><button id="tp" onclick="uredi(id)">TP</button></th>
-                    <th class="th"><button id="pnl" onclick="uredi(id)">PNL</button></th>
-                    <th class="th">Izbriši</th>
-                </tr>
-            </thead>
-            <tbody id="table-content">
-                % for item in trade:
-                <tr class="tr">
-                    <td class="td">{{item[1]}}</td>
-                    <td class="td">{{item[2]}}</td>
-                    <td class="td">{{item[3]}}</td>
-                    <td class="td">{{item[4]}}</td>
-                    <td class="td">{{item[5]}}</td>
-                    <td class="td">{{item[6]}}</td>
-                    <td class="td">{{item[7]}}</td>
-                    <td class="td">{{item[8]}}</td>
-                    <td class="td">{{item[9]}}</td>
-                    <td class="td">
-                        <form action="/{{item[0]}}/delete_trade" method="post">
-                            <button id="pnl" value="Izbriši" type="submit"></button>
-                        </form>
-                    </td>
-                </tr>
-                % end
-            </tbody>
-        </table>
-    </div>
-
-
-
+    <table class="tabela-trade" border="1">
+        <thead>
+            <tr>
+                <th class="th">
+                    <form action="/{{'symbol_id'}}/uredi" method="get">
+                        <a href="#" onclick="this.parentElement.submit()" class="th-link">Simbol ⏷</a>
+                    </form>
+                </th>
+                <th class="th">
+                    <form action="/{{'type'}}/uredi" method="get">
+                        <a href="#" onclick="this.parentElement.submit()" class="th-link">Tip ⏷</a>
+                    </form>
+                </th>
+                <th class="th">
+                    <form action="/{{'strategy'}}/uredi" method="get">
+                        <a href="#" onclick="this.parentElement.submit()" class="th-link">Strategija ⏷</a>
+                    </form>
+                </th>
+                <th class="th">
+                    <form action="/{{'rr'}}/uredi" method="get">
+                        <a href="#" onclick="this.parentElement.submit()" class="th-link">RR ⏷</a>
+                    </form>
+                </th>
+                <th class="th">
+                    <form action="/{{'target'}}/uredi" method="get">
+                        <a href="#" onclick="this.parentElement.submit()" class="th-link">Tarča ⏷</a>
+                    </form>
+                </th>
+                <th class="th">
+                    <form action="/{{'date'}}/uredi" method="get">
+                        <a href="#" onclick="this.parentElement.submit()" class="th-link">Datum ⏷</a>
+                    </form>
+                </th>
+                <th class="th">
+                    <form action="/{{'duration'}}/uredi" method="get">
+                        <a href="#" onclick="this.parentElement.submit()" class="th-link">Trajanje ⏷</a>
+                    </form>
+                </th>
+                <th class="th">
+                    <form action="/{{'tp'}}/uredi" method="get">
+                        <a href="#" onclick="this.parentElement.submit()" class="th-link">TP ⏷</a>
+                    </form>
+                </th>
+                <th class="th">
+                    <form action="/{{'pnl'}}/uredi" method="get">
+                        <a href="#" onclick="this.parentElement.submit()" class="th-link">PNL ⏷</a>
+                    </form>
+                </th>
+                <th class="th">Izbriši</th>
+            </tr>
+        </thead>
+        <tbody>
+            % for item in trade:
+            <tr class="tr">
+                <td class="td">{{item[1]}}</td>
+                <td class="td">{{item[2]}}</td>
+                <td class="td">{{item[3]}}</td>
+                <td class="td">{{item[4]}}</td>
+                <td class="td">{{item[5]}}</td>
+                <td class="td">{{item[6]}}</td>
+                <td class="td">{{item[7]}}</td>
+                <td class="td">{{item[8]}}</td>
+                <td class="td">{{item[9]}}</td>
+                <td class="td">
+                    <form action="/{{item[0]}}/delete_trade" method="post">
+                        <button id="pnl" value="Izbriši" type="submit">Izbriši</button>
+                    </form>
+                </td>
+            </tr>
+            % end
+        </tbody>
+    </table>
 </div>
 
