@@ -31,30 +31,50 @@
     </form>
         <br>
     <p class="naslov-tabele">TABELA TVOJIH TRADE-ov</p>
-    <table class="tabela-trade" border="1">
-        <tr>
-            <th class="th">Simbol</th>
-            <th class="th">Tip</th>
-            <th class="th">Strategija</th>
-            <th class="th">RR</th>
-            <th class="th">Tarča</th>
-            <th class="th">Datum</th>
-            <th class="th">Trajanje</th>
-            <th class="th">TP</th>
-            <th class="th">PNL</th>
-        </tr>
-        % for item in trade:
-        <tr class="tr">
-            <td class="td">{{item[0]}}</td>
-            <td class="td">{{item[1]}}</td>
-            <td class="td">{{item[2]}}</td>
-            <td class="td">{{item[3]}}</td>
-            <td class="td">{{item[4]}}</td>
-            <td class="td">{{item[5]}}</td>
-            <td class="td">{{item[6]}}</td>
-            <td class="td">{{item[7]}}</td>
-            <td class="td">{{item[8]}}</td>
-        </tr>
-        % end
-    </table>
+
+
+    <script src="../static/trades.js"></script>
+
+    <div class="table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th class="th"><button id="simbol" onclick="uredi(id)">Simbol</button></th>
+                    <th class="th"><button id="tip" onclick="uredi(id)">Tip</button></th>
+                    <th class="th"><button id="strategije" onclick="uredi(id)">Strategija</button></th>
+                    <th class="th"><button id="rr" onclick="uredi(id)">RR</button></th>
+                    <th class="th"><button id="tarca" onclick="uredi(id)">Tarča</button></th>
+                    <th class="th"><button id="datum" onclick="uredi(id)">Datum</button></th>
+                    <th class="th"><button id="trajanje" onclick="uredi(id)">Trajanje</button></th>
+                    <th class="th"><button id="tp" onclick="uredi(id)">TP</button></th>
+                    <th class="th"><button id="pnl" onclick="uredi(id)">PNL</button></th>
+                    <th class="th">Izbriši</th>
+                </tr>
+            </thead>
+            <tbody id="table-content">
+                % for item in trade:
+                <tr class="tr">
+                    <td class="td">{{item[1]}}</td>
+                    <td class="td">{{item[2]}}</td>
+                    <td class="td">{{item[3]}}</td>
+                    <td class="td">{{item[4]}}</td>
+                    <td class="td">{{item[5]}}</td>
+                    <td class="td">{{item[6]}}</td>
+                    <td class="td">{{item[7]}}</td>
+                    <td class="td">{{item[8]}}</td>
+                    <td class="td">{{item[9]}}</td>
+                    <td class="td">
+                        <form action="/{{item[0]}}/delete_trade" method="post">
+                            <button id="pnl" value="Izbriši" type="submit"></button>
+                        </form>
+                    </td>
+                </tr>
+                % end
+            </tbody>
+        </table>
+    </div>
+
+
+
 </div>
+

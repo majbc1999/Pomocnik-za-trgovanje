@@ -290,6 +290,14 @@ def dodaj_trade():
     seznam = repo.dobi_trade_delno(piskot.user_id)
     return template('trades.html', trade=seznam, naslov='Dodaj trade')
 
+@post('/<trade_id>/delete_trade')
+def delete_trade(trade_id: int):
+    global piskot
+    repo.izbrisi_trade(trade_id)
+    piskot.sporocilo = 'Trade izbrisan!'
+    seznam = repo.dobi_trade_delno(piskot.user_id)
+    return template('trades.html', trade=seznam, naslov='Dodaj trade')
+
 
 #############################################################
 

@@ -616,7 +616,7 @@ class Repo:
 
     def dobi_trade_delno(self, user_id: int) -> List[T]:
         self.cur.execute('''
-            SELECT symbol_id, type, strategy, RR, target, date, duration, TP, PNL 
+            SELECT id_trade, symbol_id, type, strategy, RR, target, date, duration, TP, PNL 
             FROM trade
             WHERE user_id = {} 
             ORDER BY symbol_id 
@@ -629,9 +629,27 @@ class Repo:
         dollar = findall(r'\$', pnl)
         
         if dollar == []:    # PNL doda pri assetu na katerem je trade
-            Repo().trade_result(self, user_id, simbol, float(pnl))
+            Repo().trade_result(user_id, simbol, float(pnl))
         
         elif dollar != []:  # PNL doda pri USD
             pnl = sub('\$','',pnl)
             Repo().trade_result(user_id, 'USD', float(pnl))
 
+
+    def izbrisi_trade(self, trade_id: int):
+        # Preračuna asset
+        self.cur.execute('''
+            SELECT user_id, symbol_id, pnl 
+            FROM trade
+            WHERE id_trade = %s
+        ''', (trade_id,))
+        trade = self.cur.fetchone()
+        print(trade)
+        Repo().pnl_trade(trade[0], trade[1], trade[2])
+
+        # Izbriše trade iz baze
+        self.cur.execute('''
+                DELETE FROM  trade
+                WHERE id_trade = %s 
+            ''', (trade_id,))
+        self.conn.commit()
