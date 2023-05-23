@@ -18,13 +18,19 @@
       </form>
     </div>
     <div>
-      <p>Povprečni zaslužek: {{piskot.stats_tuple[3]}}$</p>
-      <p>Povprečna izguba: {{piskot.stats_tuple[4]}}$</p>
-      <p>Največji zaslužek: {{piskot.stats_tuple[5]}}$</p>
-      <p>Največja izguba: {{piskot.stats_tuple[6]}}$</p>
-      <p>Povprečno razmerje tveganje: {{piskot.stats_tuple[0]}}</p>
-      <p>Povprečna tarča: {{piskot.stats_tuple[1]}}%</p>
-      <p>Povprečno trajanje: {{piskot.stats_tuple[2]}}h</p><br>
+      <div class="column">
+        <p>Povprečni zaslužek: <b>{{piskot.stats_tuple[3]}} $</b></p>
+        <p>Povprečna izguba: <b>{{piskot.stats_tuple[4]}} $</b></p>
+      </div>
+      <div class="column">
+        <p>Največji zaslužek: <b>{{piskot.stats_tuple[5]}} $</b></p>
+        <p>Največja izguba: <b>{{piskot.stats_tuple[6]}} $</b></p>
+      </div>
+      <div class="column">
+        <p>Povprečno razmerje tveganje: <b>{{piskot.stats_tuple[0]}}</b></p>
+        <p>Povprečna tarča: <b>{{piskot.stats_tuple[1]}} %</b></p>
+        <p>Povprečno trajanje: <b>{{piskot.stats_tuple[2]}} h</b></p><br>
+      </div>
     </div>
   </div>
     <br>

@@ -5,23 +5,21 @@
   <div>
     <p class="besedilo2">Izberi naložbe za prikaz na grafu. Par izbereš tako,
       da njegov simbol vpišeš v spodnje polje. Lahko izbereš več simbolov hkrati,
-      tako da jih ločiš s presledkom. Spodaj so prikazani vsi ki jih imaš na voljo. </p>
+      tako da jih ločiš s presledkom. Spodaj so prikazani simboli med katerimi lahko izbiraš.</p>
     <div class="clearfix">
-      <div class="box" style="height: 400px; padding-top:15%;">
-        <div style="text-align:center">
-          <form action="/new_equity_graph" method="post">
-            <span>Vpiši simbole:</span> <br>
-            <input class="text" name="simboli" type="text" required placeholder="BTC-USD SPY USD"/> <br>
-            <input class="gumb" type="submit" value="Prikaži">
-          </form>
-          <br>
+      <div class="box">  
+        <form action="/new_equity_graph" method="post">
+          <span><br>Vpiši simbole:</span> <br>
+          <input class="text" name="simboli" type="text" required placeholder="BTC-USD SPY USD"/> <br>
+          <input class="gumb" type="submit" value="Prikaži">
+        </form>
+        <ul>
           % for item in assets:
-          <span><li class="li">{{item}}</li></span>
-          % end 
-        </div>
+          <li>{{item}}</li>
+          % end
+        </ul>
       </div>
       <div class="box">
-        <p class="besedilo2">Celotni portfolio</p>
         <iframe id="igraph" scrolling="no" style="border:none;" 
         seamless="seamless" src="../Graphs/cake.html"
         height="400" width="100%"></iframe>

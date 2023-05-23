@@ -1,4 +1,4 @@
-
+from datetime import date
 import re
 import pandas as pd
 import plotly.express as px
@@ -234,8 +234,11 @@ class Graf:
     def graph_html(self, user_id: int, symbol_list: List[str], X_column='date', Y_column='value'):
         ''' Ustvari in shrani graf kot assets.html '''
         data = Graf().multy_asset(symbol_list, user_id)
-        fig = px.line(data, x='date', y='value')
-        fig.write_html("Views/Graphs/assets.html")
+        #data = data.iloc[::5, :]
+        fig = px.line(data, x='date', y='value',
+                      labels=dict(date='čas', value='vrednost [$]'),
+                      title='Vrednost naložbe')
+        fig.write_html('Views/Graphs/assets.html')
 
 
     def graph_cake(self, user_id: int):
@@ -267,7 +270,8 @@ class Graf:
             df = pd.DataFrame([(0, 0), (0, 0)], columns=['vrednost', 'simbol'])
             
         fig = px.pie(df, values='vrednost', names='simbol',
-                    color_discrete_sequence=px.colors.sequential.Purp_r)
+                    color_discrete_sequence=px.colors.sequential.Purp_r, 
+                    title='Celotni portfolio: ' + str(date.today()))
         fig.write_html('Views/Graphs/cake.html')
 
 
@@ -276,7 +280,7 @@ class Graf:
     ############         STATISTIKA       ############
     ##################################################
 
-    def win_rate(self, df: pd.DataFrame):
+    def win_rate(self, df: pd.DataFrame, strategy: str):
         ''' Pripravi win_rate.html in win_by_type.html grafa '''
         ''' Win_rate: '''
         rate = df['tp'].value_counts(normalize=True)
@@ -287,8 +291,10 @@ class Graf:
         d1 = {  'wr': [1 - l, l],
                 'value': ['Win', 'Loss']}
         data = pd.DataFrame(data=d1)
-        fig = px.pie(data, values='wr', names='value', color='value', color_discrete_map={'Win':'darkseagreen', 'Loss':'darksalmon'})
-        fig.write_html("Views/Graphs/win_rate.html")
+        fig = px.pie(data, values='wr', names='value', color='value',
+                     color_discrete_map={'Win':'darkseagreen', 'Loss':'darksalmon'},
+                     title='Win rate strategije ' + strategy)
+        fig.write_html('Views/Graphs/win_rate.html')
 
         ''' Pripravi win rate glede na tip L/S in označi št. dobljenih TPjev '''
         ''' Win_by_type: '''
@@ -303,8 +309,10 @@ class Graf:
                 'count': [rate_long[2], rate_long[1], rate_long[0], rate_short[2], rate_short[1], rate_short[0]]}
         data_2 = pd.DataFrame(data=d_2)
         fig = px.bar(data_2, x='count', y='type', color='TPs',
-                    color_continuous_scale= ['darksalmon','darkseagreen', 'olivedrab'])
-        fig.write_html("Views/Graphs/win_by_type.html")
+                    color_continuous_scale= ['darksalmon','darkseagreen', 'olivedrab'],
+                    labels=dict(date='tip', value='število'),
+                    title='Uspešnost strategije ' + strategy)
+        fig.write_html('Views/Graphs/win_by_type.html')
 
 
     def index_error_fix(self, rate_long: int | None, rate_short: int | None):
@@ -360,7 +368,7 @@ class Graf:
         return (avg_RR, avg_tar, avg_dur, avg_w, avg_l, max_w, max_l)
 
 
-    def graph_pnl(self, df: pd.DataFrame):
+    def graph_pnl(self, df: pd.DataFrame, strategy: str):
         ''' Ustvari graf pnl_graph.html '''
         df = Graf().pnl_type(df, True)
         df1 = df[['date', 'pnl']]
@@ -371,7 +379,9 @@ class Graf:
             sum += round(df1['pnl'][item], 2)    
             df1.loc[item, 'pnl'] = sum
         
-        fig = px.line(df1, x='date', y='pnl')
+        fig = px.line(df1, x='date', y='pnl', 
+                      labels=dict(date='čas', value='pnl [$]'),
+                      title='Zaslužek strategije ' + strategy)
         fig.write_html('Views/Graphs/pnl_graph.html')
 
 
@@ -388,8 +398,8 @@ class Graf:
             pass
         else:
             stats_data = Graf().filter_by_row(stats_data, 'strategy', [strategy])
-        Graf().win_rate(stats_data)
-        Graf().graph_pnl(stats_data)
+        Graf().win_rate(stats_data, strategy)
+        Graf().graph_pnl(stats_data, strategy)
         return Graf().string_stats(stats_data)
 
 
@@ -397,7 +407,7 @@ class Graf:
     ############         ANALIZA          ############
     ##################################################
 
-    def stats(self, df: pd.DataFrame) -> Tuple[float, float, float, float , float, float]:
+    def stats(self, df: pd.DataFrame, strategy: str) -> Tuple[float, float, float, float , float, float]:
         ''' Izpiše tuple vrednosti, ki nas zanimajo za analizo
             in pripravi graf win_rate_anl.html '''
         # Win rate
@@ -428,8 +438,16 @@ class Graf:
             'value': ['Win', 'Loss']}
         data = pd.DataFrame(data=d)
         fig = px.pie(data, values='wr', names='value', color='value',
-                    color_discrete_map={'Win':'darkseagreen', 'Loss':'darksalmon'})
+                    color_discrete_map={'Win':'darkseagreen', 'Loss':'darksalmon'},
+                    title='Uspešnost strategije ' + strategy)
         fig.write_html('Views/Graphs/win_rate_anl.html')
+
+        # Pripavi 3d graf v pnl_3d.html
+        fig = px.scatter_3d(df, x='target', y='rr', z='pnl',
+              color = 'type',
+              color_discrete_map = {'L':'darkseagreen', 'S':'darksalmon'},
+              title = 'Profitabilnost strategije ' + strategy)
+        fig.write_html('Views/Graphs/pnl_3d.html')
         return (w_rate, avg_w, avg_l, avg_rr, avg_tar, avg_dur)
 
 
@@ -457,4 +475,4 @@ class Graf:
             pass
         else:
             df = Graf().filter_by_row(df, 'type', [tip])
-        return Graf().stats(df)
+        return Graf().stats(df, strategy)

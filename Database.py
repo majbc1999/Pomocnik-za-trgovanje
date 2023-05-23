@@ -148,13 +148,10 @@ class Repo:
         self.cur.execute('''
             SELECT * 
             FROM asset 
-            WHERE {id} = %s
+            WHERE user_id = %s
         ''', (id,))
         d = self.cur.fetchall()
 
-        if d is None:
-            raise Exception(f'Vrstica z id-jem {id} ne obstaja v asset');
-    
         seznam = list()
         for i in d:
             seznam.append(i[1])
@@ -259,7 +256,6 @@ class Repo:
             WHERE id_trade = %s
         ''', (trade_id,))
         trade = self.cur.fetchone()
-        print(trade)
         Repo().pnl_trade(trade[0], trade[1], trade[2])
 
         # Izbriše trade iz baze

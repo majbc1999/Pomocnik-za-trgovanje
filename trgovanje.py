@@ -141,7 +141,6 @@ def posodobi():
     priimek = request.forms.priimek
     datum = request.forms.datum
     geslo = request.forms.geslo
-    print(geslo)
     repo.posodobi_user(piskot.user_id, ime, priimek, datum, geslo)
 
     seznam = repo.get_user(piskot.user_id)

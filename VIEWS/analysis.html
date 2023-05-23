@@ -12,38 +12,43 @@
             % for strategija in strategy:
             <option value="{{strategija}}">{{strategija}}</option>
             % end
-          </select><br>
+          </select>
+        <p></p>
         <label for="duration">Čas trajanja:</label>
         <input class="range" type="range" name="duration" min="1" max="100" id="duration" value="50" oninput="durationnumber.value=value">
         <input type="number" id="durationnumber" min="1" max="100" value="50" oninput="duration.value=value">
-        <br>
+        <p></p>
         <label for="rr">Razmerje tveganja:</label>
         <input class="range" type="range" name="rr" min="1" max="15" id="rr" value="7" oninput="rrnumber.value=value">
         <input type="number" id="rrnumber" min="1" max="15" value="7" oninput="rr.value=value">
-        <br>
+        <p></p>
         <label for="target">Tarča:</label>
         <input class="range" type="range" name="target" min="1" max="10" id="target" value="5" oninput="targetnumber.value=value">
         <input type="number" id="targetnumber" min="1" max="10" value="5" oninput="target.value=value">
-        <br>
+        <p></p>
         <label for="tip">Tip:</label>
         <select class="select-analiza" name="tip">
           <option value="Oba">Oba</option>  
           <option value="L">Long</option>
           <option value="S">Short</option>
-        </select><br>
+        </select>
+        <p></p>
         <input class="gumb" type="submit" value="Potrdi">
       </form>
     </div>
     <div class="box" style="text-align: center;">
-      <p>Uspešnost: {{piskot.anl_stats[0]}}%</p>
-      <p>Povprečni zaslužek: {{piskot.anl_stats[1]}}$</p>
-      <p>Povprečna izguba: {{piskot.anl_stats[2]}}$</p>
-      <p>Povprečno razmerje tveganje: {{piskot.anl_stats[3]}}</p>
-      <p>Povprečna tarča: {{piskot.anl_stats[4]}}%</p>
-      <p>Povprečno trajanje: {{piskot.anl_stats[5]}}h</p><br>
+      <p>Uspešnost: <b>{{piskot.anl_stats[0]}}</b></p>
+      <p>Povprečni zaslužek: <b>{{piskot.anl_stats[1]}}</b></p>
+      <p>Povprečna izguba: <b>{{piskot.anl_stats[2]}}</b></p>
+      <p>Povprečno razmerje tveganje: <b>{{piskot.anl_stats[3]}}</b></p>
+      <p>Povprečna tarča: <b>{{piskot.anl_stats[4]}}</b></p>
+      <p>Povprečno trajanje: <b>{{piskot.anl_stats[5]}}</b></p><br>
     </div>
   </div>
   <br>
+  <iframe id="igraph" scrolling="no" style="border:none;" 
+  seamless="seamless" src="../Graphs/pnl_3d.html"
+  height="500" width="100%"></iframe>
   <iframe id="igraph" scrolling="no" style="border:none;" 
   seamless="seamless" src="../Graphs/win_rate_anl.html"
   height="500" width="100%"></iframe>
