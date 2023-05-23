@@ -95,8 +95,8 @@
                 <td class="td">{{item[8]}}</td>
                 <td class="td">{{item[9]}}</td>
                 <td class="td">
-                    <form action="/{{item[0]}}/delete_trade" method="post">
-                        <button id="pnl" value="Izbriši" onclick="myFunction()" type="submit" class="gumb_del">Izbriši</button>
+                    <form action="/{{item[0]}}/delete_trade" method="post" onsubmit="return confirm('Ali si prepričan? Ni poti nazaj!');">
+                        <button id="pnl" value="Izbriši" type="submit" class="gumb_del">Izbriši</button>
                     </form>
                 </td>
             </tr>
@@ -104,9 +104,3 @@
         </tbody>
     </table>
 </div>
-
-<script>
-    function myFunction() {
-      confirm("Izbriši trade? Ni poti nazaj!");
-    }
-</script>

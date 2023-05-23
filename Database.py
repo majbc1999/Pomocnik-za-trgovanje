@@ -202,7 +202,7 @@ class Repo:
         return abs(amount)
 
 
-    def trade_result(self, user_id: int, simbol: str, pnl: float | str):
+    def trade_result(self, user_id: int, simbol: str, pnl: float):
         self.cur.execute('''
             SELECT amount 
             FROM asset
@@ -236,14 +236,18 @@ class Repo:
         return self.cur.fetchall()
 
 
-    def pnl_trade(self, user_id: int, simbol: str, pnl: float | str):
+    def pnl_trade(self, user_id: int, simbol: str, pnl: float | str, brisi=False):
         dollar = findall(r'\$', pnl)
-        
+            
         if dollar == []:    # PNL doda pri assetu na katerem je trade
+            if brisi == True:
+                pnl = -float(pnl)
             Repo().trade_result(user_id, simbol, float(pnl))
         
         elif dollar != []:  # PNL doda pri USD
             pnl = sub('\$','',pnl)
+            if brisi == True:
+                pnl = -float(pnl)
             Repo().trade_result(user_id, 'USD', float(pnl))
 
 
@@ -256,7 +260,7 @@ class Repo:
             WHERE id_trade = %s
         ''', (trade_id,))
         trade = self.cur.fetchone()
-        Repo().pnl_trade(trade[0], trade[1], trade[2])
+        Repo().pnl_trade(trade[0], trade[1], trade[2], True)
 
         # Izbriše trade iz baze
         self.cur.execute('''
