@@ -133,15 +133,4 @@ auth.py
 
 # Grafi
 Views/Graphs/
-VIEWS/Graphs/assets.html
-VIEWS/Graphs/cake.html
-VIEWS/Graphs/pnl_graph.html
-VIEWS/Graphs/win_by_type.html
-VIEWS/Graphs/win_rate_anl.html
-VIEWS/Graphs/win_rate.html
-Views/Graphs/assets.html
-Views/Graphs/cake.html
-Views/Graphs/pnl_graph.html
-Views/Graphs/win_by_type.html
-Views/Graphs/win_rate_anl.html
-Views/Graphs/win_rate.html
+VIEWS/Graphs/

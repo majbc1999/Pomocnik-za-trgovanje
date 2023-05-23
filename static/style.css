@@ -73,10 +73,13 @@
     background-color: #669999;
     color: white;
     padding: 14px 20px;
-    margin: 8px 0 50px 0;
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    margin-top: 8px;
+    margin-bottom: 50px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .gumb_profil {
@@ -115,6 +118,12 @@
     font-size: 25px;
     font-weight: bold;
     text-align: center;
+}
+
+.nazaj {
+    text-align: center;
+    width: 70%;
+    margin: auto;
 }
 
 .obroba {
@@ -190,6 +199,12 @@
 
 .th {
     background-color: #669999;
+}
+
+.th-link {
+    text-decoration: none;
+    background-color: #669999;
+    color: black;
 }
 
 .text {
