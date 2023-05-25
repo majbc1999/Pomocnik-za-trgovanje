@@ -21,8 +21,6 @@ from Services import AuthService
 repo = Repo()
 auth = AuthService(repo)
 graf = Graf()
-piskot = UporabnikCookie()
-
 
 # Privzete nastavitve
 SERVER_PORT = os.environ.get('BOTTLE_PORT', 8080)
@@ -59,31 +57,34 @@ def Graf_assets(ime: str):
 
 @get('/')
 def zacetna_stran():
-    return template('prijava.html', uspesna_prijava=True, naslov='Pomočnik za trgovanje')
+    return template('prijava.html', 
+                    uspesna_prijava=True, 
+                    sporocilo='',
+                    naslov='Pomočnik za trgovanje')
 
 @post('/prijava')
 def prijava_post():
-    global piskot
     uporabnisko_ime = request.forms.ime
     geslo = request.forms.geslo
 
     if not auth.obstaja_uporabnik(uporabnisko_ime):
-        piskot.sporocilo = 'Uporabnik s tem imenom ne obstaja'
-        return template('prijava.html', uspesna_prijava=False, naslov='Pomočnik za trgovanje')
+        return template('prijava.html', 
+                        uspesna_prijava=False, 
+                        sporocilo='Uporabnik s tem imenom ne obstaja',
+                        naslov='Pomočnik za trgovanje')
 
     prijava = auth.prijavi_uporabnika(uporabnisko_ime, geslo)
     if prijava[0] == 0:
-        piskot.sporocilo = 'Napačno uporabinško ime ali geslo!'
-        return template('prijava.html',  uspesna_prijava=False, naslov='Pomočnik za trgovanje')
+        return template('prijava.html',
+                        uspesna_prijava=False, 
+                        sporocilo='Napačno uporabinško ime ali geslo!',
+                        naslov='Pomočnik za trgovanje')
     
     # Nastavi piškotek
     response.set_cookie('uporabnik', uporabnisko_ime)
-    # Potrebne podatke shrani v razred določen s piškotkom
-    piskot = auth.from_piskot_to_param(request.get_cookie('uporabnik'))
-    piskot.user_id = prijava[0]
-    piskot.user_ime = prijava[1]
-    piskot.sporocilo = ''
-    redirect(f'/{piskot.user_id}/index')
+
+    user_id = repo.dobi_gen_id(app_user, uporabnisko_ime, 'user_name')[0]
+    redirect(f'/{user_id}/index')
 
 @get('/odjava')
 def logout():
@@ -94,11 +95,13 @@ def logout():
 
 @get('/registracija')
 def registracija_get():
-    return template('registracija.html', uspesna_registracija = True, naslov='Registracija')
+    return template('registracija.html', 
+                    uspesna_registracija=True, 
+                    sporocilo='',
+                    naslov='Registracija')
 
 @post('/registracija')
 def registracija_post():
-    global piskot
     ime = request.forms.name
     priimek = request.forms.surname
     datum_rojstva = request.forms.date_of_birth
@@ -106,25 +109,31 @@ def registracija_post():
     geslo = request.forms.password
 
     if not auth.obstaja_uporabnik(uporabnisko_ime):
-        piskot.sporocilo = 'Registracija ni možna, to uporabniško ime že obstaja.'
-        return template('registracija.html', uspesna_registracija = False, naslov='Registracija')
+        return template('registracija.html', 
+                        uspesna_registracija=False, 
+                        sporocilo='Registracija ni možna, to uporabniško ime že obstaja.',
+                        naslov='Registracija')
 
     auth.dodaj_uporabnika(ime, priimek, datum_rojstva, uporabnisko_ime, geslo)
-    piskot.sporocilo = 'Registracija uspešna!'
-    return template('prijava.html',  uspesna_prijava = False, naslov='Pomočnik za trgovanje')    
+    return template('prijava.html',  
+                    uspesna_prijava=False,
+                    sporocilo='Registracija uspešna!',
+                    naslov='Pomočnik za trgovanje')    
 
 #############################################################
 
 @get('/<id>/index')
 @cookie_required
 def index(id: int):
-    global piskot
-    piskot.user_assets = repo.dobi_asset_by_user(id)
+    cookie = request.get_cookie('uporabnik')
+    user_seznam = repo.dobi_gen_id(app_user, cookie, 'user_name')
+    user_id = user_seznam[0]
+    user_ime = user_seznam[1]
 
     # V bazi posodobi price_history
     df = gh.update_price_history()
     repo.posodobi_price_history(df)
-    return template('index.html')
+    return template('index.html', user_ime=user_ime , user_id=user_id)
 
 #############################################################
 
@@ -132,20 +141,31 @@ def index(id: int):
 @cookie_required
 def uredi_profil(id: int):
     seznam = repo.get_user(id)
-    return template('uredi_profil.html', sprememba=False, podatki=seznam, naslov='Uredi profil')   
+    return template('uredi_profil.html', 
+                    sprememba=False, 
+                    podatki=seznam, 
+                    sporocilo='',
+                    user_id=id,
+                    naslov='Uredi profil')   
 
 @post('/posodobi')
 def posodobi():
-    global piskot
+    cookie = request.get_cookie('uporabnik')
+    user_id = repo.dobi_gen_id(app_user, cookie, 'user_name')[0]
+
     ime = request.forms.ime
     priimek = request.forms.priimek
     datum = request.forms.datum
     geslo = request.forms.geslo
-    repo.posodobi_user(piskot.user_id, ime, priimek, datum, geslo)
+    repo.posodobi_user(user_id, ime, priimek, datum, geslo)
 
-    seznam = repo.get_user(piskot.user_id)
-    piskot.sporocilo = 'Sprememba uspešna!'
-    return template('uredi_profil.html', sprememba=True, podatki=seznam, naslov='Uredi profil') 
+    seznam = repo.get_user(user_id)
+    return template('uredi_profil.html', 
+                    sprememba=True, 
+                    podatki=seznam, 
+                    sporocilo='Sprememba uspešna!',
+                    user_id=user_id,
+                    naslov='Uredi profil') 
 
 
 #############################################################
@@ -155,30 +175,41 @@ def posodobi():
 @get('/<id>/pregled_nalozb')
 @cookie_required
 def dodaj(id: int):
-    global piskot
-    piskot.sporocilo = ''
     seznam = repo.dobi_pare()
-    return template('pregled_nalozb.html', pravilen_simbol=True, pairs=seznam, naslov='Dodaj naložbo')
+    return template('pregled_nalozb.html', 
+                    pravilen_simbol=True, 
+                    pairs=seznam, 
+                    sporocilo='',
+                    user_id=id,
+                    naslov='Dodaj naložbo')
 
 @post('/dodaj_par')
 def dodaj_par():
     ''' Doda nov par v tabelo pari '''
-    global piskot
     symbol = request.forms.symbol
     name = request.forms.ime
 
+    cookie = request.get_cookie('uporabnik')
+    user_id = repo.dobi_gen_id(app_user, cookie, 'user_name')[0]
+
     # Preveri ali vnešen simbol obstaja
     if gh.preveri_ustreznost(f'{symbol}') == 0:
-        piskot.sporocilo = 'Vnešen napačen simbol'
-        return template('pregled_nalozb.html', pravilen_simbol=False, naslov='Dodaj naložbo')
+        return template('pregled_nalozb.html', 
+                        pravilen_simbol=False, 
+                        sporocilo='Vnešen napačen simbol',
+                        user_id=user_id,
+                        naslov='Dodaj naložbo')
 
     # Vnese simbol v tabelo par
     repo.dodaj_par(symbol, name)
     gh.get_historic_data(['{}'.format(symbol)], date.today())
     repo.uvozi_Price_History('{}.csv'.format(symbol))
     gh.merge_csv(gh.get_symbols(), 'price_history.csv')
-    piskot.sporocilo = 'Simbol uspešno dodan'
-    return template('pregled_nalozb.html', pravilen_simbol=True, naslov='Dodaj naložbo')
+    return template('pregled_nalozb.html', 
+                    pravilen_simbol=True, 
+                    sporocilo='Simbol uspešno dodan', 
+                    user_id=user_id,
+                    naslov='Dodaj naložbo')
 
 #############################################################
 
@@ -186,14 +217,20 @@ def dodaj_par():
 @cookie_required
 def nalozbe(id: int):
     seznam = repo.dobi_asset_amount_by_user(id)
-    piskot.sporocilo = ''
-    return template('nalozbe.html', assets=seznam, napaka=False, naslov='Asset')
+    return template('nalozbe.html',
+                    assets=seznam, 
+                    napaka=False, 
+                    sporocilo='', 
+                    user_id=id, 
+                    naslov='Asset')
 
 @post('/buy_sell')
 def buy_sell():
     ''' Če kupimo ali prodamo naložbo, ta funkcija
         vnese spremembe v tabelo assets in doda trade '''
-    global piskot
+    cookie = request.get_cookie('uporabnik')
+    user_id = repo.dobi_gen_id(app_user, cookie, 'user_name')[0]
+
     symbol = request.forms.symbol
     datum = request.forms.datum
     tip = request.forms.tip
@@ -204,12 +241,16 @@ def buy_sell():
         if repo.dobi_gen_id(pair, symbol, id_col='symbol'):
             pass
     except Exception:
-        piskot.sporocilo = 'Napačen simbol!'
-        seznam = repo.dobi_asset_amount_by_user(piskot.user_id)
-        return template('nalozbe.html', assets=seznam, napaka=True, naslov='Asset')
+        seznam = repo.dobi_asset_amount_by_user(user_id)
+        return template('nalozbe.html', 
+                        assets=seznam, 
+                        napaka=True, 
+                        sporocilo='Napačen simbol!',
+                        user_id=user_id, 
+                        naslov='Asset')
 
     # Zabeleži trade v tabelo trades
-    trejd = trade(  user_id = piskot.user_id,
+    trejd = trade(  user_id = user_id,
                     symbol_id = symbol, 
                     type = tip,
                     date = datum, 
@@ -218,10 +259,14 @@ def buy_sell():
     repo.dodaj_gen(trejd, serial_col='id_trade')
 
     # Vnese spremembo v tabelo assets
-    repo.trade_result(piskot.user_id, symbol, amount)
-    piskot.sporocilo = 'Transakcija potrjena'
-    seznam = repo.dobi_asset_amount_by_user(piskot.user_id)
-    return template('nalozbe.html', assets=seznam, napaka=False, naslov='Asset')
+    repo.trade_result(user_id, symbol, amount)
+    seznam = repo.dobi_asset_amount_by_user(user_id)
+    return template('nalozbe.html', 
+                    assets=seznam, 
+                    napaka=False, 
+                    sporocilo='Transakcija potrjena',
+                    user_id=user_id,
+                    naslov='Asset')
 
 
 #############################################################
@@ -229,20 +274,27 @@ def buy_sell():
 @get('/<id>/napredek')
 @cookie_required
 def performance(id: int):
-    global piskot
-    graf.graph_html(piskot.user_id, piskot.user_assets) 
-    graf.graph_cake(piskot.user_id)
+    cookie = request.get_cookie('uporabnik')
+    user_id = repo.dobi_gen_id(app_user, cookie, 'user_name')[0]
+    user_assets = repo.dobi_asset_by_user(id)
+
+    graf.graph_html(user_id, user_assets) 
+    graf.graph_cake(user_id)
     TEMPLATES.clear()
-    return template('performance.html', assets=piskot.user_assets, naslov='Poglej napredek')
+    return template('performance.html', assets=user_assets, user_id=id, naslov='Poglej napredek')
 
 @post('/new_equity_graph')
 def new_equity_graph():
-    global piskot
+    cookie = request.get_cookie('uporabnik')
+    user_id = repo.dobi_gen_id(app_user, cookie, 'user_name')[0]
+    user_assets = repo.dobi_asset_by_user(user_id)
+
     simboli_graf = request.forms.simboli
-    seznam = re.split(r' ', simboli_graf)
-    graf.graph_html(piskot.user_id, seznam)
+    seznam = re.split(r' ', simboli_graf
+                      )
+    graf.graph_html(user_id, seznam)
     TEMPLATES.clear()
-    return template('performance.html', assets=piskot.user_assets, naslov='Poglej napredek')
+    return template('performance.html', assets=user_assets, user_id=user_id, naslov='Poglej napredek')
 
 
 #############################################################
@@ -252,13 +304,14 @@ def new_equity_graph():
 @get('/<id>/trades')
 @cookie_required
 def trades(id: int):
-    piskot.sporocilo = ''
     seznam = repo.dobi_trade_delno(id)
-    return template('trades.html', trade=seznam, naslov='Dodaj trade')
+    return template('trades.html', trade=seznam, sporocilo='', user_id=id, naslov='Dodaj trade')
 
 @post('/dodaj_trade')
 def dodaj_trade():
-    global  piskot
+    cookie = request.get_cookie('uporabnik')
+    user_id = repo.dobi_gen_id(app_user, cookie, 'user_name')[0]
+
     simbol = request.forms.symbol
     TP = request.forms.TP
     PNL = request.forms.PNL
@@ -267,7 +320,7 @@ def dodaj_trade():
         if repo.dobi_gen_id(pair, simbol, id_col='symbol'):
             if TP == '':
                 TP = psycopg2.extensions.AsIs('NULL')
-            trejd = trade(  user_id = piskot.user_id,
+            trejd = trade(  user_id = user_id,
                             symbol_id = simbol, 
                             type = request.forms.type,
                             strategy = request.forms.strategy,
@@ -281,28 +334,47 @@ def dodaj_trade():
             # Zabeleži trade v tabelo trades
             repo.dodaj_gen(trejd, serial_col='id_trade')
             # Izid trada poračuna v asset
-            repo.pnl_trade(piskot.user_id, simbol, PNL)
-            piskot.sporocilo = 'Trade dodan'
-    except:
-        piskot.sporocilo = 'Napačen simbol, če želite dodati trade za njega, ga najprej dodajte v tabelo pari!'
+            repo.pnl_trade(user_id, simbol, PNL)
 
-    seznam = repo.dobi_trade_delno(piskot.user_id)
-    return template('trades.html', trade=seznam, naslov='Dodaj trade')
+            seznam = repo.dobi_trade_delno(user_id)
+            return template('trades.html',
+                            trade=seznam, 
+                            sporocilo='Trade dodan', 
+                            user_id=user_id, 
+                            naslov='Dodaj trade')
+    except:
+        seznam = repo.dobi_trade_delno(user_id)
+        return template('trades.html', 
+                        trade=seznam, 
+                        sporocilo = '''Napačen simbol, če želite dodati 
+                        trade za njega, ga najprej dodajte v tabelo pari!''',
+                        user_id=user_id,
+                        naslov='Dodaj trade')
 
 @post('/<trade_id>/delete_trade')
 def delete_trade(trade_id: int):
-    global piskot
+    cookie = request.get_cookie('uporabnik')
+    user_id = repo.dobi_gen_id(app_user, cookie, 'user_name')[0]
+
     repo.izbrisi_trade(trade_id)
-    piskot.sporocilo = 'Trade izbrisan!'
-    seznam = repo.dobi_trade_delno(piskot.user_id)
-    return template('trades.html', trade=seznam, naslov='Dodaj trade')
+    seznam = repo.dobi_trade_delno(user_id)
+    return template('trades.html', 
+                    trade=seznam, 
+                    sporocilo='Trade izbrisan!',
+                    user_id=user_id, 
+                    naslov='Dodaj trade')
 
 @get('/<param>/uredi')
 @cookie_required
 def uredi(param: str):
-    global piskot
-    seznam = repo.dobi_trade_delno(piskot.user_id, param)
-    return template('trades.html', trade=seznam, naslov='Dodaj trade')
+    cookie = request.get_cookie('uporabnik')
+    user_id = repo.dobi_gen_id(app_user, cookie, 'user_name')[0]
+    seznam = repo.dobi_trade_delno(user_id, param)
+    return template('trades.html', 
+                    trade=seznam, 
+                    sporocilo='', 
+                    user_id=user_id, 
+                    naslov='Dodaj trade')
 
 
 #############################################################
@@ -310,21 +382,33 @@ def uredi(param: str):
 @get('/<id>/statistika')
 @cookie_required
 def stats(id: int):
-    global piskot
     seznam = repo.dobi_strategije(id)
-    piskot.stats_tuple = graf.graph_stats(piskot.user_id, 'All')
+    cookie = request.get_cookie('uporabnik')
+    user_id = repo.dobi_gen_id(app_user, cookie, 'user_name')[0]
+
+    # Če uporabim samo id namesto user_id ne izračuna stats_tuple?
+    stats_tuple = graf.graph_stats(user_id, 'All')
     TEMPLATES.clear()
-    return template('stats.html', strategy=seznam, naslov='Statistika')
+    return template('stats.html', 
+                    strategy=seznam, 
+                    podatki=stats_tuple, 
+                    user_id=id, 
+                    naslov='Statistika')
 
 @post('/strategy')
 def strategy():
-    global piskot
-    strategy = request.forms.strategy
-    piskot.stats_tuple = graf.graph_stats(piskot.user_id, strategy)
-    TEMPLATES.clear()
+    cookie = request.get_cookie('uporabnik')
+    user_id = repo.dobi_gen_id(app_user, cookie, 'user_name')[0]
 
-    seznam = repo.dobi_strategije(piskot.user_id)
-    return template('stats.html', strategy=seznam, naslov='Statistika')
+    strategy = request.forms.strategy
+    stats_tuple = graf.graph_stats(user_id, strategy)
+    TEMPLATES.clear()
+    seznam = repo.dobi_strategije(user_id)
+    return template('stats.html', 
+                    strategy=seznam, 
+                    podatki=stats_tuple, 
+                    user_id=user_id,
+                    naslov='Statistika')
 
 #############################################################
 
@@ -332,20 +416,31 @@ def strategy():
 @cookie_required
 def analyze_main(id: int):
     seznam = repo.dobi_strategije(id)
-    return template('analysis.html', strategy=seznam, naslov='Analiza')
+    return template('analysis.html', 
+                    strategy=seznam, 
+                    podatki=(0, 0, 0, 0, 0, 0), 
+                    user_id=id,
+                    naslov='Analiza')
 
 @post('/analyze')
 def analyze_f():
-    global piskot
-    piskot.anl_stats = graf.analyze( piskot.user_id, 
-                                request.forms.strategy, 
-                                int(request.forms.duration), 
-                                int(request.forms.rr), 
-                                int(request.forms.target), 
-                                request.forms.tip)
+    cookie = request.get_cookie('uporabnik')
+    user_id = repo.dobi_gen_id(app_user, cookie, 'user_name')[0]
+    analiza_stats = graf.analyze(   
+        user_id, 
+        request.forms.strategy, 
+        int(request.forms.duration), 
+        int(request.forms.rr), 
+        int(request.forms.target), 
+        request.forms.tip
+        )
     TEMPLATES.clear()
-    seznam = repo.dobi_strategije(piskot.user_id)
-    return template('analysis.html', strategy=seznam, naslov='Analiza')
+    seznam = repo.dobi_strategije(user_id)
+    return template('analysis.html', 
+                    strategy=seznam, 
+                    podatki=analiza_stats, 
+                    user_id=user_id,
+                    naslov='Analiza')
 
 #############################################################
 

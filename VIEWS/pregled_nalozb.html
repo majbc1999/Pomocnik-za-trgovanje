@@ -1,5 +1,4 @@
 % rebase('base.html', naslov=naslov)
-% from trgovanje import piskot
 
 <div class="obroba">
   <p>Uporabnik lahko doda nove naložbe v program, tako da izbere simbol, ki je na
@@ -10,9 +9,9 @@
   </p><br>
   <p>SIMBOL ZAPIŠI Z VELIKIMI ČRKAMI!</p><br>
   % if pravilen_simbol == True:
-  <div class="uspesno">{{piskot.sporocilo}}</div>
+  <div class="uspesno">{{sporocilo}}</div>
   % elif pravilen_simbol == False:
-  <div class="opozorilo">{{piskot.sporocilo}}</div>  
+  <div class="opozorilo">{{sporocilo}}</div>  
   % end
   <form action="/dodaj_par" method="post">
     <span>Vpiši simbol:</span> <input class="text" name="symbol" type="text" required placeholder="BTC-USD"/><br>

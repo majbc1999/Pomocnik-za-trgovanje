@@ -1,5 +1,4 @@
 % rebase('base.html', naslov=naslov)
-% from trgovanje import piskot
 
 <div class="obroba-graf">
   <div>
@@ -19,17 +18,17 @@
     </div>
     <div>
       <div class="column">
-        <p>Povprečni zaslužek: <b>{{piskot.stats_tuple[3]}} $</b></p>
-        <p>Povprečna izguba: <b>{{piskot.stats_tuple[4]}} $</b></p>
+        <p>Povprečni zaslužek: <b>{{podatki[3]}} $</b></p>
+        <p>Povprečna izguba: <b>{{podatki[4]}} $</b></p>
       </div>
       <div class="column">
-        <p>Največji zaslužek: <b>{{piskot.stats_tuple[5]}} $</b></p>
-        <p>Največja izguba: <b>{{piskot.stats_tuple[6]}} $</b></p>
+        <p>Največji zaslužek: <b>{{podatki[5]}} $</b></p>
+        <p>Največja izguba: <b>{{podatki[6]}} $</b></p>
       </div>
       <div class="column">
-        <p>Povprečno razmerje tveganje: <b>{{piskot.stats_tuple[0]}}</b></p>
-        <p>Povprečna tarča: <b>{{piskot.stats_tuple[1]}} %</b></p>
-        <p>Povprečno trajanje: <b>{{piskot.stats_tuple[2]}} h</b></p><br>
+        <p>Povprečno razmerje tveganje: <b>{{podatki[0]}}</b></p>
+        <p>Povprečna tarča: <b>{{podatki[1]}} %</b></p>
+        <p>Povprečno trajanje: <b>{{podatki[2]}} h</b></p><br>
       </div>
     </div>
   </div>

@@ -1,5 +1,4 @@
 % rebase('base.html', naslov=naslov)
-% from trgovanje import piskot
 
 <div class="obroba-graf">
   <p class="besedilo2">Tu lahko analiziraš in izboljšuješ svoje strategije.
@@ -37,12 +36,12 @@
       </form>
     </div>
     <div class="box" style="text-align: center;">
-      <p>Uspešnost: <b>{{piskot.anl_stats[0]}}</b></p>
-      <p>Povprečni zaslužek: <b>{{piskot.anl_stats[1]}}</b></p>
-      <p>Povprečna izguba: <b>{{piskot.anl_stats[2]}}</b></p>
-      <p>Povprečno razmerje tveganje: <b>{{piskot.anl_stats[3]}}</b></p>
-      <p>Povprečna tarča: <b>{{piskot.anl_stats[4]}}</b></p>
-      <p>Povprečno trajanje: <b>{{piskot.anl_stats[5]}}</b></p><br>
+      <p>Uspešnost: <b>{{podatki[0]}}</b></p>
+      <p>Povprečni zaslužek: <b>{{podatki[1]}}</b></p>
+      <p>Povprečna izguba: <b>{{podatki[2]}}</b></p>
+      <p>Povprečno razmerje tveganje: <b>{{podatki[3]}}</b></p>
+      <p>Povprečna tarča: <b>{{podatki[4]}}</b></p>
+      <p>Povprečno trajanje: <b>{{podatki[5]}}</b></p><br>
     </div>
   </div>
   <br>

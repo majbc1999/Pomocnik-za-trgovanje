@@ -1,5 +1,3 @@
-% from trgovanje import piskot
-
 <!DOCTYPE html>
 <html lang="slo">
     <head>
@@ -12,7 +10,7 @@
         <div class="obroba">
             <p class="naslov-tabele">PRIJAVA</p>
             % if uspesna_prijava == False:
-            <div class="opozorilo">{{piskot.sporocilo}}</div>  
+            <div class="opozorilo">{{sporocilo}}</div>  
             % end
             <form action="/prijava" method="post">
                 <span>Uporabniško ime:</span> <input class="text" name="ime" type="text" /><br>

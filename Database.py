@@ -227,6 +227,7 @@ class Repo:
 
 
     def dobi_trade_delno(self, user_id: int, column='symbol_id') -> List[T]:
+        ''' Če podamo stoplec nam seznam uredi glede na ta stolpec '''
         self.cur.execute('''
             SELECT id_trade, symbol_id, type, strategy, RR, target, date, duration, TP, PNL 
             FROM trade

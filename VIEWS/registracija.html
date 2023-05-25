@@ -1,5 +1,3 @@
-% from trgovanje import piskot
-
 <!DOCTYPE html>
 <html lang="slo">
   <head>
@@ -12,7 +10,7 @@
     <div class="obroba">
       <div><p class="naslov-tabele">Vpiši svoje podatke</p></div>
       % if uspesna_registracija == False:
-      <div class="opozorilo">{{piskot.sporocilo}}</div>  
+      <div class="opozorilo">{{sporocilo}}</div>  
       % end
       <form action="/registracija" method="post" autocomplete="off">
         <span>Ime:</span> <input class="text" name="name" type="text" required placeholder="Sara"/><br>

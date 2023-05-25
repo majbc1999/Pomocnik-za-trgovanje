@@ -48,13 +48,3 @@ class trade:
     target: float = field(default=psycopg2.extensions.AsIs('NULL'))
     duration: str = field(default=psycopg2.extensions.AsIs('NULL'))
     tp: int = field(default=psycopg2.extensions.AsIs('NULL'))
-
-
-@dataclass
-class UporabnikCookie:
-    user_ime: str = field(default='')
-    sporocilo: str = field(default='')
-    user_id: int = field(default=0)
-    user_assets: list[str] = field(default_factory=lambda: [])
-    anl_stats: tuple = field(default=(0, 0, 0, 0, 0, 0))
-    stats_tuple: tuple = field(default=(0, 0, 0, 0, 0, 0, 0))

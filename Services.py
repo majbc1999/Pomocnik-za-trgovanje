@@ -52,9 +52,3 @@ class AuthService:
             )
 
         self.repo.dodaj_gen(uporabnik, serial_col='id_user')
-
-
-    def from_piskot_to_param(self, piskot: str) -> UporabnikCookie:
-        piskot = UporabnikCookie()
-        return piskot
-    

@@ -1,5 +1,3 @@
-% from trgovanje import piskot
-
 <!DOCTYPE html>
 <html lang="slo">
   <head>
@@ -12,7 +10,7 @@
     <div class="obroba">
       <div><p class="naslov-tabele">Tvoji podatki</p></div>
       % if sprememba == True:
-      <div class="uspesno">{{piskot.sporocilo}}</div>  
+      <div class="uspesno">{{sporocilo}}</div>  
       % end
       <form action="/posodobi" method="post" autocomplete="off">
         <span>Ime:</span> <input class="text" name="ime" type="text" value="{{podatki[0]}}" required/><br>
@@ -24,7 +22,7 @@
       </form>
     </div>
     <br>
-    <a href="/{{piskot.user_id}}/index" class="Button"><input class="gumb_nazaj" type='button' value='Nazaj' /></a>
+    <a href="/{{user_id}}/index" class="Button"><input class="gumb_nazaj" type='button' value='Nazaj' /></a>
   </body>
   <footer class="footer">
       <p>by <a style="color: white;" href="https://github.com/sarazuzek/Pomocnik-za-trgovanje">Sara Žužek & Alan Marinić</a> </p>
