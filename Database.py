@@ -135,12 +135,13 @@ class Repo:
     def posodobi_price_history(self, df: DataFrame | None):
         if not df is None:
             for i in df.index:
-                self.cur.execute('''
-                    INSERT INTO price_history (symbol_id, date, price)
-                    VALUES (%s, %s, %s)
-                    ON CONFLICT (symbol_id, date)
-                    DO UPDATE SET price = {}
-                '''.format(df['price'][i]), (df['symbol_id'][i], df['date'][i], df['price'][i]))
+                if not df['price'][i] is 'NaN':
+                    self.cur.execute('''
+                        INSERT INTO price_history (symbol_id, date, price)
+                        VALUES (%s, %s, %s)
+                        ON CONFLICT (symbol_id, date)
+                        DO UPDATE SET price = {}
+                    '''.format(df['price'][i]), (df['symbol_id'][i], df['date'][i], df['price'][i]))
             self.conn.commit()
             
 
