@@ -17,9 +17,4 @@ def template(*largs, **kwargs):
     ''' Izpis predloge s podajanjem funkcije url '''
     return bottle.template(*largs, **kwargs, url=bottle.url)
 
-def template_user(*largs, **kwargs):
-    ''' Izpis predloge s podajanjem funkcije url in dodanim uporabnikom '''
-    return bottle.template(*largs, **kwargs, url=bottle.url)
-
-
 bottle.Route = Route

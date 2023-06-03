@@ -436,7 +436,7 @@ def analyze_f():
         )
     TEMPLATES.clear()
     seznam = repo.dobi_strategije(user_id)
-    return template('analysis.html', 
+    return template('analysis.html',
                     strategy=seznam, 
                     podatki=analiza_stats, 
                     user_id=user_id,
