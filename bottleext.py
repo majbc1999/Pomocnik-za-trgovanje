@@ -19,10 +19,7 @@ def template(*largs, **kwargs):
 
 def template_user(*largs, **kwargs):
     ''' Izpis predloge s podajanjem funkcije url in dodanim uporabnikom '''
-    # Dodamo ime uporabnika, ki je prebran iz cookija direktno v vsak html, ki ga uporabimo kot template.
-    usr_cookie = request.get_cookie('uporabnik')
-
-    return bottle.template(*largs, **kwargs, uporabnik=usr_cookie, url=bottle.url)
+    return bottle.template(*largs, **kwargs, url=bottle.url)
 
 
 bottle.Route = Route
