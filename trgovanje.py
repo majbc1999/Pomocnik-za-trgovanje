@@ -46,9 +46,9 @@ def cookie_required(f):
         redirect('/')
     return decorated
 
-@get('/Graphs/<ime>.html')
+@get('/graphs/<ime>.html')
 def Graf_assets(ime: str):
-    return template(f'Graphs/{ime}.html')
+    return template(f'graphs/{ime}.html')
 
 
 #############################################################
