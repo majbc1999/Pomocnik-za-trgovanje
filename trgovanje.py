@@ -201,9 +201,9 @@ def dodaj_par():
                         user_id=user_id,
                         naslov='Dodaj naložbo')
 
-    try:
+    
+    if repo.dodaj_par(symbol, name) == 1:
         # Vnese simbol v tabelo par
-        repo.dodaj_par(symbol, name)
         gh.get_historic_data(['{}'.format(symbol)], date.today())
         repo.uvozi_Price_History('{}.csv'.format(symbol))
         gh.merge_csv(gh.get_symbols(), 'price_history.csv')
@@ -213,7 +213,7 @@ def dodaj_par():
                         sporocilo='Simbol uspešno dodan', 
                         user_id=user_id,
                         naslov='Dodaj naložbo')
-    except:
+    else:
         return template('pregled_nalozb.html', 
                         pravilen_simbol=False, 
                         pairs=seznam,
@@ -226,7 +226,13 @@ def dodaj_par():
 @get('/<id>/nalozbe')
 @cookie_required
 def nalozbe(id: int):
-    seznam = repo.dobi_asset_amount_by_user(id)
+    ''' Namesto id iz funkcije uporabi cookie zato, da če uporabnik
+    ročno spremeni url, ne vidi podatkov ostalih uporabnik! '''
+    cookie = request.get_cookie('uporabnik')
+    user_id = repo.dobi_gen_id(app_user, cookie, 'user_name')[0]
+
+    seznam = repo.dobi_asset_amount_by_user(user_id)
+
     return template('nalozbe.html',
                     assets=seznam, 
                     napaka=False, 
@@ -284,9 +290,11 @@ def buy_sell():
 @get('/<id>/napredek')
 @cookie_required
 def performance(id: int):
+    ''' Namesto id iz funkcije uporabi cookie zato, da če uporabnik
+    ročno spremeni url, ne vidi podatkov ostalih uporabnik! '''
     cookie = request.get_cookie('uporabnik')
     user_id = repo.dobi_gen_id(app_user, cookie, 'user_name')[0]
-    user_assets = repo.dobi_asset_by_user(id)
+    user_assets = repo.dobi_asset_by_user(user_id)
 
     graf.graph_html(user_id, user_assets) 
     graf.graph_cake(user_id)
@@ -314,7 +322,11 @@ def new_equity_graph():
 @get('/<id>/trades')
 @cookie_required
 def trades(id: int):
-    seznam = repo.dobi_trade_delno(id)
+    ''' Namesto id iz funkcije uporabi cookie zato, da če uporabnik
+    ročno spremeni url, ne vidi podatkov ostalih uporabnik! '''
+    cookie = request.get_cookie('uporabnik')
+    user_id = repo.dobi_gen_id(app_user, cookie, 'user_name')[0]
+    seznam = repo.dobi_trade_delno(user_id)
     return template('trades.html', trade=seznam, sporocilo='', user_id=id, naslov='Dodaj trade')
 
 @post('/dodaj_trade')
@@ -392,9 +404,11 @@ def uredi(param: str):
 @get('/<id>/statistika')
 @cookie_required
 def stats(id: int):
-    seznam = repo.dobi_strategije(id)
+    ''' Namesto id iz funkcije uporabi cookie zato, da če uporabnik
+    ročno spremeni url, ne vidi podatkov ostalih uporabnik! '''
     cookie = request.get_cookie('uporabnik')
     user_id = repo.dobi_gen_id(app_user, cookie, 'user_name')[0]
+    seznam = repo.dobi_strategije(user_id)
 
     # Če uporabim samo id namesto user_id ne izračuna stats_tuple?
     stats_tuple = graf.graph_stats(user_id, 'All')
@@ -425,7 +439,12 @@ def strategy():
 @get('/<id>/analiza')
 @cookie_required
 def analyze_main(id: int):
-    seznam = repo.dobi_strategije(id)
+    ''' Namesto id iz funkcije uporabi cookie zato, da če uporabnik
+    ročno spremeni url, ne vidi podatkov ostalih uporabnik! '''
+    cookie = request.get_cookie('uporabnik')
+    user_id = repo.dobi_gen_id(app_user, cookie, 'user_name')[0]
+
+    seznam = repo.dobi_strategije(user_id)
     return template('analysis.html', 
                     strategy=seznam, 
                     podatki=(0, 0, 0, 0, 0, 0), 

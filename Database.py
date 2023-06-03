@@ -36,11 +36,11 @@ class Repo:
             pridobljen iz baze na podlagi njegovega idja. '''
         tbl_name = typ.__name__
         sql_cmd = f'SELECT * FROM {tbl_name} WHERE {id_col} = %s';
-        self.cur.execute(sql_cmd, (id,))
-
-        d = self.cur.fetchone()
-
-        if d is None:
+        try:
+            self.cur.execute(sql_cmd, (id,))
+            d = self.cur.fetchone()
+        except:
+            self.conn.rollback()
             raise Exception(f'Vrstica z id-jem {id} ne obstaja v {tbl_name}');
         return d
 
@@ -124,18 +124,23 @@ class Repo:
             print('Uspesno uvozil csv datoteko!')
 
 
-    def dodaj_par(self, simbol: str, name: str):
-        self.cur.execute('''
-            INSERT INTO pair (symbol, name) 
-            VALUES (%s, %s)
-        ''', (simbol, name))
-        self.conn.commit()
+    def dodaj_par(self, simbol: str, name: str) -> int:
+        try:
+            self.cur.execute('''
+                INSERT INTO pair (symbol, name) 
+                VALUES (%s, %s)
+            ''', (simbol, name))
+            self.conn.commit()
+            return 1
+        except:
+            self.conn.rollback()
+            return 0
 
 
     def posodobi_price_history(self, df: DataFrame | None):
         if not df is None:
             for i in df.index:
-                if not df['price'][i] is 'NaN':
+                if df['price'][i] != 'NaN':
                     self.cur.execute('''
                         INSERT INTO price_history (symbol_id, date, price)
                         VALUES (%s, %s, %s)
