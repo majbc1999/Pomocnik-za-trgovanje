@@ -191,25 +191,35 @@ def dodaj_par():
 
     cookie = request.get_cookie('uporabnik')
     user_id = repo.dobi_gen_id(app_user, cookie, 'user_name')[0]
-
+    seznam = repo.dobi_pare()
     # Preveri ali vnešen simbol obstaja
     if gh.preveri_ustreznost(f'{symbol}') == 0:
         return template('pregled_nalozb.html', 
-                        pravilen_simbol=False, 
+                        pravilen_simbol=False,
+                        pairs=seznam,
                         sporocilo='Vnešen napačen simbol',
                         user_id=user_id,
                         naslov='Dodaj naložbo')
 
-    # Vnese simbol v tabelo par
-    repo.dodaj_par(symbol, name)
-    gh.get_historic_data(['{}'.format(symbol)], date.today())
-    repo.uvozi_Price_History('{}.csv'.format(symbol))
-    gh.merge_csv(gh.get_symbols(), 'price_history.csv')
-    return template('pregled_nalozb.html', 
-                    pravilen_simbol=True, 
-                    sporocilo='Simbol uspešno dodan', 
-                    user_id=user_id,
-                    naslov='Dodaj naložbo')
+    try:
+        # Vnese simbol v tabelo par
+        repo.dodaj_par(symbol, name)
+        gh.get_historic_data(['{}'.format(symbol)], date.today())
+        repo.uvozi_Price_History('{}.csv'.format(symbol))
+        gh.merge_csv(gh.get_symbols(), 'price_history.csv')
+        return template('pregled_nalozb.html', 
+                        pravilen_simbol=True, 
+                        pairs=seznam,
+                        sporocilo='Simbol uspešno dodan', 
+                        user_id=user_id,
+                        naslov='Dodaj naložbo')
+    except:
+        return template('pregled_nalozb.html', 
+                        pravilen_simbol=False, 
+                        pairs=seznam,
+                        sporocilo='Simbol je že v bazi', 
+                        user_id=user_id,
+                        naslov='Dodaj naložbo')
 
 #############################################################
 
