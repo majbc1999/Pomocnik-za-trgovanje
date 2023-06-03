@@ -187,6 +187,7 @@ def dodaj(id: int):
 def dodaj_par():
     ''' Doda nov par v tabelo pari '''
     symbol = request.forms.symbol
+    symbol = symbol.upper()
     name = request.forms.ime
 
     cookie = request.get_cookie('uporabnik')

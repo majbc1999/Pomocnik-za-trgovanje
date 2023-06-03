@@ -14,8 +14,8 @@
                 <option value="L">Long</option>
             </select><br>
         <span>Strategija:</span> <input class="text" name="strategy" type="text" placeholder="WVR"/><br>
-        <span>Razmerje tveganja (RR):</span> <input class="text" name="RR" type="text" placeholder="6.81"/><br>
-        <span>Tarča:</span> <input class="text" name="target" type="text" placeholder="4.06"/><br>
+        <span>Razmerje tveganja (RR):</span> <input class="text" name="RR" type="number" placeholder="6.81" step=".01"/><br>
+        <span>Tarča:</span> <input class="text" name="target" type="number" placeholder="4.06" step=".01"/><br>
         <span>Datum:</span> <input class="text" name="date" type="date" min="2022-01-01" required/><br>
         <span>Trajanje:</span> <input class="text" name="duration" type="text" placeholder="1h"/><br>
         <label for="TP">Delni profit (TP):</label>
@@ -25,7 +25,8 @@
                 <option value="1">1</option>
                 <option value="2">2</option>
             </select><br>
-            <span>Profit/Izguba (PNL):</span> <input class="text" name="PNL" type="text" required placeholder="11.2$/-11.2$"/><br>
+        <span>Profit/Izguba (PNL):</span> <input class="text" name="PNL" type="text" required placeholder="11.2$/-11.2$"/><br>
+        <p>V PNL vpiši le številko. Decimalke loči s piko. Če je PNL v valuti USD, dodaj znak: <b>$</b></p>
         <input class= "gumb" value="Dodaj" type="submit"/>
     </form>
         <br>
