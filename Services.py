@@ -14,9 +14,9 @@ class AuthService:
 
     def obstaja_uporabnik(self, uporabnik: str) -> bool:
         try:
-            user = self.repo.dobi_gen_id(app_user, uporabnik, id_col="user_name")
+            uporabnik = self.repo.dobi_gen_id(app_user, uporabnik, id_col="user_name")
             return True
-        except:
+        except Exception:
             return False
     
 

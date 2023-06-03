@@ -108,7 +108,7 @@ def registracija_post():
     uporabnisko_ime = request.forms.user_name
     geslo = request.forms.password
 
-    if not auth.obstaja_uporabnik(uporabnisko_ime):
+    if auth.obstaja_uporabnik(uporabnisko_ime):
         return template('registracija.html', 
                         uspesna_registracija=False, 
                         sporocilo='Registracija ni možna, to uporabniško ime že obstaja.',
