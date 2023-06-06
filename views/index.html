@@ -9,7 +9,7 @@
         <form action="{{url('uredi_profil', id=user_id)}}" method="get">
             <input class="gumb_profil" value="Uredi profil" type="submit"/>
         </form>
-        <form action="/odjava" method="get">
+        <form action="{{url('logout')}}" method="get">
             <input class="gumb_logout" value="Odjava" type="submit"/>
         </form>
         <h1 class="besedilo">{{user_ime}}'s trading pomočnik</h1>
