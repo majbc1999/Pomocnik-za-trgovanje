@@ -6,7 +6,7 @@
         <link rel="stylesheet" type="text/css" href="{{url('static', filename='style.css')}}" />
     </head>
     <body class="ozadje">
-        <form action="/{{user_id}}/uredi_profil" method="get">
+        <form action="{{url('uredi_profil', id=user_id)}}" method="get">
             <input class="gumb_profil" value="Uredi profil" type="submit"/>
         </form>
         <form action="/odjava" method="get">
@@ -17,15 +17,15 @@
         <div class="sredina">
             <div class="blok">
                 <h2 class="naslov">NALOŽBE</h2>
-                <p class="besedilo2"> <a href="/{{user_id}}/pregled_nalozb" class="link">Dodaj naložbo</a></p>
-                <p class="besedilo2"> <a href="/{{user_id}}/nalozbe" class="link">Kupi/Prodaj</a></p>
-                <p class="besedilo2"> <a href="/{{user_id}}/napredek" class="link">Poglej napredek</a></p>
+                <p class="besedilo2"> <a href="{{url('dodaj', id=user_id)}}" class="link">Dodaj naložbo</a></p>
+                <p class="besedilo2"> <a href="{{url('nalozbe', id=user_id)}}" class="link">Kupi/Prodaj</a></p>
+                <p class="besedilo2"> <a href="{{url('performance', id=user_id)}}" class="link">Poglej napredek</a></p>
             </div>
             <div class="blok">
                 <h2 class="naslov">TRADES</h2>
-                <p class="besedilo2"> <a href="/{{user_id}}/trades" class="link">Dodaj trade</a></p>
-                <p class="besedilo2"> <a href="/{{user_id}}/statistika" class="link">Statistika</a></p>
-                <p class="besedilo2"> <a href="/{{user_id}}/analiza" class="link">Analiza</a></p>
+                <p class="besedilo2"> <a href="{{url('trades', id=user_id)}}" class="link">Dodaj trade</a></p>
+                <p class="besedilo2"> <a href="{{url('stats', id=user_id)}}" class="link">Statistika</a></p>
+                <p class="besedilo2"> <a href="{{url('analyze_main', id=user_id)}}" class="link">Analiza</a></p>
             </div>
         </div>
     </body>

@@ -10,15 +10,15 @@
         <div class="obroba">
             <p class="naslov-tabele">PRIJAVA</p>
             % if uspesna_prijava == False:
-            <div class="opozorilo">{{sporocilo}}</div>  
+            <div class="opozorilo">{{sporocilo}}</div> 
             % end
-            <form action="/prijava" method="post">
+            <form action="{{url('prijava_post')}}" method="post">
                 <span>Uporabniško ime:</span> <input class="text" name="ime" type="text" /><br>
                 <span>Geslo:</span> <input class="text" name="geslo" type="password" /><br>
                 <input class="gumb" value="Prijava" type="submit" />
             </form>
             <p class="naslov-tabele">
-                Prvič tukaj? <a href="/registracija" class="link">Ustvari račun</a>
+                Prvič tukaj? <a href="{{url('registracija')}}" class="link">Ustvari račun</a>
             </p>
         </div>
         <br>

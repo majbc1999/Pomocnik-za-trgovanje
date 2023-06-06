@@ -7,7 +7,7 @@
       tako da jih ločiš s presledkom. Spodaj so prikazani simboli med katerimi lahko izbiraš.</p>
     <div class="clearfix">
       <div class="box">  
-        <form action="/new_equity_graph" method="post">
+        <form action="{{url('new_equity_graph')}}" method="post">
           <span><br>Vpiši simbole:</span> <br>
           <input class="text" name="simboli" type="text" required placeholder="BTC-USD SPY USD"/> <br>
           <input class="gumb" type="submit" value="Prikaži">
@@ -20,13 +20,13 @@
       </div>
       <div class="box">
         <iframe id="igraph" scrolling="no" style="border:none;" 
-        seamless="seamless" src="../graphs/cake.html"
+        seamless="seamless" src="{{url('graf_assets', ime='cake')}}"
         height="400" width="100%"></iframe>
       </div>
     </div>
   </div>
   <br>
   <iframe id="igraph" scrolling="no" style="border:none;" 
-  seamless="seamless" src="../graphs/assets.html"
+  seamless="seamless" src="{{url('graf_assets', ime='assets')}}"
   height="500" width="100%"></iframe>
 </div>

@@ -5,7 +5,7 @@
     <p class="besedilo2">Prikazana je statistika tvojih tradov. Lahko izbereš vse hkrati,
       ali pa jih ločiš po strategiji.</p>
     <div>
-      <form action="/strategy" method="post">
+      <form action="{{url('strategy')}}" method="post">
         <label for="strategy">Izberi strategijo:</label>
             <select class="select" name="strategy">
                 <option value="All">Vsi tradi</option>
@@ -34,15 +34,15 @@
   </div>
     <br>
   <iframe id="igraph" scrolling="no" style="border:none;" 
-  seamless="seamless" src="../graphs/pnl_graph.html"
+  seamless="seamless" src="{{url('graf_assets', ime='pnl_graph')}}"
   height="500" width="100%"></iframe>
     <br>
   <iframe id="igraph" scrolling="no" style="border:none;" 
-  seamless="seamless" src="../graphs/win_rate.html"
+  seamless="seamless" src="{{url('graf_assets', ime='win_rate')}}"
   height="500" width="100%"></iframe>
     <br>
   <p class="besedilo2">Celotni portfolio</p>
   <iframe id="igraph" scrolling="no" style="border:none;" 
-  seamless="seamless" src="../graphs/win_by_type.html"
+  seamless="seamless" src="{{url('graf_assets', ime='win_by_type')}}"
   height="500" width="100%"></iframe>
 </div>

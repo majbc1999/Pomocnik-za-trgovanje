@@ -12,7 +12,7 @@
       % if uspesna_registracija == False:
       <div class="opozorilo">{{sporocilo}}</div>  
       % end
-      <form action="/registracija" method="post" autocomplete="off">
+      <form action="{{url('registracija_post')}}" method="post" autocomplete="off">
         <span>Ime:</span> <input class="text" name="name" type="text" required placeholder="Sara"/><br>
         <span>Priimek:</span> <input class="text" name="surname" type="text" required placeholder="Žužek"/><br>
         <span>Datum rojstva:</span> <input class="text" name="date_of_birth" type="date" value="2000-01-31"/><br>
@@ -21,7 +21,7 @@
         <input class="gumb" value="Ustvari račun" type="submit"/>
       </form>
       <p class="naslov-tabele">
-        Že imaš račun? <a href="/" class="link">Prijavi se</a>
+        Že imaš račun? <a href="{{url('zacetna_stran')}}" class="link">Prijavi se</a>
       </p>
     </div>
     <br>

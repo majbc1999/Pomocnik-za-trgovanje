@@ -43,11 +43,14 @@ def cookie_required(f):
         cookie = request.get_cookie('uporabnik')
         if cookie:
             return f(*args, **kwargs)
-        redirect('/')
+        return template('prijava.html', 
+                        uspesna_prijava=False, 
+                        sporocilo='Potrebna je prijava',
+                        naslov='Pomočnik za trgovanje')
     return decorated
 
 @get('/graphs/<ime>.html')
-def Graf_assets(ime: str):
+def graf_assets(ime: str):
     return template(f'graphs/{ime}.html')
 
 
@@ -84,17 +87,20 @@ def prijava_post():
     response.set_cookie('uporabnik', uporabnisko_ime)
 
     user_id = repo.dobi_gen_id(app_user, uporabnisko_ime, 'user_name')[0]
-    redirect(f'/{user_id}/index')
+    redirect(url('index', id=user_id))
 
 @get('/odjava')
 def logout():
     response.delete_cookie('uporabnik')
-    redirect('/')
+    return template('prijava.html', 
+                        uspesna_prijava=False, 
+                        sporocilo='Odjava uspešna',
+                        naslov='Pomočnik za trgovanje')
 
 #############################################################
 
 @get('/registracija')
-def registracija_get():
+def registracija():
     return template('registracija.html', 
                     uspesna_registracija=True, 
                     sporocilo='',

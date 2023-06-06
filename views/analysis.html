@@ -5,7 +5,7 @@
     Za analizo potrebuješ vsaj 20 tradov!</p>
   <div class="clearfix">
     <div class="box">
-      <form action="/analyze" method="post">
+      <form action="{{url('analyze_f')}}" method="post">
         <label for="strategy">Strategija:</label>
           <select class="select-analiza" name="strategy">
             % for strategija in strategy:
@@ -46,9 +46,9 @@
   </div>
   <br>
   <iframe id="igraph" scrolling="no" style="border:none;" 
-  seamless="seamless" src="../graphs/pnl_3d.html"
+  seamless="seamless" src="{{url('graf_assets', ime='pnl_3d')}}"
   height="500" width="49%" style="float: right"></iframe>
   <iframe id="igraph" scrolling="no" style="border:none;" 
-    seamless="seamless" src="../graphs/win_rate_anl.html"
+    seamless="seamless" src="{{url('graf_assets', ime='win_rate_anl')}}"
     height="500" width="49%" style="float: left"></iframe>
 </div>

@@ -12,7 +12,7 @@
       % if sprememba == True:
       <div class="uspesno">{{sporocilo}}</div>  
       % end
-      <form action="/posodobi" method="post" autocomplete="off">
+      <form action="{{url('posodobi')}}" method="post" autocomplete="off">
         <span>Ime:</span> <input class="text" name="ime" type="text" value="{{podatki[0]}}" required/><br>
         <span>Priimek:</span> <input class="text" name="priimek" type="text" value="{{podatki[1]}}" required/><br>
         <span>Datum rojstva:</span> <input class="text" name="datum" type="date" value="{{podatki[2]}}" required/><br>
@@ -22,7 +22,7 @@
       </form>
     </div>
     <br>
-    <a href="/{{user_id}}/index" class="Button"><input class="gumb_nazaj" type='button' value='Nazaj' /></a>
+    <a href="{{url('index', id=user_id)}}" class="Button"><input class="gumb_nazaj" type='button' value='Nazaj' /></a>
   </body>
   <footer class="footer">
       <p>by <a style="color: white;" href="https://github.com/sarazuzek/Pomocnik-za-trgovanje">Sara Žužek & Alan Marinić</a> </p>

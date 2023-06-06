@@ -12,7 +12,7 @@
   % elif pravilen_simbol == False:
   <div class="opozorilo">{{sporocilo}}</div>  
   % end
-  <form action="/dodaj_par" method="post">
+  <form action="{{url('dodaj_par')}}" method="post">
     <span>Vpiši simbol:</span> <input class="text" name="symbol" type="text" required placeholder="BTC-USD"/><br>
     <span>Vpiši ime:</span> <input class="text" name="ime" type="text" required placeholder="Bitcoin"/><br>
     <input class="gumb" value="Potrdi" type="submit" />

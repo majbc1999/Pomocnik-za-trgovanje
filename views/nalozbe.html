@@ -6,7 +6,7 @@
     % else:
     <div class="opozorilo">{{sporocilo}}</div>
     % end
-    <form action="/buy_sell" method="post">
+    <form action="{{url('buy_sell')}}" method="post">
         <span>Simbol:</span> <input class="text" name="symbol" type="text" required placeholder="BTC-USD"/><br>
         <span>Datum izvedbe:</span> <input class="text" name="datum" type="date" required/><br>
         <span>Količina:</span> <input class="text" name="amount" required placeholder="2.5" type="number" step=".01"/><br>

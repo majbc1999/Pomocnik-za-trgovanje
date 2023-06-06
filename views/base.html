@@ -7,13 +7,13 @@
     </head>
     <body class="ozadje">
         <h2 class="besedilo">{{naslov}}</h2>
-        <form action="/odjava" method="get">
+        <form action="{{url('logout')}}" method="get">
             <input class="gumb_logout" value="Odjava" type="submit"/>
         </form>
         {{!base}}        
         <br>
         <div class="nazaj">
-            <a href="/{{user_id}}/index" ><input class="gumb_nazaj" type='button' value='Nazaj' /></a>
+            <a href="{{url('index', id=user_id)}}" ><input class="gumb_nazaj" type='button' value='Nazaj' /></a>
         </div>
     </body>
     <footer class="footer">

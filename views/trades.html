@@ -6,7 +6,7 @@
     % else:
     <div class="opozorilo">{{sporocilo}}</div>
     % end
-    <form action="/dodaj_trade" method="post">
+    <form action="{{url('dodaj_trade')}}" method="post">
         <span>Simbol:</span> <input class="text" name="symbol" type="text" required placeholder="BTC-USD"/><br>
         <label for="type">Tip:</label>
             <select class="select" name="type" required>
@@ -35,47 +35,47 @@
         <thead>
             <tr>
                 <th class="th">
-                    <form action="/{{'symbol_id'}}/uredi" method="get">
+                    <form action="{{url('uredi', param='symbol_id')}}" method="get">
                         <a href="#" onclick="this.parentElement.submit()" class="th-link">Simbol ⏷</a>
                     </form>
                 </th>
                 <th class="th">
-                    <form action="/{{'type'}}/uredi" method="get">
+                    <form action="{{url('uredi', param='type')}}" method="get">
                         <a href="#" onclick="this.parentElement.submit()" class="th-link">Tip ⏷</a>
                     </form>
                 </th>
                 <th class="th">
-                    <form action="/{{'strategy'}}/uredi" method="get">
+                    <form action="{{url('uredi', param='strategy')}}" method="get">
                         <a href="#" onclick="this.parentElement.submit()" class="th-link">Strategija ⏷</a>
                     </form>
                 </th>
                 <th class="th">
-                    <form action="/{{'rr'}}/uredi" method="get">
+                    <form action="{{url('uredi', param='rr')}}" method="get">
                         <a href="#" onclick="this.parentElement.submit()" class="th-link">RR ⏷</a>
                     </form>
                 </th>
                 <th class="th">
-                    <form action="/{{'target'}}/uredi" method="get">
+                    <form action="{{url('uredi', param='target')}}" method="get">
                         <a href="#" onclick="this.parentElement.submit()" class="th-link">Tarča ⏷</a>
                     </form>
                 </th>
                 <th class="th">
-                    <form action="/{{'date'}}/uredi" method="get">
+                    <form action="{{url('uredi', param='date')}}" method="get">
                         <a href="#" onclick="this.parentElement.submit()" class="th-link">Datum ⏷</a>
                     </form>
                 </th>
                 <th class="th">
-                    <form action="/{{'duration'}}/uredi" method="get">
+                    <form action="{{url('uredi', param='duration')}}" method="get">
                         <a href="#" onclick="this.parentElement.submit()" class="th-link">Trajanje ⏷</a>
                     </form>
                 </th>
                 <th class="th">
-                    <form action="/{{'tp'}}/uredi" method="get">
+                    <form action="{{url('uredi', param='tp')}}" method="get">
                         <a href="#" onclick="this.parentElement.submit()" class="th-link">TP ⏷</a>
                     </form>
                 </th>
                 <th class="th">
-                    <form action="/{{'pnl'}}/uredi" method="get">
+                    <form action="{{url('uredi', param='pnl')}}" method="get">
                         <a href="#" onclick="this.parentElement.submit()" class="th-link">PNL ⏷</a>
                     </form>
                 </th>
@@ -95,7 +95,7 @@
                 <td class="td">{{item[8]}}</td>
                 <td class="td">{{item[9]}}</td>
                 <td class="td">
-                    <form action="/{{item[0]}}/delete_trade" method="post" onsubmit="return confirm('Ali si prepričan? Ni poti nazaj!');">
+                    <form action="{{url('delete_trade', trade_id=item[0])}}" method="post" onsubmit="return confirm('Ali si prepričan? Ni poti nazaj!');">
                         <button id="pnl" value="Izbriši" type="submit" class="gumb_del">Izbriši</button>
                     </form>
                 </td>
