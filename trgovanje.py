@@ -10,7 +10,7 @@ import psycopg2, psycopg2.extensions, psycopg2.extras
 psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
 
 from auth_public import *
-from Podatki import get_history as gh
+# from Podatki import get_history as gh
 # from graphs import Graf
 # 
 from Database import Repo
