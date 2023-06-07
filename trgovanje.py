@@ -9,11 +9,11 @@ from bottleext import get, post, run, request, template, redirect, static_file, 
 import psycopg2, psycopg2.extensions, psycopg2.extras
 psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
 
-from auth_public import *
+# from auth_public import *
 # from Podatki import get_history as gh
 # from graphs import Graf
 # 
-# *from Database import Repo
+# from Database import Repo
 # from modeli import *
 from Services import AuthService
 
