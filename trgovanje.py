@@ -480,5 +480,4 @@ def analyze_f():
 
 #############################################################
 
-if __name__ == '__main__':
-    run(host='localhost', port=SERVER_PORT, reloader=RELOADER)
+run(host='localhost', port=SERVER_PORT, reloader=RELOADER)
