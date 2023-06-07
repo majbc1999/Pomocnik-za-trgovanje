@@ -13,7 +13,7 @@ from auth_public import *
 # from Podatki import get_history as gh
 # from graphs import Graf
 # 
-from Database import Repo
+# *from Database import Repo
 # from modeli import *
 from Services import AuthService
 
