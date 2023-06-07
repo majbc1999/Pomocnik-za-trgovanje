@@ -60,6 +60,7 @@ def graf_assets(ime: str):
 
 @get('/')
 def zacetna_stran():
+    return "aaa"
     return template('prijava.html', 
                     uspesna_prijava=True, 
                     sporocilo='',
