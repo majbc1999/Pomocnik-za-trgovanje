@@ -5,7 +5,6 @@ yahoofinancials==1.14
 plotly==5.14.1
 psycopg2
 typing
-modeli
 csv
 re
 datetime
