@@ -1,13 +1,13 @@
 import os
-import re
-
-from datetime import date
-from functools import wraps
+# import re
+# 
+# from datetime import date
+# from functools import wraps
 
 from bottleext import get, post, run, request, template, redirect, static_file, url, response, TEMPLATES
 
-import psycopg2, psycopg2.extensions, psycopg2.extras
-psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
+# import psycopg2, psycopg2.extensions, psycopg2.extras
+# psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
 
 from auth_public import *
 from Podatki import get_history as gh
@@ -18,9 +18,9 @@ from modeli import *
 from Services import AuthService
 
 
-repo = Repo()
-auth = AuthService(repo)
-graf = Graf()
+# repo = Repo()
+# auth = AuthService(repo)
+# graf = Graf()
 # 
 # # Privzete nastavitve
 SERVER_PORT = os.environ.get('BOTTLE_PORT', 8080)
