@@ -13,7 +13,7 @@ psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
 # from Podatki import get_history as gh
 # from graphs import Graf
 # 
-# from Database import Repo
+from Database import Repo
 # from modeli import *
 # from Services import AuthService
 
